@@ -42,10 +42,20 @@ export interface LeaveBalance {
     carriedForward: number;
     pending: number;
     upcoming: number;
+    // Phase Phase 9: Logic
+    sickTaken: number;
+    plannedTaken: number;
 }
 
 export interface AuthResponse {
     user?: User;
     token?: string;
     error?: string;
+}
+
+export interface PublicHoliday {
+    id: string;
+    date: string;
+    name: string;
+    type: 'public' | 'optional';
 }
