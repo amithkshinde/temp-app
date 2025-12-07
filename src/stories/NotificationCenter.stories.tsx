@@ -1,4 +1,5 @@
 
+import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { NotificationCenter } from '@/components/ui/notification-center';
 import { NotificationProvider } from '@/context/NotificationContext';
@@ -8,7 +9,7 @@ const meta: Meta<typeof NotificationCenter> = {
     title: 'Dashboard/NotificationCenter',
     component: NotificationCenter,
     decorators: [
-        (Story) => (
+        (Story: React.ElementType) => (
             <div className="flex justify-end p-4 bg-gray-100">
                 {/* We need to mock the context logic or wrap it. 
              Ideally we use a MockProvider, but for simplicity here we assume decorator works 
