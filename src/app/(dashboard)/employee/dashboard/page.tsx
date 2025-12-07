@@ -256,7 +256,7 @@ export default function EmployeeDashboard() {
                                     });
                                     if (res.ok) {
                                         await fetchData();
-                                        addNotification('Leave updated successfully', 'success', user?.id);
+                                        addNotification('Leave updated successfully', 'success', user?.id || '');
                                     } else {
                                         alert('Update failed');
                                     }
