@@ -31,6 +31,20 @@ export function addHoliday(holiday: PublicHoliday) {
     PUBLIC_HOLIDAYS_2025.push(holiday);
 }
 
+export function updateHoliday(id: string, updatedData: Partial<PublicHoliday>) {
+    const index = PUBLIC_HOLIDAYS_2025.findIndex(h => h.id === id);
+    if (index !== -1) {
+        PUBLIC_HOLIDAYS_2025[index] = { ...PUBLIC_HOLIDAYS_2025[index], ...updatedData };
+    }
+}
+
+export function removeHoliday(id: string) {
+    const index = PUBLIC_HOLIDAYS_2025.findIndex(h => h.id === id);
+    if (index !== -1) {
+        PUBLIC_HOLIDAYS_2025.splice(index, 1);
+    }
+}
+
 // Mock User Selections: { userId: [holidayId1, holidayId2] }
 export const USER_HOLIDAY_SELECTIONS: Record<string, string[]> = {};
 
