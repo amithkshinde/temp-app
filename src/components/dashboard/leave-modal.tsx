@@ -25,10 +25,12 @@ export function LeaveModal({
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        setStartDate(initialStartDate);
-        setEndDate(initialEndDate || initialStartDate);
-        setReason('');
-    }, [initialStartDate, initialEndDate, isOpen]);
+        if (isOpen) {
+            setStartDate(initialStartDate);
+            setEndDate(initialEndDate || initialStartDate);
+            setReason('');
+        }
+    }, [isOpen, initialStartDate, initialEndDate]);
 
     if (!isOpen) return null;
 

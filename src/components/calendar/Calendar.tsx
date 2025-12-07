@@ -25,7 +25,7 @@ export interface CalendarEvent {
     type: 'leave' | 'holiday';
     status?: CalendarEventStatus;
     title?: string; // e.g. "Republic Day"
-    meta?: any; // For flexible data passing
+    meta?: Record<string, unknown>; // For flexible data passing
 }
 
 export interface CalendarProps {

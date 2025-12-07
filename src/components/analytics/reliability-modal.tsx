@@ -10,10 +10,12 @@ import { Button } from "@/components/ui/button";
 // Wait, I created `LeaveModal` in step 467 using standard HTML fixed overlay.
 // I'll do the same here.
 
+import { ReliabilityReport } from '@/lib/types';
+
 interface ModalProps {
     isOpen: boolean;
     onClose: () => void;
-    data: any; // The row data
+    data: ReliabilityReport | null;
 }
 
 export function ReliabilityModal({ isOpen, onClose, data }: ModalProps) {

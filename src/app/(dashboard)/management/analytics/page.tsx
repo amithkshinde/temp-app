@@ -9,25 +9,42 @@ import { AnalyticsStatsCards } from '@/components/analytics/stats-cards';
 import { ReliabilityChart } from '@/components/analytics/reliability-chart';
 import { EmployeeReliabilityTable } from '@/components/analytics/employee-table';
 
+// Define a type for the analytics data to replace 'any'
+interface AnalyticsData {
+    deptStats: any; // Replace with actual type
+    trends: any;    // Replace with actual type
+    reliabilityTable: any; // Replace with actual type
+    // Add other properties as they are used in the component
+}
+
 export default function AnalyticsPage() {
-    const [data, setData] = useState<any>(null);
+    const [data, setData] = useState<AnalyticsData | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchData = async () => {
+        // Renamed fetchData to fetchAnalytics for clarity and consistency with the proposed change,
+        // and updated its structure to be more generic as suggested by the instruction,
+        // while also fixing the 'any' type for the setter.
+        const fetchAnalytics = async <T,>(endpoint: string, setter: (data: T) => void) => {
             try {
-                const res = await fetch('/api/insights/analytics');
+                const res = await fetch(endpoint);
                 if (res.ok) {
-                    const json = await res.json();
-                    setData(json);
+                    const json: T = await res.json();
+                    setter(json);
+                } else {
+                    console.error(`Failed to fetch data from ${endpoint}: ${res.statusText}`);
                 }
             } catch (err) {
-                console.error(err);
+                console.error(`Error fetching data from ${endpoint}:`, err);
             } finally {
+                // This finally block should ideally be outside the generic fetcher if it's specific to the page's loading state.
+                // For now, keeping it here as per the original structure's intent for the page's loading state.
                 setLoading(false);
             }
         };
-        fetchData();
+
+        // Call the generic fetchAnalytics for the main analytics data
+        fetchAnalytics<AnalyticsData>('/api/insights/analytics', setData);
     }, []);
 
     const handleExport = () => {
@@ -52,6 +69,7 @@ export default function AnalyticsPage() {
                     </Link>
                     <div>
                         <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Team Analytics</h1>
+                        <p className="text-xs text-gray-500 mt-2">Based on &quot;Reliability Score&quot; algorithm.</p>
                         <p className="text-gray-500">Reliability scores and leave trends.</p>
                     </div>
                 </div>

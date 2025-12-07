@@ -88,7 +88,7 @@ export function CalendarView({
                     const isWknd = isWeekend(day);
 
                     // --- Styles ---
-                    let containerClasses = cn(
+                    const containerClasses = cn(
                         "min-h-[3.5rem] rounded-lg p-1 flex flex-col items-start justify-start text-xs transition-colors cursor-pointer border relative overflow-hidden",
                         isCurrentMonth ? "bg-white" : "bg-slate-50 opacity-50",
                         isToday(day) && "ring-1 ring-blue-400 bg-blue-50",
@@ -119,7 +119,7 @@ export function CalendarView({
                         titleText += `\nHoliday: ${holiday.name}`;
                     }
                     if (dayLeaves.length > 0) {
-                        titleText += `\nLeaves: ${dayLeaves.map(l => (l as any).userName || l.userId).join(', ')}`;
+                        titleText += `\nLeaves: ${dayLeaves.map(l => l.userName || l.userId).join(', ')}`;
                     } else if (!holiday) {
                         titleText += '\nClick to request leave';
                     }
@@ -187,7 +187,7 @@ export function CalendarView({
                                                 title={leave.reason}
                                             >
                                                 {/* Use userName if enriched, else 'Emp' */}
-                                                {(leave as any).userName || leave.userId}
+                                                {leave.userName || leave.userId}
                                             </div>
                                         );
                                     }

@@ -49,7 +49,7 @@ export default function YearlySummaryPage() {
         const headers = ["Quarter", "Allocated", "Carry Fwd", "Taken", "Remaining"];
         const rows = stats.quarters.map(q => [q.name, q.allocated, q.carryForward, q.taken, q.remaining]);
 
-        let csvContent = "data:text/csv;charset=utf-8,"
+        const csvContent = "data:text/csv;charset=utf-8,"
             + headers.join(",") + "\n"
             + rows.map(e => e.join(",")).join("\n");
 

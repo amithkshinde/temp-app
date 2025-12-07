@@ -60,10 +60,10 @@ export function ApprovalModal({ leave, onClose, onApprove, onReject }: ApprovalM
                     {/* User Info (Mock Name if not present) */}
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-500">
-                            {(leave as any).userName?.[0] || leave.userId[0].toUpperCase()}
+                            {leave.userName?.[0] || leave.userId[0].toUpperCase()}
                         </div>
                         <div>
-                            <div className="font-semibold text-gray-900">{(leave as any).userName || leave.userId}</div>
+                            <div className="font-semibold text-gray-900">{leave.userName || leave.userId}</div>
                             <div className="text-xs text-gray-500 capitalize">{leave.reason} • {duration} Day{duration > 1 ? 's' : ''}</div>
                         </div>
                     </div>

@@ -21,7 +21,7 @@ export async function GET(request: Request) {
         ];
     });
 
-    let csvContent = headers.join(",") + "\n" + rows.map(r => r.join(",")).join("\n");
+    const csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\n" + rows.map(r => r.join(",")).join("\n");
 
     return new NextResponse(csvContent, {
         headers: {

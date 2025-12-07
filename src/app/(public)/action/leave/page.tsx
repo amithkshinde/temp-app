@@ -39,9 +39,13 @@ function ActionPageContent() {
                     const data = await res.json();
                     throw new Error(data.error || 'Action failed');
                 }
-            } catch (err: any) {
+            } catch (err: unknown) {
                 setStatus('error');
-                setMessage(err.message || 'Failed to process request.');
+                if (err instanceof Error) {
+                    setMessage(err.message);
+                } else {
+                    setMessage('Failed to process request.');
+                }
             }
         };
 

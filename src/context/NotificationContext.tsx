@@ -113,8 +113,8 @@ function ToastContainer() {
     const [toasts, setToasts] = useState<{ id: string, message: string, type: string }[]>([]);
 
     useEffect(() => {
-        const handleToast = (e: any) => {
-            const { message, type } = e.detail;
+        const handleToast = (e: Event) => {
+            const { message, type } = (e as CustomEvent).detail;
             const id = Math.random().toString(36);
             setToasts(prev => [...prev, { id, message, type }]);
             setTimeout(() => {
