@@ -17,7 +17,8 @@ export async function POST(request: Request) {
         const newHoliday: PublicHoliday = {
             id: crypto.randomUUID(),
             name,
-            date
+            date,
+            type: 'public'
         };
 
         addHoliday(newHoliday);
