@@ -24,13 +24,14 @@ export function LeaveModal({
     const [reason, setReason] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         if (isOpen) {
             setStartDate(initialStartDate);
             setEndDate(initialEndDate || initialStartDate);
             setReason('');
         }
-    }, [isOpen, initialStartDate, initialEndDate]);
+    }, [isOpen]);
 
     if (!isOpen) return null;
 
@@ -60,7 +61,6 @@ export function LeaveModal({
     };
 
     const isExisting = !!existingLeaveId;
-    const isFuture = new Date(startDate) > new Date();
 
     // Logic: Auto-detect Type
     const getLeaveDetails = () => {

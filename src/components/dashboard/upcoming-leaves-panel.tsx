@@ -1,5 +1,5 @@
 import { Leave } from '@/lib/types';
-import { format, parseISO, differenceInDays } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { Calendar } from 'lucide-react';
 
 interface UpcomingLeavesPanelProps {

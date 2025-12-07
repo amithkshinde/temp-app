@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { MOCK_LEAVES } from '@/data/leaves';
 import { MOCK_USERS } from '@/data/users';
 
-export async function GET(request: Request) {
+export async function GET() {
     // const { searchParams } = new URL(request.url);
     // const format = searchParams.get('format'); // 'csv' - unused for now as we only support csv
 

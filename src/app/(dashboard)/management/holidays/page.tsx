@@ -17,13 +17,12 @@ export default function HolidaysManagement() {
     const [formData, setFormData] = useState({ name: '', date: '', id: '' });
     const [editMode, setEditMode] = useState(false);
 
-    const fetchData = async () => {
-        const res = await fetch('/api/holidays');
-        if (res.ok) setHolidays(await res.json());
-        setIsLoading(false);
-    };
-
     useEffect(() => {
+        const fetchData = async () => {
+            const res = await fetch('/api/holidays');
+            if (res.ok) setHolidays(await res.json());
+            setIsLoading(false);
+        };
         fetchData();
     }, []);
 
@@ -41,6 +40,11 @@ export default function HolidaysManagement() {
 
     // Let's use useCallback to be clean.
 
+    const refreshData = async () => {
+        const res = await fetch('/api/holidays');
+        if (res.ok) setHolidays(await res.json());
+    };
+
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
@@ -56,7 +60,7 @@ export default function HolidaysManagement() {
                 });
             }
             setIsModalOpen(false);
-            fetchData();
+            refreshData();
         } catch (err) {
             console.error(err);
         }
@@ -65,7 +69,7 @@ export default function HolidaysManagement() {
     const handleDelete = async (id: string) => {
         if (!confirm('Are you sure?')) return;
         await fetch(`/api/holidays/${id}`, { method: 'DELETE' });
-        fetchData();
+        refreshData();
     };
 
     const openEdit = (h: PublicHoliday) => {
