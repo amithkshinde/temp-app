@@ -41,13 +41,28 @@ export async function GET(request: Request) {
         return l.status === 'approved' && start > now;
     }).length;
 
+    // Calculate sick vs planned taken
+    const sickTaken = userLeaves.reduce((acc, leave) => {
+        if (leave.status === 'approved' && leave.type === 'sick' && leave.startDate.startsWith(String(currentYear))) {
+            const start = new Date(leave.startDate);
+            const end = new Date(leave.endDate);
+            const diffDays = Math.ceil(Math.abs(end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+            return acc + diffDays;
+        }
+        return acc;
+    }, 0);
+
+    const plannedTaken = takenCount - sickTaken; // Assuming strict dichotomy based on existing logic
+
     const balance: LeaveBalance = {
         allocated: ANNUAL_ALLOCATION,
         taken: takenCount,
         remaining: ANNUAL_ALLOCATION - takenCount,
         carriedForward: 0,
         pending: pendingCount,
-        upcoming: upcomingCount
+        upcoming: upcomingCount,
+        sickTaken,
+        plannedTaken
     };
 
     return NextResponse.json(balance);
