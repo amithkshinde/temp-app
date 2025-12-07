@@ -128,13 +128,13 @@ export default function ManagerDashboard() {
             const res = await fetch(`/api/leaves/${id}/approve`, { method: 'POST', body: JSON.stringify({ note }) });
             if (!res.ok) throw new Error('Failed to approve');
 
-            addNotification('Leave updated successfully', 'success');
+            addNotification('Leave updated successfully', 'success', user?.id || '');
             // Background re-fetch to ensure sync with server
             fetchAllData();
         } catch (error) {
             // Revert on Error
             setLeaves(previousLeaves);
-            addNotification('Action couldn’t be completed. Please try again.', 'error');
+            addNotification('Action couldn’t be completed. Please try again.', 'error', user?.id || '');
             console.error(error);
         }
     };
@@ -148,12 +148,12 @@ export default function ManagerDashboard() {
             const res = await fetch(`/api/leaves/${id}/reject`, { method: 'POST', body: JSON.stringify({ note }) });
             if (!res.ok) throw new Error('Failed to reject');
 
-            addNotification('Leave updated successfully', 'success');
+            addNotification('Leave updated successfully', 'success', user?.id || '');
             fetchAllData();
         } catch (error) {
             // Revert on Error
             setLeaves(previousLeaves);
-            addNotification('Action couldn’t be completed. Please try again.', 'error');
+            addNotification('Action couldn’t be completed. Please try again.', 'error', user?.id || '');
             console.error(error);
         }
     };
