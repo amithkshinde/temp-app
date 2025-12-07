@@ -1,7 +1,7 @@
 
 "use client";
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"; // Assuming shadcn Dialog exists? check imports
+
 import { Button } from "@/components/ui/button";
 
 // If Dialog doesn't exist, I'll use a simple fixed overlay div for demo.
@@ -37,7 +37,7 @@ export function ReliabilityModal({ isOpen, onClose, data }: ModalProps) {
                             <p className="text-sm text-gray-500 font-medium mb-1">Reliability Score</p>
                             <div className="flex items-baseline gap-2">
                                 <span className={`text-3xl font-bold ${data.grade === 'A' || data.grade === 'B' ? 'text-emerald-600' :
-                                        data.grade === 'C' ? 'text-amber-500' : 'text-red-500'
+                                    data.grade === 'C' ? 'text-amber-500' : 'text-red-500'
                                     }`}>
                                     {data.score}
                                 </span>
