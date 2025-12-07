@@ -17,12 +17,13 @@ export default function HolidaysManagement() {
     const [formData, setFormData] = useState({ name: '', date: '', id: '' });
     const [editMode, setEditMode] = useState(false);
 
+    const fetchData = async () => {
+        const res = await fetch('/api/holidays');
+        if (res.ok) setHolidays(await res.json());
+        setIsLoading(false);
+    };
+
     useEffect(() => {
-        const fetchData = async () => {
-            const res = await fetch('/api/holidays');
-            if (res.ok) setHolidays(await res.json());
-            setIsLoading(false);
-        };
         fetchData();
     }, []);
 
