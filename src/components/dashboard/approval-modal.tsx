@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Leave } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { format, parseISO, differenceInDays } from 'date-fns';
-import { X, Check } from 'lucide-react';
+import { X } from 'lucide-react';
 
 interface ApprovalModalProps {
     leave: Leave;

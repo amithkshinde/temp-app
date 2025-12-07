@@ -26,8 +26,8 @@ export function LeaveModal({
 
     useEffect(() => {
         if (isOpen) {
-            setStartDate(prev => prev !== initialStartDate ? initialStartDate : prev);
-            setEndDate(prev => (initialEndDate || initialStartDate) !== prev ? (initialEndDate || initialStartDate) : prev);
+            setStartDate(initialStartDate);
+            setEndDate(initialEndDate || initialStartDate);
             setReason('');
         }
     }, [isOpen, initialStartDate, initialEndDate]);

@@ -8,7 +8,7 @@ import { PublicHoliday } from '@/data/holiday-data';
 import { format } from 'date-fns';
 
 export default function HolidaysManagement() {
-    const { user, logout } = useAuth();
+    const { logout } = useAuth();
     const [holidays, setHolidays] = useState<PublicHoliday[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);

@@ -36,7 +36,7 @@ export function UpcomingLeavesPanel({ leaves, isLoading, onLeaveClick }: Upcomin
                     {upcomingLeaves.map(leave => {
                         const startDate = parseISO(leave.startDate);
                         const endDate = parseISO(leave.endDate);
-                        const days = differenceInDays(endDate, startDate) + 1;
+
 
                         // Fallback type if legacy data missing it
                         const type = leave.type || (leave.status === 'approved' ? 'Sick' : 'Planned');
@@ -58,10 +58,10 @@ export function UpcomingLeavesPanel({ leaves, isLoading, onLeaveClick }: Upcomin
                                         </span>
                                     </div>
                                     <span className={`text-[10px] uppercase font-bold px-1.5 py-0.5 rounded ${leave.status === 'approved'
-                                            ? 'bg-emerald-100 text-emerald-700'
-                                            : leave.status === 'rejected'
-                                                ? 'bg-red-100 text-red-700'
-                                                : 'bg-amber-100 text-amber-700'
+                                        ? 'bg-emerald-100 text-emerald-700'
+                                        : leave.status === 'rejected'
+                                            ? 'bg-red-100 text-red-700'
+                                            : 'bg-amber-100 text-amber-700'
                                         }`}>
                                         {leave.status}
                                     </span>

@@ -50,7 +50,6 @@ export function Calendar({
     startDate,
     endDate,
     onDateClick,
-    onRangeSelect,
     className
 }: CalendarProps) {
     // Internal state for keyboard focus if not controlled

@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -33,8 +33,7 @@ export default function EmployeeDashboard() {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [selectedLeave, setSelectedLeave] = useState<Leave | undefined>(undefined);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         if (!user) return;
         try {
             const [leavesRes, balanceRes, holidaysRes, selectionRes] = await Promise.all([
@@ -54,11 +53,11 @@ export default function EmployeeDashboard() {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [user]);
 
     useEffect(() => {
         fetchData();
-    }, [user]);
+    }, [fetchData]);
 
     // Real-time Poll
     usePolling(() => {

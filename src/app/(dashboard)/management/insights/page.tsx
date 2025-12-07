@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowLeft, Download, Filter, Calendar as CalendarIcon, Users, TrendingUp, FileText } from 'lucide-react';
-import { format, parseISO, eachDayOfInterval, startOfYear, endOfYear, getDay } from 'date-fns';
+import { format, parseISO, eachDayOfInterval, startOfYear, endOfYear } from 'date-fns';
 import { Department } from '@/lib/types';
 import { cn } from '@/lib/utils';
 

@@ -18,8 +18,8 @@ async function smokeTest() {
         });
 
         if (!loginRes.ok) throw new Error(`Login Failed: ${loginRes.status}`);
-        const loginData = await loginRes.json();
-        const empToken = loginRes.headers.get('set-cookie'); // or from body if you return token
+        await loginRes.json();
+        // const empToken = loginRes.headers.get('set-cookie'); 
         // In this app we use httpOnly cookies, so fetch in Node won't persist them automatically unless we handle "set-cookie".
         // The mock API returns `token` in body for dev convenience? Let's check api/auth/login.
         // It sets cookie. 

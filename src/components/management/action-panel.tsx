@@ -19,7 +19,7 @@ export function ActionPanel({ date, leaves, onApprove, onReject, isLoading }: Ac
         );
     }
 
-    const pendingLeaves = leaves.filter(l => l.status === 'pending');
+
 
     return (
         <div className="h-full bg-white border-l border-slate-200 flex flex-col w-full max-w-sm">

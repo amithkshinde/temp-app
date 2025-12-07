@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
     format, startOfMonth, endOfMonth, eachDayOfInterval,
-    isSameDay, isToday, isWeekend, addMonths, subMonths,
+    isSameDay, isToday, addMonths, subMonths,
     startOfWeek, endOfWeek, isWithinInterval, parseISO
 } from 'date-fns';
 import { Leave } from '@/lib/types';

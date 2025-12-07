@@ -4,8 +4,8 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowLeft, ChevronLeft, ChevronRight, Filter, Search, Calendar as CalendarIcon, Info } from 'lucide-react';
-import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isWeekend, isWithinInterval, parseISO } from 'date-fns';
+import { ArrowLeft, ChevronLeft, ChevronRight, Filter, Search } from 'lucide-react';
+import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isWeekend, parseISO } from 'date-fns';
 import { Department, Leave, User } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { PublicHoliday } from '@/data/holiday-data';

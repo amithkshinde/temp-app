@@ -27,7 +27,7 @@ export default function LoginPage() {
 
             const res = await login(email, password);
             if (!res.success) {
-                setError(res.error || 'Hmm, that didn’t match. Try again?');
+                setError(res.error || 'Hmm, that didn&rsquo;t match. Try again?');
                 // Toast could be here
             }
         } catch {

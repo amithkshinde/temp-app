@@ -1,7 +1,7 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { Calendar, CalendarProps } from '@/components/calendar/Calendar'; // Path might need adjustment depending on where storybook looks
-import { addDays, subDays, startOfMonth } from 'date-fns';
+import { Calendar } from '@/components/calendar/Calendar'; // Path might need adjustment depending on where storybook looks
+import { addDays, startOfMonth } from 'date-fns';
 
 const meta: Meta<typeof Calendar> = {
     component: Calendar,

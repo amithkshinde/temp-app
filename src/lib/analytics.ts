@@ -26,7 +26,7 @@ export const computeReliabilityScore = (user: User, userLeaves: Leave[]): Reliab
     // Heuristic Weights
     const W_LAST_MINUTE = 15; // Highest penalty for last minute
     const W_REJECTED = 10; // Penalty for rejected leaves (spamming?)
-    const W_FREQUENCY = 0.5; // Small penalty per leave taken? Or maybe not. 
+
     // Let's define "leavesTakenNormalized" as ratio to allowance?
     // If taken > allowance (20), penalize.
 

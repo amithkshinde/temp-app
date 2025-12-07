@@ -20,7 +20,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [isLoading, setIsLoading] = useState(true);
     const [isDemo, setIsDemo] = useState(false);
     const router = useRouter();
-    // const pathname = usePathname(); // Unused
 
     useEffect(() => {
         const checkSession = async () => {

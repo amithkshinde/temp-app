@@ -1,11 +1,11 @@
 
 "use client";
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation'; // Added Import
+
 import { StatsStrip } from '@/components/dashboard/stats-strip'; // Fix import if needed or just remove unused
 import { CalendarView } from '@/components/dashboard/calendar-view';
 // Removed ManagementCalendar
@@ -61,8 +61,7 @@ export default function ManagerDashboard() {
     // Actually, simply remove the dependency warning line by adding it to deps? 
     // No, fetchAllData changes on every render if not wrapped.
     // Let's suppress for now to minimize risk of infinite loops if I wrap it wrong.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const fetchAllData = async () => {
+    const fetchAllData = useCallback(async () => {
         if (!user) return;
         try {
             const year = new Date().getFullYear();
@@ -87,11 +86,11 @@ export default function ManagerDashboard() {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [user]);
 
     useEffect(() => {
         if (user) fetchAllData();
-    }, [user]);
+    }, [user, fetchAllData]);
 
     // Polling
     usePolling(() => { if (user) fetchAllData(); }, 5000);

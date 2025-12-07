@@ -12,8 +12,8 @@ import { EmployeeReliabilityTable } from '@/components/analytics/employee-table'
 // Define a type for the analytics data to replace 'any'
 interface AnalyticsData {
     deptStats: Record<string, number>;
-    trends: any; // Keep specific chart data as any if complex for now, or define
-    reliabilityTable: any[];
+    trends: { month: string; leaves: number }[];
+    reliabilityTable: Record<string, unknown>[];
 }
 
 export default function AnalyticsPage() {
@@ -94,7 +94,7 @@ export default function AnalyticsPage() {
                     <div className="relative z-10">
                         <h3 className="text-lg font-bold">Reliability Insight</h3>
                         <p className="text-pink-100 text-sm mt-2 opacity-90">
-                            Engineering has the highest "Last Minute" request ratio this quarter. Consider reviewing sprint planning alignment.
+                            Engineering has the highest &quot;Last Minute&quot; request ratio this quarter. Consider reviewing sprint planning alignment.
                         </p>
                     </div>
                     <div className="relative z-10 mt-4">
