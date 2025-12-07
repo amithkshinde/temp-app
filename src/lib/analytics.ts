@@ -1,6 +1,6 @@
 
 import { Leave, User } from '@/lib/types';
-import { differenceInBusinessDays, differenceInCalendarDays, parseISO, subHours } from 'date-fns';
+import { parseISO, subHours } from 'date-fns';
 
 export interface ReliabilityDetails {
     leavesTaken: number;
@@ -59,10 +59,10 @@ export const computeReliabilityScore = (user: User, userLeaves: Leave[]): Reliab
     let penalty = 0;
 
     // 1. Last Minute Penalty: Scale from 0 to 20 based on ratio
-    penalty += (lastMinuteRatio * 30);
+    penalty += (lastMinuteRatio * W_LAST_MINUTE * 2); // Example usage
 
     // 2. Rejection Penalty: Scale from 0 to 10
-    penalty += (rejectionRatio * 20);
+    penalty += (rejectionRatio * W_REJECTED * 2);
 
     // 3. Usage Penalty (Soft): If near limit or over
     if (takenCount > allowance) {

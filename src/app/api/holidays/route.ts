@@ -24,7 +24,7 @@ export async function POST(request: Request) {
         addHoliday(newHoliday);
         return NextResponse.json(newHoliday);
 
-    } catch (error) {
+    } catch {
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }

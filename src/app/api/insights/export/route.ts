@@ -5,7 +5,7 @@ import { MOCK_USERS } from '@/data/users';
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
-    const format = searchParams.get('format'); // 'csv'
+    // const format = searchParams.get('format'); // 'csv' - unused for now as we only support csv
 
     // Only CSV supported for now
     const headers = ["Employee", "Department", "Start Date", "End Date", "Status", "Reason"];

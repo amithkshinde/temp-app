@@ -1,6 +1,6 @@
 
 import { NextResponse } from 'next/server';
-import { MOCK_NOTIFICATIONS, addNotification, markAllAsRead, markAsRead } from '@/data/notifications';
+import { MOCK_NOTIFICATIONS, addNotification } from '@/data/notifications';
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);

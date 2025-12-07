@@ -1,5 +1,5 @@
 
-import { ArrowUpRight, Users, Calendar, AlertTriangle } from 'lucide-react';
+import { ArrowUpRight, Users, AlertTriangle } from 'lucide-react';
 
 interface StatsProps {
     deptStats: Record<string, number>;

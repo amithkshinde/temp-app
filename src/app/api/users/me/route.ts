@@ -31,7 +31,7 @@ export async function GET() {
                 role: user.role,
             }
         });
-    } catch (err) {
+    } catch {
         return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
 }

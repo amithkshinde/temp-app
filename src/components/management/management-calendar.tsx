@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import {
     format, startOfMonth, endOfMonth, eachDayOfInterval,
     isSameDay, isToday, isWeekend, addMonths, subMonths,
@@ -69,7 +69,7 @@ export function ManagementCalendar({ leaves, onDateClick, selectedDate }: Manage
                 {days.map((day) => {
                     const dayLeaves = getLeavesForDate(day);
                     const isCurrentMonth = day.getMonth() === currentMonth.getMonth();
-                    const isWknd = isWeekend(day);
+                    // const isWknd = isWeekend(day); // Unused
                     const isSelected = selectedDate && isSameDay(day, selectedDate);
 
                     let cellStyles = "min-h-[80px] rounded-lg p-2 flex flex-col items-start justify-start text-sm transition-colors cursor-pointer border";

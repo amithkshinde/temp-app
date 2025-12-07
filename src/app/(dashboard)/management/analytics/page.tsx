@@ -11,10 +11,9 @@ import { EmployeeReliabilityTable } from '@/components/analytics/employee-table'
 
 // Define a type for the analytics data to replace 'any'
 interface AnalyticsData {
-    deptStats: any; // Replace with actual type
-    trends: any;    // Replace with actual type
-    reliabilityTable: any; // Replace with actual type
-    // Add other properties as they are used in the component
+    deptStats: Record<string, number>;
+    trends: any; // Keep specific chart data as any if complex for now, or define
+    reliabilityTable: any[];
 }
 
 export default function AnalyticsPage() {
@@ -29,8 +28,8 @@ export default function AnalyticsPage() {
             try {
                 const res = await fetch(endpoint);
                 if (res.ok) {
-                    const json: T = await res.json();
-                    setter(json);
+                    const json = await res.json();
+                    setter(json as T);
                 } else {
                     console.error(`Failed to fetch data from ${endpoint}: ${res.statusText}`);
                 }

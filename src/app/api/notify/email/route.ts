@@ -14,7 +14,7 @@ export async function POST(req: Request) {
         await sendEmail({ to, subject, html });
 
         return NextResponse.json({ success: true, message: 'Email queued' });
-    } catch (err) {
+    } catch {
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }

@@ -22,7 +22,7 @@ export async function POST(
             selections: currentSelections
         });
 
-    } catch (error) {
+    } catch {
         return NextResponse.json({ error: 'Internal Error' }, { status: 500 });
     }
 }

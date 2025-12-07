@@ -20,7 +20,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [isLoading, setIsLoading] = useState(true);
     const [isDemo, setIsDemo] = useState(false);
     const router = useRouter();
-    const pathname = usePathname();
+    // const pathname = usePathname(); // Unused
 
     useEffect(() => {
         const checkSession = async () => {
@@ -70,7 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             } else {
                 return { success: false, error: data.error || 'Login failed' };
             }
-        } catch (err) {
+        } catch {
             return { success: false, error: 'Network error' };
         } finally {
             setIsLoading(false);

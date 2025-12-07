@@ -1,7 +1,7 @@
 
 import { NextResponse } from 'next/server';
-import { updateLeaveStatus, MOCK_LEAVES, removeLeave } from '@/data/leaves';
-import { notifyManagement, getLeaveRequestTemplate } from '@/lib/notifications';
+import { updateLeaveStatus, MOCK_LEAVES } from '@/data/leaves';
+import { notifyManagement } from '@/lib/notifications';
 import { addNotification } from '@/data/notifications';
 
 export async function POST(

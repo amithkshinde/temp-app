@@ -1,8 +1,7 @@
-
 "use client";
 
 import { useNotifications } from "@/context/NotificationContext";
-import { Bell, Check, Trash2, Info, CheckCircle, AlertTriangle, XCircle, MailOpen } from "lucide-react";
+import { Bell, Trash2, Info, CheckCircle, AlertTriangle, XCircle, MailOpen } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { Button } from "../ui/button";
 

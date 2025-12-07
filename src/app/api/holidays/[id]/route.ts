@@ -18,7 +18,7 @@ export async function PUT(
         updateHoliday(id, body);
         return NextResponse.json({ success: true });
 
-    } catch (error) {
+    } catch {
         return NextResponse.json({ error: 'Internal Error' }, { status: 500 });
     }
 }

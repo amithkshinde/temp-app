@@ -1,7 +1,7 @@
 
 import { Leave, User } from '@/lib/types';
 import { format, parseISO, isAfter, startOfToday } from 'date-fns';
-import { cn } from '@/lib/utils';
+// import { cn } from '@/lib/utils'; // Unused
 
 interface TeamUpcomingPanelProps {
     leaves: Leave[];

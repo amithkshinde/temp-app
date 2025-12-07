@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
     format, startOfMonth, endOfMonth, eachDayOfInterval,
-    isSameDay, isToday, isWeekend, addMonths, subMonths,
+    isToday, isWeekend, addMonths, subMonths,
     startOfWeek, endOfWeek, isWithinInterval, parseISO
 } from 'date-fns';
 import { Leave } from '@/lib/types';
@@ -101,7 +101,7 @@ export function CalendarView({
                     const isConflict = mode === 'team' && dayLeaves.filter(l => l.status !== 'rejected').length > 2;
 
                     // --- Interaction ---
-                    const handleCellClick = (e: React.MouseEvent) => {
+                    const handleCellClick = () => {
                         // If clicking specifically on a leave badge, we handle that in the badge click
                         // Here is general empty space click
                         if (holiday && onHolidayClick) {
@@ -151,11 +151,11 @@ export function CalendarView({
 
                             {/* Leaves Stack */}
                             <div className="w-full flex flex-col gap-0.5 mt-auto">
-                                {dayLeaves.slice(0, 3).map((leave, i) => {
+                                {dayLeaves.slice(0, 3).map((leave) => {
                                     // Personal Mode: Only show 'dot' or 'bar'.
                                     // Team Mode: Show Name + Color
                                     const isApproved = leave.status === 'approved';
-                                    const isPending = leave.status === 'pending';
+                                    // Removed unused isPending
 
                                     if (mode === 'personal') {
                                         // Personal: Simple Dot/Bar

@@ -2,7 +2,7 @@
 import { Leave, User } from '@/lib/types';
 import { format, parseISO, differenceInDays } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { Check, X } from 'lucide-react';
+import { Check } from 'lucide-react';
 
 interface PendingApprovalsPanelProps {
     leaves: Leave[];

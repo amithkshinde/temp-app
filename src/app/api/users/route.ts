@@ -1,4 +1,3 @@
-
 import { NextResponse } from 'next/server';
 import { MOCK_USERS } from '@/data/users';
 
@@ -21,7 +20,28 @@ export async function GET(request: Request) {
     }
 
     // Sanitize
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const safeUsers = users.map(({ password, ...u }) => u);
 
     return NextResponse.json(safeUsers);
+}
+
+export async function POST(request: Request) {
+    try {
+        const body = await request.json();
+        // Mock creation logic
+        const newUser = {
+            id: Math.random().toString(36).substr(2, 9),
+            ...body,
+            createdAt: new Date().toISOString()
+        };
+        MOCK_USERS.push(newUser);
+
+        // Remove password from response
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { password, ...safeUser } = newUser;
+        return NextResponse.json(safeUser);
+    } catch {
+        return NextResponse.json({ error: 'Failed to create user' }, { status: 500 });
+    }
 }

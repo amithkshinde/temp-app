@@ -30,7 +30,7 @@ export default function LoginPage() {
                 setError(res.error || 'Hmm, that didn’t match. Try again?');
                 // Toast could be here
             }
-        } catch (err) {
+        } catch {
             setError('Something went wrong. Please try again.');
         } finally {
             setIsLoading(false);

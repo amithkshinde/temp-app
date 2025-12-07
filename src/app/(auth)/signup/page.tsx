@@ -62,7 +62,7 @@ export default function SignupPage() {
             } else {
                 setError(data.error || 'Failed to create account');
             }
-        } catch (err) {
+        } catch {
             setError('Something went wrong. Please try again.');
         } finally {
             setIsLoading(false);

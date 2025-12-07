@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { MOCK_LEAVES } from '@/data/leaves';
 import { MOCK_USERS } from '@/data/users';
 import { computeReliabilityScore } from '@/lib/analytics';
-import { eachMonthOfInterval, format, subMonths, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
+import { eachMonthOfInterval, format, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
 
 export async function GET(request: Request) {
     try {
@@ -117,8 +117,8 @@ export async function GET(request: Request) {
             upcomingLongLeaves
         });
 
-    } catch (error) {
-        console.error("Analytics Error", error);
+    } catch {
+        console.error("Analytics Error");
         return NextResponse.json({ error: 'Failed to fetch analytics' }, { status: 500 });
     }
 }

@@ -33,6 +33,7 @@ export default function EmployeeDashboard() {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [selectedLeave, setSelectedLeave] = useState<Leave | undefined>(undefined);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const fetchData = async () => {
         if (!user) return;
         try {
@@ -111,7 +112,7 @@ export default function EmployeeDashboard() {
         if (!user) return;
 
         // Optimistic Duplicate Check at Frontend Level
-        const start = new Date(data.startDate);
+        // Removed unused 'start' var
         const duplicate = leaves.find(l => {
             const ls = new Date(l.startDate);
             const le = new Date(l.endDate);

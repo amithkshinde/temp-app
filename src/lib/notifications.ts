@@ -2,7 +2,7 @@
 import { Leave } from "./types";
 
 // Mock Queue
-const QUEUE: any[] = [];
+const QUEUE: EmailPayload[] = [];
 const PROCESS_DELAY_MS = 1000;
 
 // Config

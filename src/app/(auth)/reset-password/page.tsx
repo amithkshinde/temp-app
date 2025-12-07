@@ -9,7 +9,6 @@ import Link from 'next/link';
 
 function ResetPasswordForm() {
     const searchParams = useSearchParams();
-    const router = useRouter();
     const token = searchParams.get('token');
 
     const [password, setPassword] = useState('');
@@ -43,7 +42,7 @@ function ResetPasswordForm() {
             } else {
                 setSuccess(true);
             }
-        } catch (err) {
+        } catch {
             setError('Something went wrong.');
         } finally {
             setIsLoading(false);

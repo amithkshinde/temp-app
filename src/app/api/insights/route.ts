@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server';
 import { MOCK_LEAVES } from '@/data/leaves';
 
-export async function GET(request: Request) {
+export async function GET() {
     // Simple summary stats
-    const now = new Date();
 
     const totalRequests = MOCK_LEAVES.length;
     const pendingCount = MOCK_LEAVES.filter(l => l.status === 'pending').length;

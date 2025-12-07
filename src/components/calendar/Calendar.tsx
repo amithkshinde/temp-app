@@ -1,13 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import {
     format, startOfMonth, endOfMonth, startOfWeek, endOfWeek,
     eachDayOfInterval, isSameMonth, isSameDay, isToday,
     addDays, subDays, addWeeks, subWeeks, isWithinInterval,
-    isWeekend, parseISO
+    isWeekend
 } from 'date-fns';
-import { Button } from '@/components/ui/button';
 
 // Helper for conditional classes
 function cn(...classes: (string | undefined | null | false)[]) {
