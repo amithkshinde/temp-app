@@ -262,6 +262,7 @@ export default function TeamCalendarPage() {
                                 <X size={16} />
                                 <span className="sr-only">Close</span>
                             </button>
+                            {/* Force update */}
                         </div>
                         <div className="space-y-2 text-sm text-gray-600">
                             <p><span className="font-semibold text-gray-900">Employee:</span> {users.find(u => u.id === selectedLeave.userId)?.name || 'Unknown'}</p>
