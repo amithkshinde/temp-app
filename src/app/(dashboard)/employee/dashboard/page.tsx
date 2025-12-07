@@ -159,7 +159,7 @@ export default function EmployeeDashboard() {
     };
 
     const handleRemoveLeave = async () => {
-        if (!selectedLeave) return;
+        if (!selectedLeave || !user) return;
         if (!confirm('Are you sure you want to cancel this leave?')) return;
 
         try {
