@@ -24,14 +24,13 @@ export function LeaveModal({
     const [reason, setReason] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         if (isOpen) {
             setStartDate(initialStartDate);
             setEndDate(initialEndDate || initialStartDate);
             setReason('');
         }
-    }, [isOpen]);
+    }, [isOpen, initialStartDate, initialEndDate]);
 
     if (!isOpen) return null;
 
