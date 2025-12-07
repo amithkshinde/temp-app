@@ -10,6 +10,9 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-brand-pink: #ee236B;
+  --color-bg: #FAFAFA;
+  --radius-xl: 1rem;
 }
 
 @media (prefers-color-scheme: dark) {

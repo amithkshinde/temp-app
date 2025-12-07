@@ -1,0 +1,121 @@
+
+"use client";
+
+import { useNotifications } from "@/context/NotificationContext";
+import { Bell, Check, Trash2, Info, CheckCircle, AlertTriangle, XCircle, MailOpen } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Button } from "../ui/button";
+
+export function NotificationCenter() {
+    const { notifications, unreadCount, markAsRead, markAllAsRead, clearAll } = useNotifications();
+    const [isOpen, setIsOpen] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    // Close on click outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    const toggle = () => setIsOpen(!isOpen);
+
+    const getIcon = (type: string) => {
+        switch (type) {
+            case 'success': return <CheckCircle className="w-5 h-5 text-green-500" />;
+            case 'warning': return <AlertTriangle className="w-5 h-5 text-amber-500" />;
+            case 'error': return <XCircle className="w-5 h-5 text-red-500" />;
+            default: return <Info className="w-5 h-5 text-blue-500" />;
+        }
+    };
+
+    return (
+        <div className="relative" ref={dropdownRef}>
+            <button
+                onClick={toggle}
+                className="relative p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+                aria-label="Notifications"
+            >
+                <Bell className="w-6 h-6 text-gray-700 dark:text-gray-200" />
+                {unreadCount > 0 && (
+                    <span className="absolute top-1 right-1 flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-[var(--color-brand-pink)] rounded-full border-2 border-[var(--color-bg)]">
+                    </span>
+                )}
+            </button>
+
+            {isOpen && (
+                <div className="absolute right-0 mt-2 w-80 md:w-96 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-200">
+                    <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-800">
+                        <div>
+                            <h3 className="font-bold text-gray-900 dark:text-white">Notifications</h3>
+                            <p className="text-xs text-gray-500">{unreadCount} unread</p>
+                        </div>
+                        <div className="flex gap-2">
+                            {unreadCount > 0 && (
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={markAllAsRead}
+                                    className="h-8 text-[10px] px-2 text-gray-500 hover:text-[var(--color-brand-pink)]"
+                                >
+                                    Mark all read
+                                </Button>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="max-h-[60vh] overflow-y-auto">
+                        {notifications.length === 0 ? (
+                            <div className="p-8 text-center text-gray-500">
+                                <MailOpen className="w-12 h-12 mx-auto mb-2 opacity-20" />
+                                <p className="text-sm">No notifications yet</p>
+                            </div>
+                        ) : (
+                            <ul className="divide-y divide-gray-100 dark:divide-gray-800">
+                                {notifications.map((notif) => (
+                                    <li
+                                        key={notif.id}
+                                        className={`p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer ${!notif.read ? 'bg-blue-50/30 dark:bg-blue-900/10' : ''}`}
+                                        onClick={() => markAsRead(notif.id)}
+                                    >
+                                        <div className="flex gap-3 items-start">
+                                            <div className="mt-1 flex-shrink-0">
+                                                {getIcon(notif.type)}
+                                            </div>
+                                            <div className="flex-1 space-y-1">
+                                                <p className={`text-sm leading-tight ${!notif.read ? 'font-semibold text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-300'}`}>
+                                                    {notif.message}
+                                                </p>
+                                                <p className="text-[10px] text-gray-400">
+                                                    {new Date(notif.createdAt).toLocaleString()}
+                                                </p>
+                                            </div>
+                                            {!notif.read && (
+                                                <div className="w-2 h-2 rounded-full bg-[var(--color-brand-pink)] mt-2"></div>
+                                            )}
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+
+                    {notifications.length > 0 && (
+                        <div className="p-2 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 rounded-b-xl">
+                            <button
+                                onClick={clearAll}
+                                className="w-full py-2 text-xs text-center text-gray-500 hover:text-red-500 flex items-center justify-center gap-2 transition-colors"
+                            >
+                                <Trash2 className="w-3 h-3" /> Clear History
+                            </button>
+                        </div>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+}

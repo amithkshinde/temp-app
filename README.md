@@ -1,36 +1,91 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+# Leave Tracker MVP
+
+A comprehensive Leave Management System built with **Next.js 14**, **TypeScript**, and **TailwindCSS**.
+
+## Quick Start (One-Click)
+
+Launch the project instantly without manual setup:
+
+### macOS / Linux
+Open your terminal and run:
+```bash
+chmod +x run_mac.sh && ./run_mac.sh
+```
+
+### Windows
+Double-click `run_win.cmd` in your folder.
+
+---
+
+## Features
+
+- **Role-Based Dashboards**:
+  - **Employee**: View balance, apply for leave, track status.
+  - **Management**: Team overview, approve/reject requests, analytics.
+- **Interactive Calendar**: Custom-built calendar with support for ranges, public holidays, and status indicators.
+- **Analytics**: Reliability scores, leave trends, and CSV export.
+- **Notifications**: Email (simulated) and in-app alerts.
+- **Robust Auth**: Secure authentication flow with demo mode support.
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Node.js 18+
+- npm
+
+### Installation
+
+```bash
+npm install
+```
+
+### Environment Variables
+Create a `.env.local` file (optional, as defaults are mocked):
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:3000
+JWT_SECRET=this-is-a-secret-key-for-demo-only
+```
+
+### Running the App
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Open http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Storybook
+View the component library and interaction states:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run storybook
+# Open http://localhost:6006
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Running Tests
 
-## Learn More
+```bash
+# Unit & Integration Tests requires configuration
+# npm test 
 
-To learn more about Next.js, take a look at the following resources:
+# Automated Smoke Test (E2E Simulation)
+node scripts/smoke-test.js
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `src/app`: Next.js App Router pages and API routes.
+- `src/components`: Reusable UI components (Calendar, Stats, etc.).
+- `src/lib`: Utilities, types, and helper functions.
+- `src/context`: React Context providers (Auth, Notification).
+- `src/data`: In-memory mock data (resets on server restart).
 
-## Deploy on Vercel
+## Demo Credentials
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Role | Email | Password |
+|------|-------|----------|
+| **Employee** | `alice@company.com` | `password123` |
+| **Manager** | `david@company.com` | `password123` |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+*Or use the "Explore Demo" buttons on the login page.*
