@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowLeft, ChevronLeft, ChevronRight, Filter, Search } from 'lucide-react';
+import { ArrowLeft, ChevronLeft, ChevronRight, Filter, Search, X } from 'lucide-react';
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isWeekend, parseISO } from 'date-fns';
 import { Department, Leave, User } from '@/lib/types';
 import { cn } from '@/lib/utils';
@@ -259,7 +259,7 @@ export default function TeamCalendarPage() {
                         <div className="flex justify-between items-start">
                             <h3 className="text-lg font-bold text-gray-900">{selectedLeave.reason}</h3>
                             <button onClick={() => setSelectedLeave(null)} className="text-gray-400 hover:text-gray-600">
-                                <Info size={16} /> {/* Using Info icon as placeholder for Close X if X not imported, wait X is not imported, let's use Button or text */}
+                                <X size={16} />
                                 <span className="sr-only">Close</span>
                             </button>
                         </div>
