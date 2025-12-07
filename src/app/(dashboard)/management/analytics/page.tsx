@@ -8,12 +8,13 @@ import { Button } from '@/components/ui/button';
 import { AnalyticsStatsCards } from '@/components/analytics/stats-cards';
 import { ReliabilityChart } from '@/components/analytics/reliability-chart';
 import { EmployeeReliabilityTable } from '@/components/analytics/employee-table';
+import { ReliabilityReport } from '@/lib/types';
 
 // Define a type for the analytics data to replace 'any'
 interface AnalyticsData {
     deptStats: Record<string, number>;
     trends: { month: string; leaves: number }[];
-    reliabilityTable: Record<string, unknown>[];
+    reliabilityTable: ReliabilityReport[];
 }
 
 export default function AnalyticsPage() {
