@@ -10,6 +10,7 @@ export async function GET(request: Request) {
     const scope = searchParams.get('scope'); // 'team'
     const date = searchParams.get('date'); // 'YYYY-MM-DD'
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let whereClause: any = {};
 
     if (scope !== 'team') {
