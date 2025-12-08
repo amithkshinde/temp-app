@@ -15,7 +15,7 @@ import { useNotifications } from '@/context/NotificationContext';
 import { NotificationCenter } from '@/components/ui/notification-center';
 import { UpcomingLeavesPanel } from '@/components/dashboard/upcoming-leaves-panel';
 import { usePolling } from '@/hooks/use-polling';
-import { SmartInsights } from '@/components/dashboard/smart-insights';
+
 import { CarryForwardWidget } from '@/components/dashboard/carry-forward-widget';
 import { AuditTimeline } from '@/components/dashboard/audit-timeline';
 import { MobileFAB } from '@/components/dashboard/mobile-fab';
@@ -252,7 +252,7 @@ export default function EmployeeDashboard() {
                     holidayUsage={{ count: selectedHolidayIds.length, limit: 10 }}
                 />
 
-                <SmartInsights leaves={leaves} />
+
 
                 <div className="flex flex-col lg:flex-row gap-6">
                     <div className="flex-1 min-w-0">

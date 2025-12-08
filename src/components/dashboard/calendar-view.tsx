@@ -34,7 +34,7 @@ export function CalendarView({
     selectionEnd
 }: CalendarViewProps) {
     // View State
-    const [viewType, setViewType] = useState<'my' | 'team' | 'holidays'>('my');
+    // Removed viewType state per feedback. Defaults to showing leaves.
 
     const [currentMonth, setCurrentMonth] = useState(new Date());
 
@@ -45,24 +45,9 @@ export function CalendarView({
 
     const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
 
-    // Filter leaves based on View Type
+    // Filter leaves
     const getLeavesForDate = (date: Date) => {
-        if (viewType === 'holidays') return [];
-
         return leaves.filter(leave => {
-            // If "My View", only show my leaves (assumed filtered by parent or checking userId if passed)
-            // But existing 'leaves' prop usually usually is context driven.
-            // If mode is personal, 'leaves' is usually just user's.
-            // If mode is team, 'leaves' is everyone's.
-            // Let's rely on props:
-            // If mode='personal', viewType toggles are less relevant?
-            // Requirement 5 implies these 3 views are available.
-
-            // Simplification for MVP:
-            // 'my' -> show leaves
-            // 'team' -> show leaves (if mode=team)
-            // 'holidays' -> show only holidays (hide leaves)
-
             const start = parseISO(leave.startDate);
             const end = parseISO(leave.endDate);
             start.setHours(0, 0, 0, 0);
@@ -116,28 +101,6 @@ export function CalendarView({
                         <Button variant="ghost" onClick={nextMonth} size="sm">→</Button>
                     </div>
                 </div>
-
-                {/* View Toggles */}
-                <div className="flex bg-slate-100 p-1 rounded-lg">
-                    <button
-                        onClick={() => setViewType('my')}
-                        className={cn("px-3 py-1.5 text-xs font-medium rounded-md transition-all", viewType === 'my' ? "bg-white shadow text-gray-900" : "text-gray-500 hover:text-gray-700")}
-                    >
-                        My View
-                    </button>
-                    <button
-                        onClick={() => setViewType('team')}
-                        className={cn("px-3 py-1.5 text-xs font-medium rounded-md transition-all", viewType === 'team' ? "bg-white shadow text-gray-900" : "text-gray-500 hover:text-gray-700")}
-                    >
-                        Team
-                    </button>
-                    <button
-                        onClick={() => setViewType('holidays')}
-                        className={cn("px-3 py-1.5 text-xs font-medium rounded-md transition-all", viewType === 'holidays' ? "bg-white shadow text-gray-900" : "text-gray-500 hover:text-gray-700")}
-                    >
-                        Holidays Only
-                    </button>
-                </div>
             </div>
 
             <div className="grid grid-cols-7 gap-1 text-center mb-2">
@@ -158,44 +121,47 @@ export function CalendarView({
                     const inRange = isDateInRange(day);
 
                     // Heatmap Logic
-                    let bgClass = "bg-white"; // Default working day (White/Grey)
-                    let borderClass = "border-transparent";
+                    let bgClass = "bg-white"; // Default working day
+                    let borderClass = "border-slate-200"; // Strengthen default border
 
-                    if (!isCurrentMonth) bgClass = "bg-slate-50 opacity-40";
+                    if (!isCurrentMonth) {
+                        bgClass = "bg-[#FAFAFA]"; // Solid light grey, no opacity
+                        borderClass = "border-slate-100";
+                    }
                     else if (inRange) {
                         bgClass = "bg-pink-50";
-                        borderClass = "border-pink-200";
+                        borderClass = "border-pink-300"; // Stronger
                     }
                     else if (holiday) {
                         // Blue - Holiday
                         bgClass = "bg-blue-50 hover:bg-blue-100";
-                        borderClass = "border-blue-100";
+                        borderClass = "border-blue-200";
                     }
-                    else if (dayLeaves.length > 0 && viewType !== 'holidays') {
+                    else if (dayLeaves.length > 0) {
                         const hasApproved = dayLeaves.some(l => l.status === 'approved');
                         const hasPending = dayLeaves.some(l => l.status === 'pending');
 
                         if (hasApproved) {
-                            // Green - Leave Taken
                             bgClass = "bg-emerald-50 hover:bg-emerald-100";
-                            borderClass = "border-emerald-100";
+                            borderClass = "border-emerald-200";
                         } else if (hasPending) {
-                            // Yellow - Pending
                             bgClass = "bg-amber-50 hover:bg-amber-100";
-                            borderClass = "border-amber-100";
+                            borderClass = "border-amber-200";
                         }
                     } else if (isWknd) {
-                        bgClass = "bg-slate-50";
+                        bgClass = "bg-[#F8F9FA]"; // Solid
+                        borderClass = "border-slate-200";
                     }
 
-                    if (isToday(day)) borderClass = "border-blue-400 ring-1 ring-blue-400";
+                    if (isToday(day)) borderClass = "border-blue-500 ring-1 ring-blue-500";
                     if (isRangeStart(day) || isRangeEnd(day)) borderClass = "ring-2 ring-[var(--color-brand-pink)] border-transparent";
 
 
                     const containerClasses = cn(
                         "min-h-[4rem] rounded-lg p-1.5 flex flex-col items-start justify-start text-xs transition-all cursor-pointer border relative",
                         bgClass,
-                        borderClass
+                        borderClass,
+                        !isCurrentMonth && "text-gray-300" // Visually dim text but keep bg solid
                     );
 
                     // --- Conflict Check (Team Mode) ---
@@ -223,67 +189,59 @@ export function CalendarView({
                         >
                             {/* Date Number */}
                             <div className="w-full flex justify-between items-start mb-1">
-                                <span className={cn("font-medium", isToday(day) && "text-blue-600")}>
+                                <span className={cn("font-bold", isToday(day) && "text-blue-600", !isCurrentMonth && "text-gray-300 font-normal", isCurrentMonth && "text-gray-700")}>
                                     {format(day, 'd')}
                                 </span>
-                                {isConflict && viewType === 'team' && (
+                                {isConflict && (mode === 'team') && (
                                     <AlertCircle size={12} className="text-red-500 animate-pulse" />
                                 )}
                             </div>
 
                             {/* Holiday Label */}
                             {holiday && (
-                                <div className="text-[10px] leading-tight text-blue-600 font-medium w-full truncate mb-1 bg-blue-100/50 px-1 py-0.5 rounded">
+                                <div className="text-[10px] leading-tight text-blue-700 font-bold w-full truncate mb-1 bg-blue-100 px-1 py-0.5 rounded shadow-sm">
                                     {holiday.name} {isSelectedHoliday && '✓'}
                                 </div>
                             )}
 
-                            {/* Leaves Stack - Visibility depends on ViewType */}
-                            {viewType !== 'holidays' && (
-                                <div className="w-full flex flex-col gap-1 mt-auto">
-                                    {dayLeaves.slice(0, 3).map((leave) => {
-                                        const isApproved = leave.status === 'approved';
+                            {/* Leaves Stack */}
+                            <div className="w-full flex flex-col gap-1 mt-auto">
+                                {dayLeaves.slice(0, 3).map((leave) => {
+                                    const isApproved = leave.status === 'approved';
 
-                                        // In 'my' view, simple dots/lines depending on preference. 
-                                        // But users asked for Heatmap. Heatmap is usually background.
-                                        // We applied background. Do we still keep the bars? 
-                                        // Yes, for specific record details.
-
-                                        if (mode === 'personal' || viewType === 'my') {
-                                            // If it's MY view, and I see a leave, it's MY leave.
-                                            return (
-                                                <div key={leave.id} className={cn(
-                                                    "h-1.5 w-full rounded-full",
-                                                    isApproved ? "bg-emerald-400" : "bg-amber-400 animate-pulse"
-                                                )} />
-                                            );
-                                        } else {
-                                            // Team View Labels
-                                            return (
-                                                <div
-                                                    key={leave.id}
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        onLeaveClick?.(leave);
-                                                    }}
-                                                    className={cn(
-                                                        "text-[9px] px-1 rounded text-white truncate w-full cursor-pointer hover:opacity-80 transition-opacity",
-                                                        isApproved ? "bg-emerald-500" : "bg-amber-500 text-black",
-                                                        leave.status === 'rejected' && "line-through opacity-50 bg-gray-400"
-                                                    )}
-                                                >
-                                                    {leave.userName || leave.userId}
-                                                </div>
-                                            );
-                                        }
-                                    })}
-                                    {dayLeaves.length > 3 && (
-                                        <div className="text-[9px] text-gray-400 text-center leading-none">
-                                            +{dayLeaves.length - 3}
-                                        </div>
-                                    )}
-                                </div>
-                            )}
+                                    if (mode === 'personal') {
+                                        return (
+                                            <div key={leave.id} className={cn(
+                                                "h-1.5 w-full rounded-full shadow-sm",
+                                                isApproved ? "bg-emerald-500" : "bg-amber-400"
+                                            )} />
+                                        );
+                                    } else {
+                                        // Team View Labels
+                                        return (
+                                            <div
+                                                key={leave.id}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    onLeaveClick?.(leave);
+                                                }}
+                                                className={cn(
+                                                    "text-[9px] px-1 rounded text-white truncate w-full cursor-pointer hover:opacity-90 transition-opacity font-medium shadow-sm",
+                                                    isApproved ? "bg-emerald-600" : "bg-amber-500 text-black",
+                                                    leave.status === 'rejected' && "line-through opacity-50 bg-gray-400"
+                                                )}
+                                            >
+                                                {leave.userName || leave.userId}
+                                            </div>
+                                        );
+                                    }
+                                })}
+                                {dayLeaves.length > 3 && (
+                                    <div className="text-[9px] text-gray-500 font-bold text-center leading-none">
+                                        +{dayLeaves.length - 3}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     );
                 })}

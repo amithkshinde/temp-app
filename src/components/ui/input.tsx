@@ -24,7 +24,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
                 )}
                 <div className="relative">
                     <input
-                        className={`flex h-11 w-full rounded-xl border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--color-brand-pink)] disabled:cursor-not-allowed disabled:opacity-50 ${error ? 'border-red-500' : 'border-slate-200'
+                        className={`flex h-11 w-full rounded-xl border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--color-brand-pink)] disabled:cursor-not-allowed disabled:opacity-50 text-[#1A1A1A] opacity-100 ${error ? 'border-red-500' : 'border-slate-200'
                             } ${className} ${isPassword ? 'pr-10' : ''}`}
                         ref={ref}
                         type={isPassword ? (showPassword ? 'text' : 'password') : type}
