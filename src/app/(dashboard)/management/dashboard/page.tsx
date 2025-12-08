@@ -68,27 +68,7 @@ export default function ManagerDashboard() {
     // Polling
     usePolling(() => { if (user) fetchAllData(); }, 5000);
 
-    // Derived State: Overlaps
-    const overlappingDates = useMemo(() => {
-        const overlaps = new Set<string>();
-        leaves.forEach((l1, i) => {
-            if (l1.status === 'rejected' || l1.status === 'cancelled') return;
-            leaves.forEach((l2, j) => {
-                if (i <= j) return;
-                if (l2.status === 'rejected' || l2.status === 'cancelled') return;
-                if (l1.userId === l2.userId) return;
-
-                if (areIntervalsOverlapping(
-                    { start: parseISO(l1.startDate), end: parseISO(l1.endDate) },
-                    { start: parseISO(l2.startDate), end: parseISO(l2.endDate) }
-                )) {
-                    overlaps.add(l1.id);
-                    overlaps.add(l2.id);
-                }
-            });
-        });
-        return overlaps;
-    }, [leaves]);
+    // Derived State: Overlaps (Removed unused calculation)
 
     const handleApprove = async (id: string, note: string) => {
         const previousLeaves = [...leaves];

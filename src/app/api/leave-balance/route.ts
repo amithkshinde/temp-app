@@ -62,16 +62,16 @@ export async function GET(request: Request) {
             })
         ]);
 
-        const publicHolidayDates = publicHolidays.map((h: { date: string }) => h.date);
+        const publicHolidayDates = publicHolidays.map((h: Holiday) => h.date);
 
         // Calculate Taken (Approved leaves in current year)
-        const upcomingCount = userLeaves.filter((l: { status: string; startDate: string }) => {
+        const upcomingCount = userLeaves.filter((l: Leave) => {
             const start = new Date(l.startDate);
             return (l.status === 'approved' || l.status === 'pending') && start > now;
         }).length;
 
         // Calculate sick vs planned taken
-        const sickTaken = userLeaves.reduce((acc: number, leave: any) => {
+        const sickTaken = userLeaves.reduce((acc: number, leave: Leave) => {
             const l = leave as Leave;
             if (l.status === 'approved' && l.type === 'sick' && l.startDate.startsWith(String(currentYear))) {
                 return acc + getWorkingDays(l.startDate, l.endDate, publicHolidayDates);
@@ -79,7 +79,7 @@ export async function GET(request: Request) {
             return acc;
         }, 0);
 
-        const takenCount = userLeaves.reduce((acc: number, leave: any) => {
+        const takenCount = userLeaves.reduce((acc: number, leave: Leave) => {
             const l = leave as Leave;
             if (l.status === 'approved' && l.startDate.startsWith(String(currentYear))) {
                 return acc + getWorkingDays(l.startDate, l.endDate, publicHolidayDates);
@@ -98,7 +98,7 @@ export async function GET(request: Request) {
         const quarterStartMonth = currentQuarter * 3;
         const quarterEndMonth = quarterStartMonth + 3; // Exclusive
 
-        const takenInQuarter = userLeaves.reduce((acc: number, leave: any) => {
+        const takenInQuarter = userLeaves.reduce((acc: number, leave: Leave) => {
             const l = leave as Leave;
             if (l.status === 'approved' && l.startDate.startsWith(String(currentYear))) {
                 const leaveDate = parseISO(l.startDate);
