@@ -16,7 +16,6 @@ import { NotificationCenter } from '@/components/ui/notification-center';
 import { UpcomingLeavesPanel } from '@/components/dashboard/upcoming-leaves-panel';
 import { usePolling } from '@/hooks/use-polling';
 
-import { CarryForwardWidget } from '@/components/dashboard/carry-forward-widget';
 import { AuditTimeline } from '@/components/dashboard/audit-timeline';
 import { MobileFAB } from '@/components/dashboard/mobile-fab';
 
@@ -271,7 +270,7 @@ export default function EmployeeDashboard() {
                             }}
                         />
                         <div className="mt-6">
-                            <CarryForwardWidget />
+                            {/* Simulator Removed */}
                         </div>
                     </div>
                     {/* Updated Panel with click handler */}
