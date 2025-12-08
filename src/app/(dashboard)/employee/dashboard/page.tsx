@@ -18,6 +18,7 @@ import { usePolling } from '@/hooks/use-polling';
 
 import { AuditTimeline } from '@/components/dashboard/audit-timeline';
 import { MobileFAB } from '@/components/dashboard/mobile-fab';
+import { HolidaySelectionModal } from '@/components/dashboard/holiday-selection-modal';
 
 
 export default function EmployeeDashboard() {
@@ -33,6 +34,7 @@ export default function EmployeeDashboard() {
 
     // Modal State
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isHolidayModalOpen, setIsHolidayModalOpen] = useState(false);
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [selectedLeave, setSelectedLeave] = useState<Leave | undefined>(undefined);
 
@@ -275,6 +277,20 @@ export default function EmployeeDashboard() {
                     </div>
                     {/* Updated Panel with click handler */}
                     <div className="w-full lg:w-80 space-y-6">
+                        <div className="bg-white rounded-[var(--radius-xl)] shadow-sm border border-slate-100 p-6">
+                            <h3 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wider">Public Holidays</h3>
+                            <p className="text-xs text-gray-500 mb-4">
+                                You have selected {selectedHolidayIds.length} / 10 holidays.
+                            </p>
+                            <Button
+                                variant="outline"
+                                className="w-full text-xs font-medium"
+                                onClick={() => setIsHolidayModalOpen(true)}
+                            >
+                                Manage Holidays
+                            </Button>
+                        </div>
+
                         <UpcomingLeavesPanel
                             leaves={leaves}
                             isLoading={isLoading}
@@ -291,6 +307,39 @@ export default function EmployeeDashboard() {
                     setSelectedLeave(undefined);
                     setIsModalOpen(true);
                 }} />
+
+                <HolidaySelectionModal
+                    isOpen={isHolidayModalOpen}
+                    onClose={() => setIsHolidayModalOpen(false)}
+                    availableHolidays={holidays}
+                    selectedHolidayIds={selectedHolidayIds}
+                    onSave={async (ids: string[]) => {
+                        // We need to sync the full list. 
+                        // Current API is single toggle. optimizing to just loop or add bulk endpoint if possible.
+                        // For MVP: we just call the toggle endpoint for diffs? Or easier, assume the modal handles the logic and returns full list?
+                        // Wait, the modal I wrote just returns ids. The API `POST /api/users/:id/holiday-selection` toggles one by one.
+                        // To be robust, I should probably bulk update.
+                        // But since I cannot change API easily right now without checking backend, 
+                        // I will assume for Phase 17 I should simple "Reset and Add" or "Diff".
+                        // Let's implement a simple "Diff" here or just update state and optimistically assume server syncs?
+                        // Actually, I can just iterate and call the toggle API for any that changed.
+                        // Let's do that for now.
+
+                        const current = new Set(selectedHolidayIds);
+                        const next = new Set(ids);
+
+                        // Find added
+                        for (const id of Array.from(next)) {
+                            if (!current.has(id)) await handleHolidayClick(id);
+                        }
+                        // Find removed
+                        for (const id of Array.from(current)) {
+                            if (!next.has(id)) await handleHolidayClick(id);
+                        }
+
+                        setSelectedHolidayIds(ids);
+                    }}
+                />
 
                 {isModalOpen && (
                     <LeaveModal

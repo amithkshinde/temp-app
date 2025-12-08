@@ -7,7 +7,7 @@ const PROCESS_DELAY_MS = 1000;
 
 // Config
 const EMAIL_FROM = "no-reply@twistopen.in";
-const MANAGEMENT_EMAIL = "amith.shinde@twistopen.in";
+const MANAGEMENT_EMAIL = "amithk.shinde@gmail.com";
 const BRAND_COLOR = "#ee236B";
 
 // --- Types ---
