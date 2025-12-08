@@ -1,5 +1,6 @@
 import { LeaveBalance } from '@/lib/types';
-import { TrendingUp, Calendar, AlertCircle, Users, Layout } from 'lucide-react';
+import { TrendingUp, Calendar, Users, Layout } from 'lucide-react';
+import { Card } from "@/components/ui/card";
 
 interface StatsStripProps {
     balance?: LeaveBalance | null;

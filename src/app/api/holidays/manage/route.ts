@@ -19,7 +19,8 @@ export async function POST(request: Request) {
 
         addHoliday(newHoliday);
         return NextResponse.json(newHoliday);
-    } catch (_error) {
+    } catch (error) {
+        console.error("Add Holiday Error:", error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }
@@ -35,7 +36,8 @@ export async function DELETE(request: Request) {
 
         removeHoliday(id);
         return NextResponse.json({ success: true });
-    } catch (_error) {
+    } catch (error) {
+        console.error("Delete Holiday Error:", error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }

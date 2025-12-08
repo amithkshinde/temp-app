@@ -1,7 +1,19 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { LeaveBalance } from '@/lib/types';
 import { eachDayOfInterval, isWeekend, format, parseISO } from 'date-fns';
+
+// Define minimal types to satisfy linter without depending on potentially stale generated types
+interface Leave {
+    startDate: string;
+    endDate: string;
+    status: string;
+    type: string;
+}
+
+interface Holiday {
+    date: string;
+    type: string;
+}
 
 const ANNUAL_ALLOCATION = 24;
 const HOLIDAY_LIMIT = 10;
@@ -50,27 +62,27 @@ export async function GET(request: Request) {
             })
         ]);
 
-        const publicHolidayDates = publicHolidays.map((h: any) => h.date);
+        const publicHolidayDates = publicHolidays.map((h: { date: string }) => h.date);
 
         // Calculate Taken (Approved leaves in current year)
-        const takenCount = userLeaves.reduce((acc: number, leave: any) => {
-            if (leave.status === 'approved' && leave.startDate.startsWith(String(currentYear))) {
-                return acc + getWorkingDays(leave.startDate, leave.endDate, publicHolidayDates);
-            }
-            return acc;
-        }, 0);
-
-        const pendingCount = userLeaves.filter((l: any) => l.status === 'pending').length;
-
-        const upcomingCount = userLeaves.filter((l: any) => {
+        const upcomingCount = userLeaves.filter((l: { status: string; startDate: string }) => {
             const start = new Date(l.startDate);
             return (l.status === 'approved' || l.status === 'pending') && start > now;
         }).length;
 
         // Calculate sick vs planned taken
         const sickTaken = userLeaves.reduce((acc: number, leave: any) => {
-            if (leave.status === 'approved' && leave.type === 'sick' && leave.startDate.startsWith(String(currentYear))) {
-                return acc + getWorkingDays(leave.startDate, leave.endDate, publicHolidayDates);
+            const l = leave as Leave;
+            if (l.status === 'approved' && l.type === 'sick' && l.startDate.startsWith(String(currentYear))) {
+                return acc + getWorkingDays(l.startDate, l.endDate, publicHolidayDates);
+            }
+            return acc;
+        }, 0);
+
+        const takenCount = userLeaves.reduce((acc: number, leave: any) => {
+            const l = leave as Leave;
+            if (l.status === 'approved' && l.startDate.startsWith(String(currentYear))) {
+                return acc + getWorkingDays(l.startDate, l.endDate, publicHolidayDates);
             }
             return acc;
         }, 0);
@@ -87,15 +99,18 @@ export async function GET(request: Request) {
         const quarterEndMonth = quarterStartMonth + 3; // Exclusive
 
         const takenInQuarter = userLeaves.reduce((acc: number, leave: any) => {
-            if (leave.status === 'approved' && leave.startDate.startsWith(String(currentYear))) {
-                const leaveDate = parseISO(leave.startDate);
+            const l = leave as Leave;
+            if (l.status === 'approved' && l.startDate.startsWith(String(currentYear))) {
+                const leaveDate = parseISO(l.startDate);
                 const leaveMonth = leaveDate.getMonth();
                 if (leaveMonth >= quarterStartMonth && leaveMonth < quarterEndMonth) {
-                    return acc + getWorkingDays(leave.startDate, leave.endDate, publicHolidayDates);
+                    return acc + getWorkingDays(l.startDate, l.endDate, publicHolidayDates);
                 }
             }
             return acc;
         }, 0);
+
+        const pendingCount = userLeaves.filter((l: any) => l.status === 'pending').length;
 
         // Simulated Carry Forward (Fixed at 2 for MVP/Demo as per previous logic)
         const simulatedCarryForward = 2;
@@ -104,7 +119,7 @@ export async function GET(request: Request) {
         const quarterlyAvailable = Math.max(0, quarterlyTotal - takenInQuarter);
 
 
-        const balance: LeaveBalance = {
+        return NextResponse.json({
             allocated: ANNUAL_ALLOCATION,
             taken: takenCount,
             remaining: ANNUAL_ALLOCATION - takenCount,
@@ -116,9 +131,7 @@ export async function GET(request: Request) {
             plannedTaken,
             holidaysAllowed: HOLIDAY_LIMIT,
             holidaysTaken
-        };
-
-        return NextResponse.json(balance);
+        });
 
     } catch (e) {
         console.error("Balance Error:", e);

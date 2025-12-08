@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowLeft, Download, FileText } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 
 
 interface QuarterStats {
@@ -44,27 +44,9 @@ export default function YearlySummaryPage() {
         fetchData();
     }, [user]);
 
-    const handleExportCSV = () => {
-        if (!stats) return;
-        const headers = ["Quarter", "Allocated", "Carry Fwd", "Taken", "Remaining"];
-        const rows = stats.quarters.map(q => [q.name, q.allocated, q.carryForward, q.taken, q.remaining]);
 
-        const csvContent = "data:text/csv;charset=utf-8,"
-            + headers.join(",") + "\n"
-            + rows.map(e => e.join(",")).join("\n");
 
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `leave_summary_${user?.name}_${new Date().getFullYear()}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    };
 
-    const handlePrint = () => {
-        window.print();
-    };
 
     if (isLoading || !user) {
         return <div className="p-8 flex justify-center text-gray-400">Loading summary...</div>;

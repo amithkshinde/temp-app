@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState, useMemo, useCallback } from 'react';
@@ -9,13 +8,11 @@ import Link from 'next/link';
 import { StatsStrip } from '@/components/dashboard/stats-strip';
 import { CalendarView } from '@/components/dashboard/calendar-view';
 
-import { LeaveRequestList } from '@/components/management/leave-request-list';
 import { Leave, LeaveBalance, User } from '@/lib/types';
 import { PublicHoliday } from '@/data/holiday-data';
 import { useNotifications } from '@/context/NotificationContext';
 import { NotificationCenter } from '@/components/ui/notification-center';
 import { usePolling } from '@/hooks/use-polling';
-import { List, Calendar as CalendarIcon, AlertTriangle } from 'lucide-react';
 import { areIntervalsOverlapping, parseISO } from 'date-fns';
 
 import { ApprovalModal } from '@/components/dashboard/approval-modal';
@@ -36,7 +33,7 @@ export default function ManagerDashboard() {
 
     // UI State
     const [isLoading, setIsLoading] = useState(true);
-    const [viewMode, setViewMode] = useState<'calendar' | 'list'>('calendar');
+
     const [selectedLeave, setSelectedLeave] = useState<Leave | null>(null);
     const [summaryDate, setSummaryDate] = useState<Date | null>(null);
     const [isHolidayModalOpen, setIsHolidayModalOpen] = useState(false);
@@ -183,30 +180,15 @@ export default function ManagerDashboard() {
 
                 <div className="flex flex-col lg:flex-row gap-6">
                     <div className="flex-1 min-w-0">
-                        {viewMode === 'list' ? (
-                            <LeaveRequestList
+                        <div className="min-h-[600px]">
+                            <CalendarView
                                 leaves={leaves}
-                                users={users}
-                                onApprove={handleApprove}
-                                onReject={handleReject}
+                                holidays={holidays}
+                                mode="team"
+                                onDateClick={(date) => setSummaryDate(date)}
+                                onLeaveClick={(leave) => setSelectedLeave(leave)}
                             />
-                        ) : (
-                            <div className="min-h-[600px]">
-                                <CalendarView
-                                    leaves={leaves}
-                                    holidays={holidays}
-                                    mode="team"
-                                    onDateClick={(date) => setSummaryDate(date)}
-                                    onLeaveClick={(leave) => setSelectedLeave(leave)}
-                                />
-                                {overlappingDates.size > 0 && (
-                                    <div className="mt-4 flex items-center gap-2 p-3 bg-amber-50 text-amber-700 rounded-lg text-sm">
-                                        <AlertTriangle size={16} />
-                                        <span>Warning: {overlappingDates.size} requests have scheduling conflicts. Check dates carefully.</span>
-                                    </div>
-                                )}
-                            </div>
-                        )}
+                        </div>
                     </div>
 
                     <div className="flex flex-col gap-6">

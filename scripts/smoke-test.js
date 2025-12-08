@@ -1,3 +1,4 @@
+/* eslint-disable */
 const http = require('http');
 
 async function testEndpoint(path, method = 'GET', body = null) {

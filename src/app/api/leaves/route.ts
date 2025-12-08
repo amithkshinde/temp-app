@@ -1,8 +1,7 @@
 
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { Leave } from '@/lib/types';
-import { getLeaveRequestTemplate, notifyManagement } from '@/lib/notifications';
+import { notifyManagement } from '@/lib/notifications';
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
@@ -54,6 +53,7 @@ export async function GET(request: Request) {
             }
         });
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const enrichedLeaves = leaves.map((l: any) => ({
             ...l,
             userName: l.user?.name || 'Unknown'
