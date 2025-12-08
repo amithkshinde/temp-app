@@ -170,7 +170,7 @@ export function LeaveModal({
                                 {details.isSick ? 'Reason (Optional)' : 'Reason for Leave'}
                             </label>
                             <textarea
-                                className="w-full rounded-xl border border-slate-200 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-pink)]/20 focus:border-[var(--color-brand-pink)] transition-all resize-none"
+                                className="w-full rounded-xl border border-slate-200 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-pink)]/20 focus:border-[var(--color-brand-pink)] transition-all resize-none text-[#1A1A1A] opacity-100"
                                 rows={3}
                                 value={reason}
                                 onChange={(e) => setReason(e.target.value)}
