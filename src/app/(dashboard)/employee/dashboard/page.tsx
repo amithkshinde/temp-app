@@ -252,7 +252,7 @@ export default function EmployeeDashboard() {
                     holidayUsage={{ count: selectedHolidayIds.length, limit: 10 }}
                 />
 
-                <SmartInsights leaves={leaves} user={user} />
+                <SmartInsights leaves={leaves} />
 
                 <div className="flex flex-col lg:flex-row gap-6">
                     <div className="flex-1 min-w-0">

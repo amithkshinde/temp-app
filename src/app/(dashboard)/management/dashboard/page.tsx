@@ -60,8 +60,8 @@ export default function ManagerDashboard() {
             if (balanceRes.ok) setBalance(await balanceRes.json());
             if (holidaysRes.ok) setHolidays(await holidaysRes.json());
 
-        } catch (err) {
-            console.error(err);
+        } catch (_error) {
+            console.error("Failed to fetch data", _error);
         } finally {
             setIsLoading(false);
         }

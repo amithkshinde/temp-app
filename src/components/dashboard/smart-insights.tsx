@@ -1,15 +1,14 @@
 import { Card } from '@/components/ui/card';
-import { Leave, User } from '@/lib/types';
-import { differenceInDays, parseISO, isWeekend } from 'date-fns';
+import { Leave } from '@/lib/types';
+import { differenceInDays, parseISO } from 'date-fns';
 import { TrendingUp, Calendar, Zap, Users } from 'lucide-react';
 import { useMemo } from 'react';
 
 interface SmartInsightsProps {
     leaves: Leave[];
-    user: User | null;
 }
 
-export function SmartInsights({ leaves, user }: SmartInsightsProps) {
+export function SmartInsights({ leaves }: SmartInsightsProps) {
     const insights = useMemo(() => {
         if (!leaves.length) return null;
 

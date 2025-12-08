@@ -27,8 +27,6 @@ export function AuditTimeline({ leaves }: AuditTimelineProps) {
                     }[leave.status] || { icon: AlertCircle, color: 'text-gray-400', bg: 'bg-white' };
 
 
-                    const Icon = statusConfig.icon;
-
                     return (
                         <div key={leave.id} className="relative group">
                             {/* Dot on line */}
@@ -48,7 +46,7 @@ export function AuditTimeline({ leaves }: AuditTimelineProps) {
                                 </p>
                                 {leave.status === 'rejected' && (
                                     <p className="text-xs text-red-500 mt-1 bg-red-50 p-2 rounded-lg inline-block">
-                                        Manager: "Policy requirement not met."
+                                        Manager: &quot;Policy requirement not met.&quot;
                                     </p>
                                 )}
                             </div>
