@@ -43,7 +43,7 @@ export async function GET(request: Request) {
             prisma.holiday.findMany({ where: { type: 'public' } })
         ]);
 
-        const publicHolidayDates = holidays.map((h: any) => h.date);
+        const publicHolidayDates = holidays.map((h: { date: string }) => h.date);
 
         // Initialize Quarters
         // Requirement: 24 Annual Leaves => 6 per Quarter.

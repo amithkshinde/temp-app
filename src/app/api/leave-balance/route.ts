@@ -110,7 +110,7 @@ export async function GET(request: Request) {
             return acc;
         }, 0);
 
-        const pendingCount = userLeaves.filter((l: any) => l.status === 'pending').length;
+        const pendingCount = userLeaves.filter((l: Leave) => l.status === 'pending').length;
 
         // Simulated Carry Forward (Fixed at 2 for MVP/Demo as per previous logic)
         const simulatedCarryForward = 2;

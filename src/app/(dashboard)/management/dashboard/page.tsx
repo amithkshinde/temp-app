@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -13,7 +13,6 @@ import { PublicHoliday } from '@/data/holiday-data';
 import { useNotifications } from '@/context/NotificationContext';
 import { NotificationCenter } from '@/components/ui/notification-center';
 import { usePolling } from '@/hooks/use-polling';
-import { areIntervalsOverlapping, parseISO } from 'date-fns';
 
 import { ApprovalModal } from '@/components/dashboard/approval-modal';
 import { PendingApprovalsPanel } from '@/components/dashboard/pending-approvals-panel';
