@@ -53,15 +53,15 @@ export function UpcomingLeavesPanel({ leaves, isLoading, onLeaveClick }: Upcomin
                                         <span className="font-bold text-gray-900 text-sm">
                                             {format(startDate, 'MMM d, yyyy')}
                                         </span>
-                                        <span className="text-[10px] text-gray-400 font-medium">
+                                        <span className="text-[10px] text-gray-500 font-medium">
                                             {leave.startDate !== leave.endDate ? `Until ${format(endDate, 'MMM d')} ` : 'Single Day'}
                                         </span>
                                     </div>
-                                    <span className={`text-[10px] uppercase font-bold px-1.5 py-0.5 rounded ${leave.status === 'approved'
-                                        ? 'bg-emerald-100 text-emerald-700'
+                                    <span className={`text-[10px] uppercase font-bold px-1.5 py-0.5 rounded border ${leave.status === 'approved'
+                                        ? 'bg-gray-50 text-gray-700 border-gray-200'
                                         : leave.status === 'rejected'
-                                            ? 'bg-red-100 text-red-700'
-                                            : 'bg-amber-100 text-amber-700'
+                                            ? 'bg-gray-50 text-gray-400 border-gray-200 line-through'
+                                            : 'bg-white text-gray-600 border-dashed border-gray-300'
                                         }`}>
                                         {leave.status}
                                     </span>
@@ -69,12 +69,12 @@ export function UpcomingLeavesPanel({ leaves, isLoading, onLeaveClick }: Upcomin
 
                                 <div className="flex items-center justify-between mt-2">
                                     <div className="flex items-center gap-2">
-                                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${isSick ? 'bg-orange-100 text-orange-700' : 'bg-blue-100 text-blue-700'
+                                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${isSick ? 'bg-white text-gray-700 border-gray-300' : 'bg-gray-100 text-gray-900 border-gray-200'
                                             }`}>
                                             {isSick ? 'Sick Leave' : 'Planned Leave'}
                                         </span>
                                     </div>
-                                    <span className="text-xs text-brand-pink opacity-0 group-hover:opacity-100 transition-opacity font-medium">
+                                    <span className="text-xs text-[#f0216a] opacity-0 group-hover:opacity-100 transition-opacity font-bold hover:underline">
                                         Edit
                                     </span>
                                 </div>

@@ -65,7 +65,7 @@ export function LeaveModal({
 
     // Logic: Auto-detect Type
     const getLeaveDetails = () => {
-        if (!startDate) return { type: 'Unknown', status: 'Unknown', color: '', isSick: false };
+        if (!startDate) return { type: 'Unknown', status: 'Unknown', className: '', isSick: false };
         const start = new Date(startDate);
         const now = new Date();
         now.setHours(0, 0, 0, 0);
@@ -81,26 +81,19 @@ export function LeaveModal({
         return {
             type: isSick ? 'Sick Leave' : 'Planned Leave',
             status: isSick ? 'Auto Approved' : 'Pending Approval',
-            color: isSick ? 'text-orange-700 bg-orange-50 ring-1 ring-orange-100' : 'text-blue-700 bg-blue-50 ring-1 ring-blue-100',
+            className: isSick
+                ? 'text-gray-900 border border-gray-300 bg-gray-50'
+                : 'text-gray-900 border border-gray-300 bg-white',
             isSick
         };
     };
 
     const details = getLeaveDetails();
 
-    // Auto-set reason if Sick and no reason yet (or force it?)
-    // User says: "Leave type auto-set to Sick Leave". 
-    // "Reason field" is still shown in user request diagram ("Date... Leave type... Reason field").
-    // So we just default it perhaps, or let them type. 
-    // "No Quick Template for Today... Instead... Reason field".
-
     return (
         <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/50 backdrop-blur-sm p-0 md:p-4 animate-in fade-in duration-200">
-            {/* Modal Container: Bottom Sheet on Mobile, Centered Card on Desktop */}
+            {/* Modal Container */}
             <div className="bg-white rounded-t-[var(--radius-xl)] md:rounded-[var(--radius-xl)] shadow-xl w-full md:max-w-md overflow-hidden flex flex-col max-h-[85vh] md:max-h-[90vh] animate-in slide-in-from-bottom-10 duration-300">
-
-                {/* Header Pattern */}
-                <div className={`h-2 w-full ${details.isSick ? 'bg-orange-500' : 'bg-blue-500'}`} />
 
                 <div className="p-6 overflow-y-auto">
                     <div className="flex justify-between items-start mb-6">
@@ -110,18 +103,18 @@ export function LeaveModal({
                             </h2>
                             {details.isSick && !isExisting && (
                                 <p className="text-sm text-gray-500 mt-1">
-                                    Take care! sick leave is auto-approved.
+                                    Sick leave for today/tomorrow is auto-approved.
                                 </p>
                             )}
                         </div>
                         {startDate && (
-                            <div className={`px-2.5 py-1 rounded-lg text-[10px] uppercase font-bold tracking-wide ${details.color}`}>
+                            <div className={`px-2.5 py-1 rounded-lg text-[10px] uppercase font-bold tracking-wide ${details.className}`}>
                                 {isExisting ? 'Editing' : details.status}
                             </div>
                         )}
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-5">
+                    <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="grid grid-cols-2 gap-4">
                             <Input
                                 label="Start Date"
@@ -130,6 +123,7 @@ export function LeaveModal({
                                 onChange={(e) => setStartDate(e.target.value)}
                                 required
                                 disabled={isLoading}
+                                className="font-medium"
                             />
                             <Input
                                 label="End Date"
@@ -138,13 +132,14 @@ export function LeaveModal({
                                 onChange={(e) => setEndDate(e.target.value)}
                                 required
                                 disabled={isLoading}
+                                className="font-medium"
                             />
                         </div>
 
                         {/* Quick Template */}
                         {!isExisting && (
-                            <div className="space-y-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
-                                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                            <div className="space-y-3">
+                                <label className="text-sm font-semibold text-gray-900 block">
                                     {details.isSick ? 'Quick Sick Reasons' : 'Quick Presets'}
                                 </label>
                                 <div className="grid grid-cols-2 gap-2">
@@ -156,7 +151,7 @@ export function LeaveModal({
                                             key={opt}
                                             type="button"
                                             onClick={() => setReason(opt)}
-                                            className={`text-xs p-2 rounded-lg border transition-all ${reason === opt ? 'bg-brand-pink text-white border-brand-pink' : 'bg-white border-slate-200 hover:border-brand-pink text-slate-600'}`}
+                                            className={`text-xs p-2 rounded-lg border transition-all font-medium ${reason === opt ? 'bg-[#f0216a] text-white border-[#f0216a]' : 'bg-white border-slate-200 hover:border-slate-400 text-slate-700'}`}
                                         >
                                             {opt}
                                         </button>
@@ -166,11 +161,11 @@ export function LeaveModal({
                         )}
 
                         <div>
-                            <label className="text-sm font-medium block mb-1.5 text-gray-700">
+                            <label className="text-sm font-semibold text-gray-900 block mb-2">
                                 {details.isSick ? 'Reason (Optional)' : 'Reason for Leave'}
                             </label>
                             <textarea
-                                className="w-full rounded-xl border border-slate-200 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-pink)]/20 focus:border-[var(--color-brand-pink)] transition-all resize-none text-[#1A1A1A] opacity-100"
+                                className="w-full rounded-xl border border-slate-200 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#f0216a]/20 focus:border-[#f0216a] transition-all resize-none text-[#1A1A1A]"
                                 rows={3}
                                 value={reason}
                                 onChange={(e) => setReason(e.target.value)}
@@ -180,7 +175,7 @@ export function LeaveModal({
                         </div>
 
                         {isExisting && (
-                            <div className="p-3 bg-blue-50 text-blue-700 rounded-lg text-xs flex items-center gap-2">
+                            <div className="p-3 bg-gray-50 border border-gray-100 text-gray-600 rounded-lg text-xs flex items-center gap-2">
                                 <span>ℹ️</span>
                                 Updating a leave will reset its status to Pending.
                             </div>
@@ -204,7 +199,7 @@ export function LeaveModal({
                                     <Button type="button" variant="outline" onClick={onClose} disabled={isLoading}>
                                         Close
                                     </Button>
-                                    <Button type="submit" isLoading={isLoading}>
+                                    <Button type="submit" isLoading={isLoading} className="bg-[#f0216a] hover:bg-[#d61b5c] text-white">
                                         Update Leave
                                     </Button>
                                 </>
@@ -216,7 +211,7 @@ export function LeaveModal({
                                     <Button
                                         type="submit"
                                         isLoading={isLoading}
-                                        className={details.isSick ? "bg-orange-600 hover:bg-orange-700 text-white border-none" : "bg-brand-pink hover:bg-brand-pink/90 text-white border-none"}
+                                        className="bg-[#f0216a] hover:bg-[#d61b5c] text-white border-none"
                                     >
                                         {details.isSick ? 'Confirm Sick Leave' : 'Submit Request'}
                                     </Button>

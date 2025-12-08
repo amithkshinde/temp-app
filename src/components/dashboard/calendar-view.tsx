@@ -125,36 +125,38 @@ export function CalendarView({
                     let borderClass = "border-slate-200"; // Strengthen default border
 
                     if (!isCurrentMonth) {
-                        bgClass = "bg-[#FAFAFA]"; // Solid light grey, no opacity
+                        bgClass = "bg-[#FAFAFA]"; // Solid light grey
                         borderClass = "border-slate-100";
                     }
                     else if (inRange) {
-                        bgClass = "bg-pink-50";
-                        borderClass = "border-pink-300"; // Stronger
+                        bgClass = "bg-[#f0216a]/10"; // Very Light Brand Pink
+                        borderClass = "border-[#f0216a]/30";
                     }
                     else if (holiday) {
-                        // Blue - Holiday
-                        bgClass = "bg-blue-50 hover:bg-blue-100";
-                        borderClass = "border-blue-200";
+                        // Holiday - Outlined/Gray
+                        bgClass = "bg-white border-dashed";
+                        borderClass = "border-gray-300";
                     }
                     else if (dayLeaves.length > 0) {
                         const hasApproved = dayLeaves.some(l => l.status === 'approved');
                         const hasPending = dayLeaves.some(l => l.status === 'pending');
 
                         if (hasApproved) {
-                            bgClass = "bg-emerald-50 hover:bg-emerald-100";
-                            borderClass = "border-emerald-200";
+                            // Approved - Solid Gray/Black
+                            bgClass = "bg-gray-100";
+                            borderClass = "border-gray-400";
                         } else if (hasPending) {
-                            bgClass = "bg-amber-50 hover:bg-amber-100";
-                            borderClass = "border-amber-200";
+                            // Pending - Striped or Dashed
+                            bgClass = "bg-white";
+                            borderClass = "border-dashed border-gray-400";
                         }
                     } else if (isWknd) {
-                        bgClass = "bg-[#F8F9FA]"; // Solid
-                        borderClass = "border-slate-200";
+                        bgClass = "bg-[#FAFAFA]";
+                        borderClass = "border-slate-100";
                     }
 
-                    if (isToday(day)) borderClass = "border-blue-500 ring-1 ring-blue-500";
-                    if (isRangeStart(day) || isRangeEnd(day)) borderClass = "ring-2 ring-[var(--color-brand-pink)] border-transparent";
+                    if (isToday(day)) borderClass = "border-gray-900 ring-1 ring-gray-900";
+                    if (isRangeStart(day) || isRangeEnd(day)) borderClass = "ring-2 ring-[#f0216a] border-transparent";
 
 
                     const containerClasses = cn(
@@ -199,7 +201,7 @@ export function CalendarView({
 
                             {/* Holiday Label */}
                             {holiday && (
-                                <div className="text-[10px] leading-tight text-blue-700 font-bold w-full truncate mb-1 bg-blue-100 px-1 py-0.5 rounded shadow-sm">
+                                <div className="text-[10px] leading-tight text-gray-600 font-bold w-full truncate mb-1 bg-gray-50 border border-gray-100 px-1 py-0.5 rounded shadow-sm">
                                     {holiday.name} {isSelectedHoliday && '✓'}
                                 </div>
                             )}
@@ -213,7 +215,7 @@ export function CalendarView({
                                         return (
                                             <div key={leave.id} className={cn(
                                                 "h-1.5 w-full rounded-full shadow-sm",
-                                                isApproved ? "bg-emerald-500" : "bg-amber-400"
+                                                isApproved ? "bg-gray-800" : "bg-gray-300"
                                             )} />
                                         );
                                     } else {
@@ -227,8 +229,8 @@ export function CalendarView({
                                                 }}
                                                 className={cn(
                                                     "text-[9px] px-1 rounded text-white truncate w-full cursor-pointer hover:opacity-90 transition-opacity font-medium shadow-sm",
-                                                    isApproved ? "bg-emerald-600" : "bg-amber-500 text-black",
-                                                    leave.status === 'rejected' && "line-through opacity-50 bg-gray-400"
+                                                    isApproved ? "bg-gray-900" : "bg-gray-400 text-white",
+                                                    leave.status === 'rejected' && "line-through opacity-50 bg-gray-200 text-gray-500"
                                                 )}
                                             >
                                                 {leave.userName || leave.userId}
@@ -249,9 +251,9 @@ export function CalendarView({
 
             {/* Legend */}
             <div className="flex flex-wrap gap-4 mt-4 text-xs text-gray-500 justify-center">
-                <div className="flex items-center gap-1"><div className="w-3 h-3 bg-emerald-50 border border-emerald-100 rounded"></div> Leave Taken</div>
-                <div className="flex items-center gap-1"><div className="w-3 h-3 bg-amber-50 border border-amber-100 rounded"></div> Pending</div>
-                <div className="flex items-center gap-1"><div className="w-3 h-3 bg-blue-50 border border-blue-100 rounded"></div> Holiday</div>
+                <div className="flex items-center gap-1"><div className="w-3 h-3 bg-gray-100 border border-gray-400 rounded"></div> Leave Taken</div>
+                <div className="flex items-center gap-1"><div className="w-3 h-3 bg-white border border-dashed border-gray-400 rounded"></div> Pending</div>
+                <div className="flex items-center gap-1"><div className="w-3 h-3 bg-white border border-dashed border-gray-300 rounded"></div> Holiday</div>
                 <div className="flex items-center gap-1"><div className="w-3 h-3 bg-white border border-slate-200 rounded"></div> Working Day</div>
             </div>
         </div>
