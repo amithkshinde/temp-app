@@ -166,7 +166,20 @@ export default function ManagerDashboard() {
                     </div>
                 </header>
 
-                <StatsStrip balance={balance} isLoading={isLoading} />
+                <StatsStrip
+                    balance={balance}
+                    isLoading={isLoading}
+                    role="management"
+                    onLeaveTodayCount={leaves.filter((l: Leave) => {
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0); // Local
+                        const s = new Date(l.startDate);
+                        s.setHours(0, 0, 0, 0);
+                        const e = new Date(l.endDate);
+                        e.setHours(0, 0, 0, 0);
+                        return l.status === 'approved' && today >= s && today <= e;
+                    }).length}
+                />
 
                 <div className="flex flex-col lg:flex-row gap-6">
                     <div className="flex-1 min-w-0">

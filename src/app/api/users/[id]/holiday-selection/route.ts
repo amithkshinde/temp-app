@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { USER_HOLIDAY_SELECTIONS, toggleUserSelection } from '@/data/holiday-data';
-
+import { prisma } from '@/lib/prisma';
 
 export async function POST(
     request: Request,
@@ -12,17 +11,54 @@ export async function POST(
         const body = await request.json();
         const { holidayId } = body;
 
-        toggleUserSelection(userId, holidayId);
+        // Toggle logic: Check if exists
+        const existing = await prisma.holidaySelection.findUnique({
+            where: {
+                userId_holidayId: {
+                    userId,
+                    holidayId
+                }
+            }
+        });
 
-        const currentSelections = USER_HOLIDAY_SELECTIONS[userId] || [];
+        if (existing) {
+            // Remove
+            await prisma.holidaySelection.delete({
+                where: {
+                    userId_holidayId: {
+                        userId,
+                        holidayId
+                    }
+                }
+            });
+        } else {
+            // Add
+            await prisma.holidaySelection.create({
+                data: {
+                    userId,
+                    holidayId
+                }
+            });
+        }
+
+        // Return updated count/list
+        const selections = await prisma.holidaySelection.findMany({
+            where: { userId }
+        });
 
         return NextResponse.json({
             success: true,
-            selectedCount: currentSelections.length,
-            selections: currentSelections
+            selectedCount: selections.length,
+            selections: selections.map((s: { holidayId: string }) => s.holidayId) // Frontend expects list of IDs probably or list of selection objects?
+            // Mock returned object: { success, selectedCount, selections: string[] } based on previous code usage interpretation?
+            // Previous code: `selections: currentSelections` which was array of strings (holiday IDs) in data/holiday-data.ts likely.
+            // Let's check data/holiday-data.ts usage to be sure.
+            // Actually, let's look at GET below. GET returns `selections`.
+            // If previous matched `USER_HOLIDAY_SELECTIONS[userId]` which was string[], then yes.
         });
 
-    } catch {
+    } catch (e) {
+        console.error(e);
         return NextResponse.json({ error: 'Internal Error' }, { status: 500 });
     }
 }
@@ -33,6 +69,13 @@ export async function GET(
 ) {
     const params = await props.params;
     const userId = params.id;
-    const selections = USER_HOLIDAY_SELECTIONS[userId] || [];
-    return NextResponse.json(selections);
+
+    // Fetch user's selections
+    const selections = await prisma.holidaySelection.findMany({
+        where: { userId },
+        select: { holidayId: true }
+    });
+
+    // Return array of IDs to match what frontend likely expects
+    return NextResponse.json(selections.map((s: { holidayId: string }) => s.holidayId));
 }

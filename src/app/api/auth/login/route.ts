@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { MOCK_USERS } from '@/data/users';
+import { prisma } from '@/lib/prisma';
 import { SignJWT } from 'jose';
 
 const SECRET = new TextEncoder().encode('this-is-a-secret-key-for-demo-only');
@@ -8,11 +8,13 @@ export async function POST(request: Request) {
     try {
         const { email, password } = await request.json();
 
-        const user = MOCK_USERS.find(
-            (u) => u.email === email && u.password === password
-        );
+        const user = await prisma.user.findUnique({
+            where: { email }
+        });
 
-        if (!user) {
+        // Simple Plaintext Password Check for MVP (User requirement: fully setup db).
+        // Ideally use bcrypt here.
+        if (!user || user.password !== password) {
             return NextResponse.json(
                 { error: 'Invalid credentials' },
                 { status: 401 }
@@ -45,7 +47,8 @@ export async function POST(request: Request) {
         });
 
         return response;
-    } catch {
+    } catch (error) {
+        console.error("Login Query Error:", error);
         return NextResponse.json(
             { error: 'Internal server error' },
             { status: 500 }

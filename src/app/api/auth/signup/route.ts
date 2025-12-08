@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { MOCK_USERS, addUser } from '@/data/users';
-import { Role, User } from '@/lib/types';
+import { prisma } from '@/lib/prisma';
 
 export async function POST(request: Request) {
     try {
@@ -22,7 +21,8 @@ export async function POST(request: Request) {
         }
 
         // Check if user exists
-        if (MOCK_USERS.find(u => u.email === email)) {
+        const existingUser = await prisma.user.findUnique({ where: { email } });
+        if (existingUser) {
             return NextResponse.json({ error: 'Email already exists' }, { status: 400 });
         }
 
@@ -31,7 +31,9 @@ export async function POST(request: Request) {
             if (!employeeId || !department) {
                 return NextResponse.json({ error: 'Employee ID and Department are required' }, { status: 400 });
             }
-            if (MOCK_USERS.find(u => u.employeeId === employeeId)) {
+            // Check for duplicate employee ID
+            const existingEmpId = await prisma.user.findFirst({ where: { employeeId } });
+            if (existingEmpId) {
                 return NextResponse.json({ error: 'Employee ID already exists' }, { status: 400 });
             }
         } else if (role === 'management') {
@@ -44,21 +46,22 @@ export async function POST(request: Request) {
         }
 
         // Create User
-        const newUser: User & { password: string } = {
-            id: crypto.randomUUID(), // Native crypto
-            name,
-            email,
-            role: role as Role,
-            password,
-            ...(role === 'employee' ? { employeeId, department } : {})
-        };
-
-        addUser(newUser);
+        const newUser = await prisma.user.create({
+            data: {
+                name,
+                email,
+                password, // Note: Storing plain text as per previous MVP. Recommendation: Hash this.
+                role,
+                employeeId: role === 'employee' ? employeeId : undefined,
+                department: role === 'employee' ? department : undefined,
+                inviteCode: role === 'management' ? inviteCode : undefined,
+            }
+        });
 
         return NextResponse.json({ success: true, userId: newUser.id });
 
     } catch (err) {
-        console.error(err);
+        console.error('Signup Error:', err);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }

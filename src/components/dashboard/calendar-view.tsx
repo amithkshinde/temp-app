@@ -129,26 +129,26 @@ export function CalendarView({
                         borderClass = "border-slate-100";
                     }
                     else if (inRange) {
-                        bgClass = "bg-[#f0216a]/10"; // Very Light Brand Pink
-                        borderClass = "border-[#f0216a]/30";
+                        bgClass = "bg-[#FFF0F5]"; // Very soft pink
+                        borderClass = "border-[#f0216a]/20";
                     }
                     else if (holiday) {
-                        // Holiday - Outlined/Gray
-                        bgClass = "bg-white border-dashed";
-                        borderClass = "border-gray-300";
+                        // Holiday - Soft Yellow/Amber for visibility but soft
+                        bgClass = "bg-amber-50/50";
+                        borderClass = "border-amber-100 border-dashed";
                     }
                     else if (dayLeaves.length > 0) {
                         const hasApproved = dayLeaves.some(l => l.status === 'approved');
                         const hasPending = dayLeaves.some(l => l.status === 'pending');
 
                         if (hasApproved) {
-                            // Approved - Solid Gray/Black
-                            bgClass = "bg-gray-100";
-                            borderClass = "border-gray-400";
+                            // Approved - Soft Blue/Slate
+                            bgClass = "bg-slate-100";
+                            borderClass = "border-slate-300";
                         } else if (hasPending) {
-                            // Pending - Striped or Dashed
-                            bgClass = "bg-white";
-                            borderClass = "border-dashed border-gray-400";
+                            // Pending - Soft Purple/Lavender
+                            bgClass = "bg-purple-50";
+                            borderClass = "border-purple-200 border-dashed";
                         }
                     } else if (isWknd) {
                         bgClass = "bg-[#FAFAFA]";
@@ -163,7 +163,7 @@ export function CalendarView({
                         "min-h-[4rem] rounded-lg p-1.5 flex flex-col items-start justify-start text-xs transition-all cursor-pointer border relative",
                         bgClass,
                         borderClass,
-                        !isCurrentMonth && "text-gray-300" // Visually dim text but keep bg solid
+                        !isCurrentMonth && "text-gray-300"
                     );
 
                     // --- Conflict Check (Team Mode) ---
@@ -201,7 +201,7 @@ export function CalendarView({
 
                             {/* Holiday Label */}
                             {holiday && (
-                                <div className="text-[10px] leading-tight text-gray-600 font-bold w-full truncate mb-1 bg-gray-50 border border-gray-100 px-1 py-0.5 rounded shadow-sm">
+                                <div className="text-[10px] leading-tight text-amber-900/70 font-bold w-full truncate mb-1 bg-amber-100/50 px-1 py-0.5 rounded">
                                     {holiday.name} {isSelectedHoliday && '✓'}
                                 </div>
                             )}
@@ -215,7 +215,7 @@ export function CalendarView({
                                         return (
                                             <div key={leave.id} className={cn(
                                                 "h-1.5 w-full rounded-full shadow-sm",
-                                                isApproved ? "bg-gray-800" : "bg-gray-300"
+                                                isApproved ? "bg-slate-500" : "bg-purple-300"
                                             )} />
                                         );
                                     } else {
@@ -250,11 +250,27 @@ export function CalendarView({
             </div>
 
             {/* Legend */}
-            <div className="flex flex-wrap gap-4 mt-4 text-xs text-gray-500 justify-center">
-                <div className="flex items-center gap-1"><div className="w-3 h-3 bg-gray-100 border border-gray-400 rounded"></div> Leave Taken</div>
-                <div className="flex items-center gap-1"><div className="w-3 h-3 bg-white border border-dashed border-gray-400 rounded"></div> Pending</div>
-                <div className="flex items-center gap-1"><div className="w-3 h-3 bg-white border border-dashed border-gray-300 rounded"></div> Holiday</div>
-                <div className="flex items-center gap-1"><div className="w-3 h-3 bg-white border border-slate-200 rounded"></div> Working Day</div>
+            <div className="flex flex-wrap gap-6 mt-6 text-xs text-gray-600 justify-center">
+                <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-slate-100 border border-slate-300 rounded flex items-center justify-center">
+                        <div className="w-full h-1.5 bg-slate-500 rounded-full mx-1"></div>
+                    </div>
+                    <span>Leave Taken</span>
+                </div>
+                <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-purple-50 border border-purple-200 border-dashed rounded flex items-center justify-center">
+                        <div className="w-full h-1.5 bg-purple-300 rounded-full mx-1"></div>
+                    </div>
+                    <span>Pending Leave</span>
+                </div>
+                <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-amber-50 border border-amber-100 border-dashed rounded"></div>
+                    <span>Holiday</span>
+                </div>
+                <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-white border border-slate-200 rounded"></div>
+                    <span>Working Day</span>
+                </div>
             </div>
         </div>
     );

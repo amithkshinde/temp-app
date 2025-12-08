@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
-import { MOCK_USERS } from '@/data/users';
+import { prisma } from '@/lib/prisma';
 
 const SECRET = new TextEncoder().encode('this-is-a-secret-key-for-demo-only');
 
@@ -17,7 +17,7 @@ export async function GET() {
         const { payload } = await jwtVerify(token, SECRET);
         const userId = payload.id as string;
 
-        const user = MOCK_USERS.find(u => u.id === userId);
+        const user = await prisma.user.findUnique({ where: { id: userId } });
 
         if (!user) {
             return NextResponse.json({ error: 'User not found' }, { status: 404 });

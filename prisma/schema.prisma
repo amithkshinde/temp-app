@@ -1,0 +1,71 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id String @id @default(uuid())
+  email String @unique
+  password String
+  name String
+  role String
+  department String?
+  employeeId String?
+  inviteCode String?
+  
+  leaves Leave[]
+  notifications Notification[]
+  holidaySelections HolidaySelection[]
+  
+  createdAt DateTime @default(now())
+}
+
+model Leave {
+  id String @id @default(uuid())
+  startDate String
+  endDate String
+  reason String
+  type String     // 'sick' | 'planned'
+  status String   // 'pending' | 'approved' | 'rejected' | 'cancelled'
+  
+  userId String
+  user User @relation(fields: [userId], references: [id])
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Notification {
+  id String @id @default(uuid())
+  message String
+  type String 
+  read Boolean @default(false)
+  
+  userId String
+  user User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Holiday {
+  id String @id @default(uuid())
+  name String
+  date String
+  type String // 'public'
+  
+  selections HolidaySelection[]
+}
+
+model HolidaySelection {
+  id String @id @default(uuid())
+  userId String
+  user User @relation(fields: [userId], references: [id])
+  holidayId String
+  holiday Holiday @relation(fields: [holidayId], references: [id])
+
+  @@unique([userId, holidayId])
+}

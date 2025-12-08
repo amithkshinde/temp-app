@@ -144,8 +144,8 @@ export function LeaveModal({
                                 </label>
                                 <div className="grid grid-cols-2 gap-2">
                                     {(details.isSick
-                                        ? ['Viral Fever', 'Stomach Bug', 'Migraine', 'Personal Emergency']
-                                        : ['Vacation - Family', 'Personal Works', 'Casual Leave', 'Doctor Appointment']
+                                        ? ['Sick Leave']
+                                        : ['Planned Leave']
                                     ).map(opt => (
                                         <button
                                             key={opt}

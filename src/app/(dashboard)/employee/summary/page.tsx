@@ -86,55 +86,50 @@ export default function YearlySummaryPage() {
                             <p className="text-gray-500">Performance and Leave Analysis • {new Date().getFullYear()}</p>
                         </div>
                     </div>
-                    <div className="flex gap-3">
-                        <Button variant="outline" onClick={handleExportCSV} className="gap-2">
-                            <FileText size={16} /> Export CSV
-                        </Button>
-                        <Button onClick={handlePrint} className="gap-2 bg-[var(--color-brand-pink)] hover:bg-pink-700 text-white">
-                            <Download size={16} /> Export PDF
-                        </Button>
-                    </div>
                 </div>
 
                 {/* Overview Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    {/* New Card: Allocated */}
                     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                        <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">Total Leaves Taken</h3>
+                        <h3 className="text-sm font-medium text-gray-400 uppercase tracking-wide">Annual Allocated</h3>
+                        <p className="mt-2 text-4xl font-bold text-gray-900">24 <span className="text-lg font-normal text-gray-400">days</span></p>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                        <h3 className="text-sm font-medium text-gray-400 uppercase tracking-wide">Total Taken</h3>
                         <p className="mt-2 text-4xl font-bold text-gray-900">{stats?.totalTaken || 0} <span className="text-lg font-normal text-gray-400">days</span></p>
                     </div>
+
                     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                        <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">Public Holidays Used</h3>
+                        <h3 className="text-sm font-medium text-gray-400 uppercase tracking-wide">Holidays Used</h3>
                         <p className="mt-2 text-4xl font-bold text-gray-900">
                             {holidaysUsed.length} <span className="text-gray-300">/</span> <span className="text-xl text-gray-400">10</span>
                         </p>
-                        <div className="w-full bg-gray-100 h-2 rounded-full mt-4 overflow-hidden">
-                            <div
-                                className={`h-full ${holidaysUsed.length > 10 ? 'bg-red-500' : 'bg-blue-500'}`}
-                                style={{ width: `${Math.min(100, (holidaysUsed.length / 10) * 100)}%` }}
-                            ></div>
-                        </div>
                     </div>
+
                     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                         <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">Current Q Remaining</h3>
-                        {/* Assuming current Q is derived from simple date check or passed from API. Using Q1 default for simple mock visualization if undefined */}
+                        {/* Determine current quarter safely */}
                         <p className="mt-2 text-4xl font-bold text-emerald-600">
-                            {stats?.quarters[0].remaining || 0} <span className="text-lg font-normal text-gray-400">days</span>
+                            {(() => {
+                                const currentQ = Math.floor(new Date().getMonth() / 3);
+                                return stats?.quarters[currentQ]?.remaining || 0;
+                            })()} <span className="text-lg font-normal text-gray-400">days</span>
                         </p>
-                        <p className="text-xs text-gray-400 mt-2">Available for immediate request</p>
+                        <p className="text-xs text-gray-400 mt-2">Available Now</p>
                     </div>
                 </div>
 
                 {/* Quarterly Chart (CSS Only Bar Chart) */}
                 <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
-                    <h3 className="text-lg font-bold text-gray-900 mb-6">Usage Trends</h3>
+                    <h3 className="text-lg font-bold text-gray-900 mb-6">Quarterly Usage Trends</h3>
                     <div className="flex items-end justify-between h-48 gap-4">
                         {stats?.quarters.map((q, i) => (
                             <div key={i} className="flex flex-col items-center flex-1 group">
-                                <div className="relative w-full max-w-[60px] bg-gray-100 rounded-t-lg h-full flex items-end overflow-hidden">
-                                    {/* Background track */}
-                                    {/* Fill bar */}
+                                <div className="relative w-full max-w-[60px] bg-gray-50 rounded-t-lg h-full flex items-end overflow-hidden border-b border-gray-200">
                                     <div
-                                        className="w-full bg-[var(--color-brand-pink)] transition-all duration-1000 ease-out group-hover:opacity-80"
+                                        className="w-full bg-[var(--color-brand-pink)] transition-all duration-1000 ease-out group-hover:opacity-90 rounded-t-sm"
                                         style={{ height: `${Math.min(100, (q.taken / (q.allocated + q.carryForward)) * 100)}%` }}
                                     ></div>
                                 </div>

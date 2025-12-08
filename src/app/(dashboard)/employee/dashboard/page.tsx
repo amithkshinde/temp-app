@@ -251,6 +251,7 @@ export default function EmployeeDashboard() {
                     balance={balance}
                     isLoading={isLoading}
                     holidayUsage={{ count: selectedHolidayIds.length, limit: 10 }}
+                    role="employee"
                 />
 
 

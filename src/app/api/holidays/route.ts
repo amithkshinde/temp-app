@@ -1,8 +1,13 @@
 import { NextResponse } from 'next/server';
-import { MOCK_HOLIDAYS, addHoliday, PublicHoliday } from '@/data/holiday-data';
+import { prisma } from '@/lib/prisma';
 
 export async function GET() {
-    return NextResponse.json(MOCK_HOLIDAYS);
+    try {
+        const holidays = await prisma.holiday.findMany();
+        return NextResponse.json(holidays);
+    } catch {
+        return NextResponse.json({ error: 'Internal Error' }, { status: 500 });
+    }
 }
 
 export async function POST(request: Request) {
@@ -14,17 +19,18 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Name and Date are required' }, { status: 400 });
         }
 
-        const newHoliday: PublicHoliday = {
-            id: crypto.randomUUID(),
-            name,
-            date,
-            type: 'public'
-        };
+        const newHoliday = await prisma.holiday.create({
+            data: {
+                name,
+                date,
+                type: 'public'
+            }
+        });
 
-        addHoliday(newHoliday);
         return NextResponse.json(newHoliday);
 
-    } catch {
+    } catch (e) {
+        console.error(e);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }
