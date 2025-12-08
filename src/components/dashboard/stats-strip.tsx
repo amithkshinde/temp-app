@@ -19,10 +19,11 @@ export function StatsStrip({ balance, isLoading, holidayUsage }: StatsStripProps
     ];
 
     return (
-        <div className="w-full overflow-x-auto pb-2">
-            <div className="flex space-x-4 min-w-max">
+        <div className="w-full">
+            {/* Changed from overflow-x-auto to flex/grid for full width expansion */}
+            <div className="flex flex-col md:flex-row gap-4 w-full">
                 {cards.map((card) => (
-                    <div key={card.label} className="bg-white p-4 rounded-[var(--radius-xl)] border border-slate-100 min-w-[140px] shadow-sm">
+                    <div key={card.label} className="bg-white p-4 rounded-[var(--radius-xl)] border border-slate-100 shadow-sm flex-1 min-w-[120px]">
                         <p className="text-xs text-gray-400 uppercase font-semibold tracking-wider">{card.label}</p>
                         <p className={`text-2xl font-bold mt-1 ${card.highlight ? 'text-[var(--color-brand-pink)]' : 'text-slate-900'}`}>
                             {card.value}
@@ -32,7 +33,7 @@ export function StatsStrip({ balance, isLoading, holidayUsage }: StatsStripProps
                 ))}
 
                 {holidayUsage && (
-                    <div className={`bg-white p-4 rounded-[var(--radius-xl)] border min-w-[140px] shadow-sm relative
+                    <div className={`bg-white p-4 rounded-[var(--radius-xl)] border shadow-sm relative flex-1 min-w-[120px]
                         ${holidayUsage.count > holidayUsage.limit ? 'border-orange-200 bg-orange-50' : 'border-slate-100'}`}>
                         <p className="text-xs text-gray-400 uppercase font-semibold tracking-wider">Holidays</p>
                         <div className="flex items-center gap-2 mt-1">

@@ -140,12 +140,17 @@ export function LeaveModal({
                             />
                         </div>
 
-                        {/* Quick Template: Hide if Sick (Today/Tomorrow) */}
-                        {!isExisting && !details.isSick && (
+                        {/* Quick Template */}
+                        {!isExisting && (
                             <div className="space-y-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
-                                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Quick Select</label>
+                                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                                    {details.isSick ? 'Quick Sick Reasons' : 'Quick Presets'}
+                                </label>
                                 <div className="grid grid-cols-2 gap-2">
-                                    {['Personal Emergency', 'Vacation', 'Casual Leave', 'Appointments'].map(opt => (
+                                    {(details.isSick
+                                        ? ['Viral Fever', 'Stomach Bug', 'Migraine', 'Personal Emergency']
+                                        : ['Vacation - Family', 'Personal Works', 'Casual Leave', 'Doctor Appointment']
+                                    ).map(opt => (
                                         <button
                                             key={opt}
                                             type="button"

@@ -1,8 +1,30 @@
 import { NextResponse } from 'next/server';
 import { MOCK_LEAVES } from '@/data/leaves';
 import { LeaveBalance } from '@/lib/types';
+import { USER_HOLIDAY_SELECTIONS, PUBLIC_HOLIDAYS_2025 } from '@/data/holiday-data';
+import { eachDayOfInterval, isWeekend, format, parseISO } from 'date-fns';
 
-const ANNUAL_ALLOCATION = 20;
+const ANNUAL_ALLOCATION = 24; // Updated per requirement
+const HOLIDAY_LIMIT = 10;
+
+function getWorkingDays(startStr: string, endStr: string) {
+    const start = parseISO(startStr);
+    const end = parseISO(endStr);
+
+    // Safety check
+    if (start > end) return 0;
+
+    const days = eachDayOfInterval({ start, end });
+    let workingDays = 0;
+
+    for (const day of days) {
+        if (isWeekend(day)) continue;
+        const formatted = format(day, 'yyyy-MM-dd');
+        if (PUBLIC_HOLIDAYS_2025.some(h => h.date === formatted)) continue;
+        workingDays++;
+    }
+    return workingDays;
+}
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
@@ -18,18 +40,9 @@ export async function GET(request: Request) {
     const userLeaves = MOCK_LEAVES.filter(l => l.userId === userId);
 
     // Calculate Taken (Approved leaves in current year)
-    // Simple check: if start date is in current year
     const takenCount = userLeaves.reduce((acc, leave) => {
         if (leave.status === 'approved' && leave.startDate.startsWith(String(currentYear))) {
-            // Calculate duration in days?
-            // Requirement implies "Total Leaves Allocated" -> "Leaves Taken". usually days.
-            // For simple mock, let's assume 1 leave entry = duration in days.
-            // But we have startDate/endDate. We should calc days.
-            const start = new Date(leave.startDate);
-            const end = new Date(leave.endDate);
-            const diffTime = Math.abs(end.getTime() - start.getTime());
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-            return acc + diffDays;
+            return acc + getWorkingDays(leave.startDate, leave.endDate);
         }
         return acc;
     }, 0);
@@ -38,21 +51,21 @@ export async function GET(request: Request) {
 
     const upcomingCount = userLeaves.filter(l => {
         const start = new Date(l.startDate);
-        return l.status === 'approved' && start > now;
+        return (l.status === 'approved' || l.status === 'pending') && start > now;
     }).length;
 
     // Calculate sick vs planned taken
     const sickTaken = userLeaves.reduce((acc, leave) => {
         if (leave.status === 'approved' && leave.type === 'sick' && leave.startDate.startsWith(String(currentYear))) {
-            const start = new Date(leave.startDate);
-            const end = new Date(leave.endDate);
-            const diffDays = Math.ceil(Math.abs(end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-            return acc + diffDays;
+            return acc + getWorkingDays(leave.startDate, leave.endDate);
         }
         return acc;
     }, 0);
 
-    const plannedTaken = takenCount - sickTaken; // Assuming strict dichotomy based on existing logic
+    const plannedTaken = takenCount - sickTaken;
+
+    // Holidays
+    const holidaysTaken = (USER_HOLIDAY_SELECTIONS[userId] || []).length;
 
     const balance: LeaveBalance = {
         allocated: ANNUAL_ALLOCATION,
@@ -62,7 +75,9 @@ export async function GET(request: Request) {
         pending: pendingCount,
         upcoming: upcomingCount,
         sickTaken,
-        plannedTaken
+        plannedTaken,
+        holidaysAllowed: HOLIDAY_LIMIT,
+        holidaysTaken
     };
 
     return NextResponse.json(balance);

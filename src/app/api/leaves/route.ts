@@ -13,11 +13,11 @@ export async function GET(request: Request) {
     let leaves = MOCK_LEAVES;
 
     if (scope !== 'team') {
-        // Default to user filter if not team scope, or require userId
-        // Requirements imply Employee dash passes userId.
-        if (userId) {
-            leaves = leaves.filter(l => l.userId === userId);
+        if (!userId) {
+            // STRICT PRIVACY: If no userId provided, return nothing to avoid leaking full DB.
+            return NextResponse.json([]);
         }
+        leaves = leaves.filter(l => l.userId === userId);
     }
 
     if (year) {

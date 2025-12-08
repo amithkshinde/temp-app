@@ -15,6 +15,8 @@ import { useNotifications } from '@/context/NotificationContext';
 import { NotificationCenter } from '@/components/ui/notification-center';
 import { UpcomingLeavesPanel } from '@/components/dashboard/upcoming-leaves-panel';
 import { usePolling } from '@/hooks/use-polling';
+import { SmartInsights } from '@/components/dashboard/smart-insights';
+import { CarryForwardWidget } from '@/components/dashboard/carry-forward-widget';
 
 
 export default function EmployeeDashboard() {
@@ -32,6 +34,10 @@ export default function EmployeeDashboard() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [selectedLeave, setSelectedLeave] = useState<Leave | undefined>(undefined);
+
+    // Selection State
+    const [selectionStart, setSelectionStart] = useState<Date | null>(null);
+    const [selectionEnd, setSelectionEnd] = useState<Date | null>(null);
 
     const fetchData = useCallback(async () => {
         if (!user) return;
@@ -65,10 +71,45 @@ export default function EmployeeDashboard() {
     }, 3000);
 
     const handleDateClick = (date: Date, existingLeave?: Leave) => {
-        setSelectedDate(date);
-        setSelectedLeave(existingLeave);
-        setIsModalOpen(true);
+        if (existingLeave) {
+            // If clicking an existing leave, open modal immediately to edit
+            setSelectedLeave(existingLeave);
+            setSelectedDate(date);
+            setIsModalOpen(true);
+            setSelectionStart(null);
+            setSelectionEnd(null);
+            return;
+        }
+
+        // Logic for Range Selection
+        if (!selectionStart || (selectionStart && selectionEnd)) {
+            // Start new selection
+            setSelectionStart(date);
+            setSelectionEnd(null);
+        } else {
+            // Complete selection
+            let start = selectionStart;
+            let end = date;
+            if (end < start) {
+                [start, end] = [end, start];
+            }
+            setSelectionStart(start);
+            setSelectionEnd(end);
+
+            // Open Modal with range
+            setSelectedDate(start);
+            setSelectedLeave(undefined); // New Leave
+            setIsModalOpen(true);
+        }
     };
+
+    // Reset selection when modal closes
+    useEffect(() => {
+        if (!isModalOpen) {
+            setSelectionStart(null);
+            setSelectionEnd(null);
+        }
+    }, [isModalOpen]);
 
     const handleHolidayClick = async (holidayId: string) => {
         if (user?.demo) return alert('Demo mode: Action disabled');
@@ -104,8 +145,6 @@ export default function EmployeeDashboard() {
     };
 
     const [showSickRibbon, setShowSickRibbon] = useState(false);
-
-    // ... (fetchData hook)
 
     const handleMarkLeave = async (data: { startDate: string; endDate: string; reason: string }) => {
         if (!user) return;
@@ -190,7 +229,7 @@ export default function EmployeeDashboard() {
                             </Button>
                         </Link>
                         <NotificationCenter />
-                        <span className="text-sm font-medium">{user?.name}</span>
+                        <span className="text-base font-semibold text-gray-900">{user?.name}</span>
                         <Button onClick={logout} variant="secondary" className="text-xs">Sign out</Button>
                     </div>
                 </header>
@@ -211,7 +250,8 @@ export default function EmployeeDashboard() {
                     holidayUsage={{ count: selectedHolidayIds.length, limit: 10 }}
                 />
 
-                {/* ... */}
+                <SmartInsights leaves={leaves} user={user} />
+
                 <div className="flex flex-col lg:flex-row gap-6">
                     <div className="flex-1 min-w-0">
                         <CalendarView
@@ -220,12 +260,17 @@ export default function EmployeeDashboard() {
                             selectedHolidayIds={selectedHolidayIds}
                             onDateClick={handleDateClick}
                             onHolidayClick={handleHolidayClick}
+                            selectionStart={selectionStart}
+                            selectionEnd={selectionEnd}
                             onLeaveClick={(leave: Leave) => {
                                 setSelectedLeave(leave);
                                 setSelectedDate(parseISO(leave.startDate));
                                 setIsModalOpen(true);
                             }}
                         />
+                        <div className="mt-6">
+                            <CarryForwardWidget />
+                        </div>
                     </div>
                     {/* Updated Panel with click handler */}
                     <UpcomingLeavesPanel
@@ -238,8 +283,6 @@ export default function EmployeeDashboard() {
                         }}
                     />
                 </div>
-
-                {/* ... */}
 
                 {isModalOpen && selectedDate && (
                     <LeaveModal
@@ -267,8 +310,8 @@ export default function EmployeeDashboard() {
                             }
                         }}
                         onRemove={handleRemoveLeave}
-                        initialStartDate={selectedLeave ? selectedLeave.startDate : format(selectedDate, 'yyyy-MM-dd')}
-                        initialEndDate={selectedLeave ? selectedLeave.endDate : undefined}
+                        initialStartDate={selectedLeave ? selectedLeave.startDate : (selectedDate ? format(selectedDate, 'yyyy-MM-dd') : '')}
+                        initialEndDate={selectedLeave ? selectedLeave.endDate : (selectionEnd ? format(selectionEnd, 'yyyy-MM-dd') : undefined)}
                         existingLeaveId={selectedLeave?.id}
                         isDemo={user?.demo}
                     />
@@ -277,4 +320,3 @@ export default function EmployeeDashboard() {
         </div>
     );
 }
-

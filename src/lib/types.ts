@@ -44,6 +44,8 @@ export interface LeaveBalance {
     upcoming: number;
     sickTaken: number;
     plannedTaken: number;
+    holidaysAllowed: number;
+    holidaysTaken: number;
 }
 
 export interface AuthResponse {
