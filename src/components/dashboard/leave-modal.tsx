@@ -95,8 +95,9 @@ export function LeaveModal({
     // "No Quick Template for Today... Instead... Reason field".
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-            <div className="bg-white rounded-[var(--radius-xl)] shadow-xl w-full max-w-md overflow-hidden flex flex-col max-h-[90vh]">
+        <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/50 backdrop-blur-sm p-0 md:p-4 animate-in fade-in duration-200">
+            {/* Modal Container: Bottom Sheet on Mobile, Centered Card on Desktop */}
+            <div className="bg-white rounded-t-[var(--radius-xl)] md:rounded-[var(--radius-xl)] shadow-xl w-full md:max-w-md overflow-hidden flex flex-col max-h-[85vh] md:max-h-[90vh] animate-in slide-in-from-bottom-10 duration-300">
 
                 {/* Header Pattern */}
                 <div className={`h-2 w-full ${details.isSick ? 'bg-orange-500' : 'bg-blue-500'}`} />

@@ -17,6 +17,8 @@ import { UpcomingLeavesPanel } from '@/components/dashboard/upcoming-leaves-pane
 import { usePolling } from '@/hooks/use-polling';
 import { SmartInsights } from '@/components/dashboard/smart-insights';
 import { CarryForwardWidget } from '@/components/dashboard/carry-forward-widget';
+import { AuditTimeline } from '@/components/dashboard/audit-timeline';
+import { MobileFAB } from '@/components/dashboard/mobile-fab';
 
 
 export default function EmployeeDashboard() {
@@ -273,18 +275,25 @@ export default function EmployeeDashboard() {
                         </div>
                     </div>
                     {/* Updated Panel with click handler */}
-                    <UpcomingLeavesPanel
-                        leaves={leaves}
-                        isLoading={isLoading}
-                        onLeaveClick={(leave: Leave) => {
-                            setSelectedLeave(leave);
-                            setSelectedDate(parseISO(leave.startDate));
-                            setIsModalOpen(true);
-                        }}
-                    />
+                    <div className="w-full lg:w-80 space-y-6">
+                        <UpcomingLeavesPanel
+                            leaves={leaves}
+                            isLoading={isLoading}
+                            onLeaveClick={(leave) => {
+                                setSelectedLeave(leave);
+                                setIsModalOpen(true);
+                            }}
+                        />
+                        <AuditTimeline leaves={leaves} />
+                    </div>
                 </div>
 
-                {isModalOpen && selectedDate && (
+                <MobileFAB onClick={() => {
+                    setSelectedLeave(undefined);
+                    setIsModalOpen(true);
+                }} />
+
+                {isModalOpen && (
                     <LeaveModal
                         isOpen={isModalOpen}
                         onClose={() => setIsModalOpen(false)}
