@@ -23,7 +23,9 @@ export function AuditTimeline({ leaves }: AuditTimelineProps) {
                         approved: { icon: CheckCircle2, color: 'text-emerald-500', bg: 'bg-white' },
                         pending: { icon: Clock, color: 'text-amber-500', bg: 'bg-white' },
                         rejected: { icon: XCircle, color: 'text-red-500', bg: 'bg-white' },
+                        cancelled: { icon: XCircle, color: 'text-gray-400', bg: 'bg-white' },
                     }[leave.status] || { icon: AlertCircle, color: 'text-gray-400', bg: 'bg-white' };
+
 
                     const Icon = statusConfig.icon;
 
