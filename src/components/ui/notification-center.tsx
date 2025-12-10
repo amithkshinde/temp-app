@@ -36,10 +36,10 @@ export function NotificationCenter() {
         <div className="relative" ref={dropdownRef}>
             <button
                 onClick={toggle}
-                className="relative p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors z-50"
+                className="relative p-2 rounded-full hover:bg-black/5 transition-colors z-50 group"
                 aria-label="Notifications"
             >
-                <Bell className="w-6 h-6 text-gray-900 dark:text-white" />
+                <Bell className="w-6 h-6 text-gray-500 group-hover:text-gray-700 transition-colors" />
                 {unreadCount > 0 && (
                     <span className="absolute top-1 right-1 flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-[var(--color-brand-pink)] rounded-full border-2 border-[var(--color-bg)]">
                     </span>
@@ -47,10 +47,10 @@ export function NotificationCenter() {
             </button>
 
             {isOpen && (
-                <div className="absolute right-0 mt-2 w-80 md:w-96 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-200">
-                    <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-800">
+                <div className="absolute right-0 mt-2 w-80 md:w-96 bg-white border border-slate-200 rounded-[var(--radius-xl)] shadow-md z-50 animate-in fade-in zoom-in-95 duration-200">
+                    <div className="flex items-center justify-between p-4 border-b border-slate-100">
                         <div>
-                            <h3 className="font-bold text-gray-900 dark:text-white">Notifications</h3>
+                            <h3 className="font-bold text-gray-900">Notifications</h3>
                             <p className="text-xs text-gray-500">{unreadCount} unread</p>
                         </div>
                         <div className="flex gap-2">
@@ -74,11 +74,11 @@ export function NotificationCenter() {
                                 <p className="text-sm">No notifications yet</p>
                             </div>
                         ) : (
-                            <ul className="divide-y divide-gray-100 dark:divide-gray-800">
+                            <ul className="divide-y divide-gray-100">
                                 {notifications.map((notif) => (
                                     <li
                                         key={notif.id}
-                                        className={`p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer ${!notif.read ? 'bg-blue-50/30 dark:bg-blue-900/10' : ''}`}
+                                        className={`p-4 hover:bg-gray-50 transition-colors cursor-pointer ${!notif.read ? 'bg-blue-50/30' : ''}`}
                                         onClick={() => markAsRead(notif.id)}
                                     >
                                         <div className="flex gap-3 items-start">
@@ -86,7 +86,7 @@ export function NotificationCenter() {
                                                 {getIcon(notif.type)}
                                             </div>
                                             <div className="flex-1 space-y-1">
-                                                <p className={`text-sm leading-tight ${!notif.read ? 'font-semibold text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-300'}`}>
+                                                <p className={`text-sm leading-tight ${!notif.read ? 'font-semibold text-gray-900' : 'text-gray-600'}`}>
                                                     {notif.message}
                                                 </p>
                                                 <p className="text-[10px] text-gray-400">
@@ -104,7 +104,7 @@ export function NotificationCenter() {
                     </div>
 
                     {notifications.length > 0 && (
-                        <div className="p-2 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 rounded-b-xl">
+                        <div className="p-2 border-t border-slate-100 bg-gray-50 rounded-b-[var(--radius-xl)]">
                             <button
                                 onClick={clearAll}
                                 className="w-full py-2 text-xs text-center text-gray-500 hover:text-red-500 flex items-center justify-center gap-2 transition-colors"
