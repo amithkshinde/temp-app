@@ -8,12 +8,25 @@ export async function POST(request: Request) {
     try {
         const { email, password } = await request.json();
 
-        const user = await prisma.user.findUnique({
-            where: { email }
-        });
+        let user = null;
 
-        // Simple Plaintext Password Check for MVP (User requirement: fully setup db).
-        // Ideally use bcrypt here.
+        try {
+            user = await prisma.user.findUnique({
+                where: { email }
+            });
+        } catch (dbError) {
+            console.error("Database connection failed, falling back to mock users:", dbError);
+        }
+
+        // Fallback to mock users if DB fails or user not found
+        if (!user) {
+            const { MOCK_USERS } = await import('@/data/users');
+            const mockUser = MOCK_USERS.find(u => u.email === email);
+            if (mockUser && mockUser.password === password) {
+                user = mockUser;
+            }
+        }
+
         if (!user || user.password !== password) {
             return NextResponse.json(
                 { error: 'Invalid credentials' },

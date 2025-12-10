@@ -4,7 +4,7 @@ export const MOCK_USERS: (User & { password: string })[] = [
     {
         id: 'emp-001',
         name: 'Alice Employee',
-        email: 'alice@example.com',
+        email: 'alice@twistopen.in',
         role: 'employee',
         password: 'password123',
         department: 'Engineering',
@@ -13,14 +13,14 @@ export const MOCK_USERS: (User & { password: string })[] = [
     {
         id: 'mgr-001',
         name: 'Bob Manager',
-        email: 'bob@example.com',
+        email: 'bob@twistopen.in',
         role: 'management',
         password: 'password123',
     },
     {
         id: 'emp-002',
         name: 'Sarah Sales',
-        email: 'sarah@example.com',
+        email: 'sarah@twistopen.in',
         role: 'employee',
         password: 'password123',
         department: 'Sales',
@@ -29,7 +29,7 @@ export const MOCK_USERS: (User & { password: string })[] = [
     {
         id: 'emp-003',
         name: 'Mike Marketing',
-        email: 'mike@example.com',
+        email: 'mike@twistopen.in',
         role: 'employee',
         password: 'password123',
         department: 'Marketing',
@@ -38,7 +38,7 @@ export const MOCK_USERS: (User & { password: string })[] = [
     {
         id: 'emp-004',
         name: 'Dave Designer',
-        email: 'dave@example.com',
+        email: 'dave@twistopen.in',
         role: 'employee',
         password: 'password123',
         department: 'Design',
