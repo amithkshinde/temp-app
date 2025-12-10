@@ -21,9 +21,9 @@ export function UpcomingLeavesPanel({ leaves, isLoading, onLeaveClick }: Upcomin
         .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
 
     return (
-        <div className="w-80 bg-white rounded-[var(--radius-xl)] shadow-sm border border-slate-100 p-6 h-fit shrink-0">
-            <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <Calendar size={18} className="text-gray-400" />
+        <div className="w-80 bg-white rounded-[var(--radius-xl)] shadow-sm border border-slate-200 p-4 h-fit shrink-0">
+            <h3 className="text-xs text-gray-500 font-medium tracking-wide uppercase mb-1 flex items-center gap-2">
+                <Calendar size={14} className="text-gray-400" />
                 Upcoming Leaves
             </h3>
 

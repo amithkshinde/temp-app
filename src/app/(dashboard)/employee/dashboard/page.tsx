@@ -278,8 +278,8 @@ export default function EmployeeDashboard() {
                     </div>
                     {/* Updated Panel with click handler */}
                     <div className="w-full lg:w-80 space-y-6">
-                        <div className="bg-white rounded-[var(--radius-xl)] shadow-sm border border-slate-100 p-6">
-                            <h3 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wider">Public Holidays</h3>
+                        <div className="bg-white rounded-[var(--radius-xl)] shadow-sm border border-slate-200 p-4">
+                            <h3 className="text-xs text-gray-500 font-medium tracking-wide uppercase mb-1">Public Holidays</h3>
                             <p className="text-xs text-gray-500 mb-4">
                                 You have selected {selectedHolidayIds.length} / 10 holidays.
                             </p>

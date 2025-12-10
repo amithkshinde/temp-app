@@ -90,10 +90,10 @@ export function CalendarView({
     const isRangeEnd = (date: Date) => selectionEnd && date.toDateString() === selectionEnd.toDateString();
 
     return (
-        <div className="bg-white rounded-[var(--radius-xl)] shadow-sm border border-slate-100 p-6">
+        <div className="bg-white rounded-[var(--radius-xl)] shadow-sm border border-slate-200 p-4">
             <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
                 <div className="flex items-center gap-4">
-                    <h2 className="text-xl font-bold text-gray-900">
+                    <h2 className="text-xs text-gray-500 font-medium tracking-wide uppercase">
                         {format(currentMonth, 'MMMM yyyy')}
                     </h2>
                     <div className="flex space-x-2">

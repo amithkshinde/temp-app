@@ -14,8 +14,8 @@ export function AuditTimeline({ leaves }: AuditTimelineProps) {
     );
 
     return (
-        <Card className="p-6 bg-white border-slate-100 shadow-sm mt-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Activity Log</h3>
+        <Card className="p-4 bg-white border-slate-200 shadow-sm mt-6 rounded-[var(--radius-xl)]">
+            <h3 className="text-xs text-gray-500 font-medium tracking-wide uppercase mb-1">Activity Log</h3>
 
             <div className="relative border-l-2 border-slate-100 ml-3 space-y-8 pl-6 py-2">
                 {sortedLeaves.slice(0, 5).map((leave) => {
