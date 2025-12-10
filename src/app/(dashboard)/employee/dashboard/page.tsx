@@ -279,16 +279,18 @@ export default function EmployeeDashboard() {
                     {/* Updated Panel with click handler */}
                     <div className="w-full lg:w-80 space-y-6">
                         <div className="bg-white rounded-[var(--radius-xl)] shadow-sm border border-slate-200 p-4">
-                            <h3 className="text-xs text-gray-500 font-medium tracking-wide uppercase mb-1">Public Holidays</h3>
-                            <p className="text-xs text-gray-500 mb-4">
+                            <div className="flex justify-between items-center mb-1">
+                                <h3 className="text-xs text-gray-500 font-medium tracking-wide uppercase">Public Holidays</h3>
+                                <button
+                                    className="text-xs font-medium text-[var(--color-brand-pink)] hover:text-[#d01b5b] hover:underline transition-colors p-0 bg-transparent border-none appearance-none cursor-pointer"
+                                    onClick={() => setIsHolidayModalOpen(true)}
+                                >
+                                    Manage
+                                </button>
+                            </div>
+                            <p className="text-xs text-gray-500 mb-0">
                                 You have selected {selectedHolidayIds.length} / 10 holidays.
                             </p>
-                            <button
-                                className="text-xs font-medium text-[var(--color-brand-pink)] hover:text-[#d01b5b] hover:underline transition-colors p-0 bg-transparent border-none appearance-none cursor-pointer"
-                                onClick={() => setIsHolidayModalOpen(true)}
-                            >
-                                Manage Holidays
-                            </button>
                         </div>
 
                         <UpcomingLeavesPanel
