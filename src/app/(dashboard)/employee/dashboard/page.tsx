@@ -283,13 +283,12 @@ export default function EmployeeDashboard() {
                             <p className="text-xs text-gray-500 mb-4">
                                 You have selected {selectedHolidayIds.length} / 10 holidays.
                             </p>
-                            <Button
-                                variant="outline"
-                                className="w-full text-xs font-medium"
+                            <button
+                                className="text-xs font-medium text-[var(--color-brand-pink)] hover:text-[#d01b5b] hover:underline transition-colors p-0 bg-transparent border-none appearance-none cursor-pointer"
                                 onClick={() => setIsHolidayModalOpen(true)}
                             >
                                 Manage Holidays
-                            </Button>
+                            </button>
                         </div>
 
                         <UpcomingLeavesPanel
