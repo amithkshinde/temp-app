@@ -14,7 +14,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         if (variant === 'primary') {
             variantStyles = "bg-[var(--color-brand-pink)] text-white hover:opacity-90 active:scale-95 shadow-sm";
         } else if (variant === 'secondary') {
-            variantStyles = "bg-slate-100 text-slate-900 hover:bg-[#E4E8EC] hover:shadow-sm";
+            variantStyles = "bg-slate-100 text-slate-900 border border-[#D9DEE3] hover:bg-[#E4E8EC] hover:shadow-sm";
         } else if (variant === 'outline') {
             variantStyles = "border border-slate-200 bg-white hover:bg-slate-100 text-slate-900";
         } else if (variant === 'ghost') {

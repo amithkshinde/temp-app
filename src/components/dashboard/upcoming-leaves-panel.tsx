@@ -22,8 +22,7 @@ export function UpcomingLeavesPanel({ leaves, isLoading, onLeaveClick }: Upcomin
 
     return (
         <div className="w-80 bg-white rounded-[var(--radius-xl)] shadow-sm border border-slate-200 p-4 h-fit shrink-0">
-            <h3 className="text-xs text-gray-500 font-medium tracking-wide uppercase mb-1 flex items-center gap-2">
-                <Calendar size={14} className="text-gray-400" />
+            <h3 className="text-xs text-gray-500 font-medium tracking-wide uppercase mb-1">
                 Upcoming Leaves
             </h3>
 
