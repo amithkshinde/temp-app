@@ -45,7 +45,7 @@ export function UpcomingLeavesPanel({ leaves, isLoading, onLeaveClick }: Upcomin
                         return (
                             <div
                                 key={leave.id}
-                                className="p-3 rounded-lg bg-slate-50 border border-slate-100 hover:bg-slate-100 transition-colors cursor-pointer group"
+                                className="p-3 rounded-lg bg-white border border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer group"
                                 onClick={() => onLeaveClick?.(leave)}
                             >
                                 <div className="flex justify-between items-start mb-1">

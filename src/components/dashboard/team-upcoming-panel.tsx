@@ -39,7 +39,7 @@ export function TeamUpcomingPanel({ leaves, users, isLoading }: TeamUpcomingPane
                     const user = users.find(u => u.id === leave.userId);
 
                     return (
-                        <div key={leave.id} className="p-4 rounded-[var(--radius-xl)] bg-slate-50 border border-slate-100">
+                        <div key={leave.id} className="p-4 rounded-[var(--radius-xl)] bg-white border border-slate-100">
                             <div className="font-bold text-gray-900 text-sm mb-1">
                                 {user?.name || leave.userId}
                             </div>
