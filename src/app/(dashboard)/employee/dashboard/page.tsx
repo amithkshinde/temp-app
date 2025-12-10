@@ -222,18 +222,18 @@ export default function EmployeeDashboard() {
             <div className="max-w-5xl mx-auto space-y-6">
                 <header className="flex justify-between items-center">
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-900">Leave Balance</h1>
-                        <p className="text-gray-500">Manage your leave schedule</p>
+                        <h1 className="text-3xl font-bold text-gray-900">Welcome, {user?.name}!</h1>
+                        <p className="text-gray-500">Here’s your leave overview</p>
                     </div>
                     <div className="flex items-center gap-4">
                         <Link href="/employee/summary">
-                            <Button variant="outline" className="text-xs">
+                            <Button variant="ghost" className="text-xs text-gray-500 hover:text-gray-900">
                                 View Yearly Summary
                             </Button>
                         </Link>
                         <NotificationCenter />
                         <span className="text-base font-semibold text-gray-900">{user?.name}</span>
-                        <Button onClick={logout} variant="secondary" className="text-xs">Sign out</Button>
+                        <Button onClick={logout} variant="ghost" className="text-xs text-red-500 hover:text-red-700 hover:bg-red-50">Sign out</Button>
                     </div>
                 </header>
 

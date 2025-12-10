@@ -196,7 +196,7 @@ export function LeaveModal({
                                     >
                                         Cancel Leave
                                     </Button>
-                                    <Button type="button" variant="outline" onClick={onClose} disabled={isLoading}>
+                                    <Button type="button" variant="ghost" onClick={onClose} disabled={isLoading}>
                                         Close
                                     </Button>
                                     <Button type="submit" isLoading={isLoading} className="bg-[#f0216a] hover:bg-[#d61b5c] text-white">

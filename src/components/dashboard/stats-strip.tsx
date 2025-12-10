@@ -16,38 +16,33 @@ export function StatsStrip({ balance, isLoading, holidayUsage, role = 'employee'
 
     if (role === 'employee') {
         return (
-            <div className="w-full">
-                <div className="flex flex-col md:flex-row gap-4 w-full">
-                    {/* ONLY Remaining in Quarter for Employee */}
-                    <div className="rounded-[var(--radius-xl)] border border-slate-200 shadow-sm flex-1 p-4 flex items-center gap-4 bg-white">
-                        <div className="h-10 w-10 rounded-full bg-gray-50 flex items-center justify-center text-[#f0216a]">
-                            <TrendingUp size={20} />
-                        </div>
-                        <div>
-                            <p className="text-xs text-gray-500 font-medium tracking-wide uppercase">Remaining (This Quarter)</p>
-                            <p className="text-3xl font-bold text-gray-900">{balance?.quarterlyAvailable ?? 0}</p>
-                        </div>
-                    </div>
+            <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-4">
+                {/* 1. Total Leaves */}
+                <div className="rounded-[var(--radius-xl)] border border-slate-200 shadow-sm p-4 flex flex-col justify-center bg-white h-24">
+                    <p className="text-xs text-gray-500 font-medium tracking-wide uppercase mb-1">Total Leaves</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                        {((balance?.allocated || 0) + (balance?.carriedForward || 0)) || 0}
+                    </p>
+                </div>
 
-                    {/* Holidays Usage */}
-                    {holidayUsage && (
-                        <div className={`bg-white p-4 rounded-[var(--radius-xl)] border shadow-sm flex-1 flex items-center gap-4
-                            ${holidayUsage.count > holidayUsage.limit ? 'border-gray-400 bg-gray-50' : 'border-slate-200'}`}>
-                            <div className="h-10 w-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-600">
-                                <Calendar size={20} />
-                            </div>
-                            <div>
-                                <p className="text-xs text-gray-500 font-medium tracking-wide uppercase">Public Holidays</p>
-                                <div className="flex items-center gap-2">
-                                    <p className="text-2xl font-bold text-gray-900">{holidayUsage.count}</p>
-                                    <span className="text-sm text-gray-400">/ {holidayUsage.limit}</span>
-                                </div>
-                            </div>
-                            {holidayUsage.count > holidayUsage.limit && (
-                                <span className="text-[#f0216a] text-xs font-bold ml-auto">Over Limit</span>
-                            )}
-                        </div>
-                    )}
+                {/* 2. Taken */}
+                <div className="rounded-[var(--radius-xl)] border border-slate-200 shadow-sm p-4 flex flex-col justify-center bg-white h-24">
+                    <p className="text-xs text-gray-500 font-medium tracking-wide uppercase mb-1">Taken</p>
+                    <p className="text-2xl font-bold text-gray-900">{balance?.taken ?? 0}</p>
+                </div>
+
+                {/* 3. Remaining */}
+                <div className="rounded-[var(--radius-xl)] border border-slate-200 shadow-sm p-4 flex flex-col justify-center bg-white h-24">
+                    <p className="text-xs text-gray-500 font-medium tracking-wide uppercase mb-1">Remaining</p>
+                    <p className="text-2xl font-bold text-[#f0216a]">
+                        {((balance?.allocated || 0) + (balance?.carriedForward || 0) - (balance?.taken || 0)) || 0}
+                    </p>
+                </div>
+
+                {/* 4. Carried Forward */}
+                <div className="rounded-[var(--radius-xl)] border border-slate-200 shadow-sm p-4 flex flex-col justify-center bg-white h-24">
+                    <p className="text-xs text-gray-500 font-medium tracking-wide uppercase mb-1">Carried Forward</p>
+                    <p className="text-2xl font-bold text-gray-900">{balance?.carriedForward ?? 0}</p>
                 </div>
             </div>
         );
