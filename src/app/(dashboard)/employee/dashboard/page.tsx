@@ -222,7 +222,7 @@ export default function EmployeeDashboard() {
             <div className="max-w-5xl mx-auto space-y-6">
                 <header className="flex justify-between items-center">
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-900">Welcome, {user?.name}!</h1>
+                        <h1 className="text-3xl font-bold text-gray-900">Welcome, {user?.name.split(' ')[0]}!</h1>
                         <p className="text-gray-500">Here’s your leave overview</p>
                     </div>
                     <div className="flex items-center gap-4">

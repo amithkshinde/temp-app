@@ -39,7 +39,7 @@ export function NotificationCenter() {
                 className="relative p-2 rounded-full hover:bg-black/5 transition-colors z-50 group"
                 aria-label="Notifications"
             >
-                <Bell className="w-6 h-6 text-gray-500 group-hover:text-gray-700 transition-colors" />
+                <Bell className="w-[22px] h-[22px] text-gray-500 group-hover:text-gray-700 transition-colors" />
                 {unreadCount > 0 && (
                     <span className="absolute top-1 right-1 flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-[var(--color-brand-pink)] rounded-full border-2 border-[var(--color-bg)]">
                     </span>

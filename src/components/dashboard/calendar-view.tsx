@@ -93,7 +93,7 @@ export function CalendarView({
         <div className="bg-white rounded-[var(--radius-xl)] shadow-sm border border-slate-200 p-4">
             <div className="relative flex items-center justify-center mb-6">
                 <Button variant="ghost" onClick={prevMonth} size="sm" className="absolute left-0">←</Button>
-                <h2 className="text-xs text-gray-500 font-medium tracking-wide uppercase">
+                <h2 className="text-base text-gray-700 font-bold tracking-wide uppercase">
                     {format(currentMonth, 'MMMM yyyy')}
                 </h2>
                 <Button variant="ghost" onClick={nextMonth} size="sm" className="absolute right-0">→</Button>

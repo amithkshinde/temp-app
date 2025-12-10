@@ -35,7 +35,7 @@ export function UserMenu() {
         <div className="relative" ref={dropdownRef}>
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="relative w-9 h-9 flex items-center justify-center rounded-full bg-slate-100 text-slate-700 font-bold text-xs ring-2 ring-transparent hover:ring-slate-200 transition-all focus:outline-none"
+                className="relative w-9 h-9 flex items-center justify-center rounded-full bg-slate-900 text-white font-bold text-xs ring-2 ring-transparent hover:ring-slate-200 transition-all focus:outline-none"
                 aria-label="User Menu"
             >
                 {initials}
@@ -44,7 +44,7 @@ export function UserMenu() {
             {isOpen && (
                 <div className="absolute right-0 mt-2 w-56 bg-white border border-slate-200 rounded-[var(--radius-xl)] shadow-md z-50 animate-in fade-in zoom-in-95 duration-200 overflow-hidden">
                     <div className="p-4 bg-slate-50/50">
-                        <p className="font-bold text-sm text-gray-900 truncate">{user.name}</p>
+                        <p className="font-bold text-sm text-gray-900 truncate">{user.name.split(' ')[0]}</p>
                         <p className="text-xs text-gray-500 truncate capitalize">{user.role}</p>
                     </div>
 
