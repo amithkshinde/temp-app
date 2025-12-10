@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState, useCallback } from 'react';
@@ -19,6 +18,7 @@ import { usePolling } from '@/hooks/use-polling';
 import { AuditTimeline } from '@/components/dashboard/audit-timeline';
 import { MobileFAB } from '@/components/dashboard/mobile-fab';
 import { HolidaySelectionModal } from '@/components/dashboard/holiday-selection-modal';
+import { UserMenu } from '@/components/dashboard/user-menu';
 
 
 export default function EmployeeDashboard() {
@@ -226,14 +226,8 @@ export default function EmployeeDashboard() {
                         <p className="text-gray-500">Here’s your leave overview</p>
                     </div>
                     <div className="flex items-center gap-4">
-                        <Link href="/employee/summary">
-                            <Button variant="ghost" className="text-xs text-gray-500 hover:text-gray-900">
-                                View Yearly Summary
-                            </Button>
-                        </Link>
                         <NotificationCenter />
-                        <span className="text-base font-semibold text-gray-900">{user?.name}</span>
-                        <Button onClick={logout} variant="ghost" className="text-xs text-red-500 hover:text-red-700 hover:bg-red-50">Sign out</Button>
+                        <UserMenu />
                     </div>
                 </header>
 
