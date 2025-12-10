@@ -48,9 +48,9 @@ export default function LoginPage() {
                         <Image
                             src="/twist-logo.png"
                             alt="Twist Open"
-                            width={200}
-                            height={80}
-                            className="h-16 w-auto object-contain"
+                            width={144}
+                            height={280}
+                            className="h-24 w-auto object-contain"
                             priority
                         />
                     </div>
