@@ -12,10 +12,39 @@
   --font-mono: var(--font-geist-mono);
   --color-brand-pink: #f0216a;
   /* Slightly deeper pink/red for better contrast/professionalism */
-  --color-bg: #ffffff;
+  --color-bg: #F2F2F2;
   /* Neutral gray */
   --radius-xl: 0.5rem;
   /* Reduced radius */
+
+  /* Soft Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.02);
+  --shadow: rgba(0, 0, 0, 0.04) 0px 2px 4px, rgba(0, 0, 0, 0.03) 0px 6px 12px;
+  --shadow-md: rgba(0, 0, 0, 0.04) 0px 4px 6px -1px, rgba(0, 0, 0, 0.03) 0px 6px 12px;
+  --shadow-lg: rgba(0, 0, 0, 0.04) 0px 10px 15px -3px, rgba(0, 0, 0, 0.03) 0px 6px 12px;
+  --shadow-xl: rgba(0, 0, 0, 0.04) 0px 20px 25px -5px, rgba(0, 0, 0, 0.03) 0px 8px 10px -6px;
+}
+
+@layer utilities {
+  .shadow-sm {
+    box-shadow: var(--shadow-sm);
+  }
+
+  .shadow {
+    box-shadow: var(--shadow);
+  }
+
+  .shadow-md {
+    box-shadow: var(--shadow-md);
+  }
+
+  .shadow-lg {
+    box-shadow: var(--shadow-lg);
+  }
+
+  .shadow-xl {
+    box-shadow: var(--shadow-xl);
+  }
 }
 
 @media (prefers-color-scheme: dark) {
