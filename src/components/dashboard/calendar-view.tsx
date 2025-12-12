@@ -2,7 +2,8 @@ import { useState } from 'react';
 import {
     format, startOfMonth, endOfMonth, eachDayOfInterval,
     isToday, isWeekend, addMonths, subMonths,
-    startOfWeek, endOfWeek, isWithinInterval, parseISO
+    startOfWeek, endOfWeek, isWithinInterval, parseISO,
+    isBefore, startOfToday
 } from 'date-fns';
 import { Leave } from '@/lib/types';
 import { Button } from '@/components/ui/button';
@@ -18,8 +19,6 @@ interface CalendarViewProps {
     onHolidayClick?: (holidayId: string) => void;
     mode?: 'personal' | 'team';
     onLeaveClick?: (leave: Leave) => void; // For Manager to approve
-    selectionStart?: Date | null;
-    selectionEnd?: Date | null;
 }
 
 export function CalendarView({
@@ -30,12 +29,7 @@ export function CalendarView({
     onHolidayClick,
     mode = 'personal',
     onLeaveClick,
-    selectionStart,
-    selectionEnd
 }: CalendarViewProps) {
-    // View State
-    // Removed viewType state per feedback. Defaults to showing leaves.
-
     const [currentMonth, setCurrentMonth] = useState(new Date());
 
     const monthStart = startOfMonth(currentMonth);
@@ -44,6 +38,7 @@ export function CalendarView({
     const calendarEnd = endOfWeek(monthEnd);
 
     const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
+    const today = startOfToday();
 
     // Filter leaves
     const getLeavesForDate = (date: Date) => {
@@ -54,7 +49,7 @@ export function CalendarView({
             end.setHours(0, 0, 0, 0);
             const d = new Date(date);
             d.setHours(0, 0, 0, 0);
-            return isWithinInterval(d, { start, end });
+            return isWithinInterval(d, { start, end }) && leave.status !== 'cancelled';
         });
     };
 
@@ -65,29 +60,6 @@ export function CalendarView({
 
     const nextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
     const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
-
-    const isDateInRange = (date: Date) => {
-        if (!selectionStart) return false;
-
-        // Single selection
-        if (!selectionEnd) {
-            return isToday(date) ? false : (date.getTime() === selectionStart.getTime());
-        }
-
-        const start = selectionStart < selectionEnd ? selectionStart : selectionEnd;
-        const end = selectionStart < selectionEnd ? selectionEnd : selectionStart;
-
-        // Normalize
-        const d = new Date(date); d.setHours(0, 0, 0, 0);
-        const s = new Date(start); s.setHours(0, 0, 0, 0);
-        const e = new Date(end); e.setHours(0, 0, 0, 0);
-
-        return d >= s && d <= e;
-    };
-
-    // Check if date matches exactly start or end (for rounded corners styling)
-    const isRangeStart = (date: Date) => selectionStart && date.toDateString() === selectionStart.toDateString();
-    const isRangeEnd = (date: Date) => selectionEnd && date.toDateString() === selectionEnd.toDateString();
 
     return (
         <div className="bg-white rounded-[var(--radius-xl)] shadow-sm border border-slate-200 p-4">
@@ -113,70 +85,81 @@ export function CalendarView({
                     const holiday = getHolidayForDate(day);
                     const isSelectedHoliday = holiday && selectedHolidayIds.includes(holiday.id);
                     const isCurrentMonth = day.getMonth() === currentMonth.getMonth();
+                    const isPast = isBefore(day, today);
                     const isWknd = isWeekend(day);
-                    const inRange = isDateInRange(day);
 
                     // Heatmap Logic
                     let bgClass = "bg-white"; // Default working day
-                    let borderClass = "border-slate-200"; // Strengthen default border
+                    let borderClass = "border-slate-200";
+                    let textClass = "text-gray-900";
 
                     if (!isCurrentMonth) {
-                        bgClass = "bg-[#FAFAFA]"; // Solid light grey
+                        bgClass = "bg-[#FAFAFA]";
                         borderClass = "border-slate-100";
+                        textClass = "text-gray-300";
                     }
-                    else if (inRange) {
-                        bgClass = "bg-[#FFF0F5]"; // Very soft pink
-                        borderClass = "border-[#f0216a]/20";
+                    else if (isPast) {
+                        bgClass = "bg-slate-50";
+                        textClass = "text-gray-400";
                     }
                     else if (holiday) {
-                        // Holiday - Soft Yellow/Amber for visibility but soft
                         bgClass = "bg-amber-50/50";
                         borderClass = "border-amber-100 border-dashed";
                     }
                     else if (dayLeaves.length > 0) {
                         const hasApproved = dayLeaves.some(l => l.status === 'approved');
                         const hasPending = dayLeaves.some(l => l.status === 'pending');
+                        const hasRejected = dayLeaves.some(l => l.status === 'rejected');
 
                         if (hasApproved) {
-                            // Approved - Soft Blue/Slate
-                            bgClass = "bg-slate-100";
-                            borderClass = "border-slate-300";
+                            bgClass = "bg-green-50";
+                            borderClass = "border-green-200";
                         } else if (hasPending) {
-                            // Pending - Soft Purple/Lavender
-                            bgClass = "bg-purple-50";
-                            borderClass = "border-purple-200 border-dashed";
+                            bgClass = "bg-yellow-50";
+                            borderClass = "border-yellow-200 border-dashed";
+                        } else if (hasRejected) {
+                            bgClass = "bg-red-50";
+                            borderClass = "border-red-200";
                         }
                     } else if (isWknd) {
                         bgClass = "bg-[#FAFAFA]";
                         borderClass = "border-slate-100";
+                        textClass = "text-gray-400";
                     }
 
-                    if (isToday(day)) borderClass = "border-gray-900 ring-1 ring-gray-900";
-                    if (isRangeStart(day) || isRangeEnd(day)) borderClass = "ring-2 ring-[#f0216a] border-transparent";
+                    if (isToday(day)) {
+                        borderClass = "border-blue-600 ring-1 ring-blue-600";
+                        textClass = "text-blue-700 font-bold";
+                    }
 
+                    const isDisabled = isPast && !isToday(day); // Today should be clickable
 
                     const containerClasses = cn(
-                        "min-h-[4rem] rounded-lg p-1.5 flex flex-col items-start justify-start text-xs transition-all cursor-pointer border relative",
+                        "min-h-[4rem] rounded-lg p-1.5 flex flex-col items-start justify-start text-xs transition-all border relative",
                         bgClass,
                         borderClass,
-                        !isCurrentMonth && "text-gray-300"
+                        textClass,
+                        isDisabled ? "cursor-not-allowed opacity-60" : "cursor-pointer hover:shadow-md"
                     );
-
-                    // --- Conflict Check (Team Mode) ---
-                    const isConflict = mode === 'team' && dayLeaves.filter(l => l.status !== 'rejected').length > 2;
 
                     // --- Interaction ---
                     const handleCellClick = () => {
+                        if (isDisabled) return;
+
                         if (holiday && onHolidayClick) {
                             onHolidayClick(holiday.id);
                         } else {
+                            // Single click, no existing selection logic here
                             onDateClick(day, dayLeaves.length === 1 ? dayLeaves[0] : undefined);
                         }
                     };
 
                     let titleText = format(day, 'EEEE, MMMM d, yyyy');
                     if (holiday) titleText += `\nHoliday: ${holiday.name}`;
-                    if (dayLeaves.length > 0) titleText += `\nLeaves: ${dayLeaves.map(l => l.userName || l.userId).join(', ')}`;
+                    if (dayLeaves.length > 0) titleText += `\nLeaves: ${dayLeaves.map(l => `${l.userName || l.userId} (${l.status})`).join(', ')}`;
+
+                    // --- Conflict Check (Team Mode) ---
+                    const isConflict = mode === 'team' && dayLeaves.filter(l => l.status === 'approved').length > 2;
 
                     return (
                         <div
@@ -187,7 +170,7 @@ export function CalendarView({
                         >
                             {/* Date Number */}
                             <div className="w-full flex justify-between items-start mb-1">
-                                <span className={cn("font-bold", isToday(day) && "text-blue-600", !isCurrentMonth && "text-gray-300 font-normal", isCurrentMonth && "text-gray-700")}>
+                                <span className={cn("font-medium", textClass)}>
                                     {format(day, 'd')}
                                 </span>
                                 {isConflict && (mode === 'team') && (
@@ -205,17 +188,16 @@ export function CalendarView({
                             {/* Leaves Stack */}
                             <div className="w-full flex flex-col gap-1 mt-auto">
                                 {dayLeaves.slice(0, 3).map((leave) => {
-                                    const isApproved = leave.status === 'approved';
-
                                     if (mode === 'personal') {
                                         return (
                                             <div key={leave.id} className={cn(
                                                 "h-1.5 w-full rounded-full shadow-sm",
-                                                isApproved ? "bg-slate-500" : "bg-purple-300"
+                                                leave.status === 'approved' && "bg-green-500",
+                                                leave.status === 'pending' && "bg-yellow-400",
+                                                leave.status === 'rejected' && "bg-red-400",
                                             )} />
                                         );
                                     } else {
-                                        // Team View Labels
                                         return (
                                             <div
                                                 key={leave.id}
@@ -225,8 +207,9 @@ export function CalendarView({
                                                 }}
                                                 className={cn(
                                                     "text-[9px] px-1 rounded text-white truncate w-full cursor-pointer hover:opacity-90 transition-opacity font-medium shadow-sm",
-                                                    isApproved ? "bg-gray-900" : "bg-gray-400 text-white",
-                                                    leave.status === 'rejected' && "line-through opacity-50 bg-gray-200 text-gray-500"
+                                                    leave.status === 'approved' && "bg-green-700",
+                                                    leave.status === 'pending' && "bg-yellow-600",
+                                                    leave.status === 'rejected' && "bg-red-700 decoration-line-through",
                                                 )}
                                             >
                                                 {leave.userName || leave.userId}
@@ -234,11 +217,6 @@ export function CalendarView({
                                         );
                                     }
                                 })}
-                                {dayLeaves.length > 3 && (
-                                    <div className="text-[9px] text-gray-500 font-bold text-center leading-none">
-                                        +{dayLeaves.length - 3}
-                                    </div>
-                                )}
                             </div>
                         </div>
                     );
@@ -248,24 +226,26 @@ export function CalendarView({
             {/* Legend */}
             <div className="flex flex-wrap gap-6 mt-6 text-xs text-gray-600 justify-center">
                 <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-slate-100 border border-slate-300 rounded flex items-center justify-center">
-                        <div className="w-full h-1.5 bg-slate-500 rounded-full mx-1"></div>
+                    <div className="w-4 h-4 bg-green-50 border border-green-200 rounded flex items-center justify-center">
+                        <div className="w-full h-1.5 bg-green-500 rounded-full mx-1"></div>
                     </div>
-                    <span>Leave Taken</span>
+                    <span>Approved</span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-purple-50 border border-purple-200 border-dashed rounded flex items-center justify-center">
-                        <div className="w-full h-1.5 bg-purple-300 rounded-full mx-1"></div>
+                    <div className="w-4 h-4 bg-yellow-50 border border-yellow-200 border-dashed rounded flex items-center justify-center">
+                        <div className="w-full h-1.5 bg-yellow-400 rounded-full mx-1"></div>
                     </div>
-                    <span>Pending Leave</span>
+                    <span>Pending</span>
+                </div>
+                <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-red-50 border border-red-200 rounded flex items-center justify-center">
+                        <div className="w-full h-1.5 bg-red-400 rounded-full mx-1"></div>
+                    </div>
+                    <span>Rejected</span>
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="w-4 h-4 bg-amber-50 border border-amber-100 border-dashed rounded"></div>
                     <span>Holiday</span>
-                </div>
-                <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-white border border-slate-200 rounded"></div>
-                    <span>Working Day</span>
                 </div>
             </div>
         </div>

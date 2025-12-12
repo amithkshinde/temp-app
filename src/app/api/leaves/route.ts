@@ -76,15 +76,46 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
+        // 1. Duplicate Check
+        const overlappingLeave = await prisma.leave.findFirst({
+            where: {
+                userId,
+                status: { not: 'cancelled' },
+                OR: [
+                    {
+                        startDate: { lte: endDate },
+                        endDate: { gte: startDate }
+                    }
+                ]
+            }
+        });
+
+        if (overlappingLeave) {
+            return NextResponse.json(
+                { error: 'You already have a leave request for this period.' },
+                { status: 409 }
+            );
+        }
+
+        // 2. Logic for Sick Leave vs Planned
         const start = new Date(startDate);
         const now = new Date();
         now.setHours(0, 0, 0, 0);
         start.setHours(0, 0, 0, 0);
 
         const diffDays = Math.ceil((start.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-        const isSickLeave = diffDays >= 0 && diffDays <= 1;
+
+        // Check if explicitly marked as Sick in reason AND within allowed window (Today/Tomorrow)
+        // Note: Frontend formats reason as "Sick: ..." or just "Sick"
+        const isReasonSick = reason.toLowerCase().startsWith('sick');
+        const isDateValidForSick = diffDays <= 1 && diffDays >= -1; // Allow today, tomorrow (and maybe yesterday if reporting late? Stick to requirement "today or today+1")
+        // User Requirement: "today or today+1". 
+        // Strict adherence: diffDays >= 0 && diffDays <= 1.
+
+        const isSickLeave = isReasonSick && (diffDays >= 0 && diffDays <= 1);
 
         const type: 'sick' | 'planned' = isSickLeave ? 'sick' : 'planned';
+        // Sick = Auto Approved. Others = Pending.
         const status = isSickLeave ? 'approved' : 'pending';
 
         const newLeave = await prisma.leave.create({
@@ -92,7 +123,7 @@ export async function POST(request: Request) {
                 userId,
                 startDate,
                 endDate,
-                reason,
+                reason, // "Sick: Fever" or "Personal: Wedding"
                 type,
                 status
             }
@@ -101,29 +132,27 @@ export async function POST(request: Request) {
         // Notifications
         if (status === 'pending') {
             const user = await prisma.user.findUnique({ where: { id: userId } });
-            // Mock email
-            // const html = getLeaveRequestTemplate(newLeave, userId); // Requires Leave type compat
-            // Casting newLeave to any to avoid strict type mismatch with mock template helper for now
-            await notifyManagement(`New Planned Leave Request from ${user?.name}`, `<p>New request</p>`);
+            // Notify Management Only
+            await notifyManagement(`New Planned Leave Request from ${user?.name}`, `<p>New request from ${user?.name} for ${startDate} to ${endDate}. Reason: ${reason}</p>`);
 
             const managers = await prisma.user.findMany({ where: { role: 'management' } });
-
             for (const manager of managers) {
+                // Ensure we don't notify the employee themselves (if they were a manager, edge case)
                 if (manager.id !== userId) {
                     await prisma.notification.create({
                         data: {
                             userId: manager.id,
                             type: 'info',
-                            message: `New planned leave request from ${user?.name || userId}`,
+                            message: `New leave request from ${user?.name || userId}`,
                             read: false
                         }
                     });
                 }
             }
         } else {
-            // Sick Leave
+            // Sick Leave (Auto Approved) -> Notify Management
             const user = await prisma.user.findUnique({ where: { id: userId } });
-            await notifyManagement(`Sick Leave Report: ${user?.name}`, `<p>${user?.name} has reported sick for ${startDate}. Auto-approved.</p>`);
+            await notifyManagement(`Sick Leave User: ${user?.name}`, `<p>${user?.name} is on Sick Leave on ${startDate}. Auto-approved.</p>`);
 
             const managers = await prisma.user.findMany({ where: { role: 'management' } });
             for (const manager of managers) {
@@ -132,12 +161,14 @@ export async function POST(request: Request) {
                         data: {
                             userId: manager.id,
                             type: 'warning',
-                            message: `${user?.name || userId} is on Sick Leave (${startDate})`,
+                            message: `${user?.name || userId} is on Sick Leave on ${startDate}`,
                             read: false
                         }
                     });
                 }
             }
+            // NO notification created for the employee themselves here, 
+            // frontend handles "Sick Leave Recorded" toast locally as per requirement.
         }
 
         return NextResponse.json(newLeave);

@@ -18,17 +18,32 @@ export async function PUT(
             return NextResponse.json({ error: 'Leave not found' }, { status: 404 });
         }
 
-        const start = new Date(startDate);
+        // Prevent editing past leaves
         const now = new Date();
         now.setHours(0, 0, 0, 0);
+        const existingStart = new Date(existingLeave.startDate);
+        existingStart.setHours(0, 0, 0, 0);
+
+        if (existingStart < now) {
+            return NextResponse.json({ error: 'Cannot edit past leaves' }, { status: 403 });
+        }
+
+        const start = new Date(startDate);
         start.setHours(0, 0, 0, 0);
 
+        // Prevent moving leave to past
+        if (start < now) {
+            return NextResponse.json({ error: 'Cannot move leave to past dates' }, { status: 403 });
+        }
+
         const diffDays = Math.ceil((start.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-        const isSickLeave = diffDays >= 0 && diffDays <= 1;
+
+        // Sick Logic: Reason + Date
+        const isReasonSick = reason.toLowerCase().startsWith('sick');
+        const isSickLeave = isReasonSick && (diffDays >= 0 && diffDays <= 1);
 
         const type: 'sick' | 'planned' = isSickLeave ? 'sick' : 'planned';
-        // Reset status to pending if planned, approved if sick
-        const status = type === 'planned' ? 'pending' : 'approved';
+        const status = isSickLeave ? 'approved' : 'pending';
 
         const updatedLeave = await prisma.leave.update({
             where: { id },
@@ -44,7 +59,7 @@ export async function PUT(
         // Notifications
         if (status === 'pending') {
             const user = await prisma.user.findUnique({ where: { id: existingLeave.userId } });
-            await notifyManagement(`Leave Updated (Planned): ${user?.name}`, `<p>Updated leave request.</p>`);
+            await notifyManagement(`Leave Updated (Planned): ${user?.name}`, `<p>Updated leave request to ${startDate}. Reason: ${reason}</p>`);
 
             const managers = await prisma.user.findMany({ where: { role: 'management' } });
             for (const manager of managers) {
@@ -54,6 +69,24 @@ export async function PUT(
                             userId: manager.id,
                             type: 'info',
                             message: `Leave updated by ${user?.name || existingLeave.userId}`,
+                            read: false
+                        }
+                    });
+                }
+            }
+        } else {
+            // Sick Leave Updated (Auto Approved)
+            const user = await prisma.user.findUnique({ where: { id: existingLeave.userId } });
+            await notifyManagement(`Sick Leave Update: ${user?.name}`, `<p>${user?.name} updated sick leave to ${startDate}. Auto-approved.</p>`);
+
+            const managers = await prisma.user.findMany({ where: { role: 'management' } });
+            for (const manager of managers) {
+                if (manager.id !== existingLeave.userId) {
+                    await prisma.notification.create({
+                        data: {
+                            userId: manager.id,
+                            type: 'warning',
+                            message: `${user?.name || existingLeave.userId} updated Sick Leave (${startDate})`,
                             read: false
                         }
                     });

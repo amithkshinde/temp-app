@@ -1,7 +1,9 @@
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { differenceInCalendarDays, startOfToday, parseISO, isWithinInterval, format } from 'date-fns';
+import { Select } from '@/components/ui/select';
+import { PublicHoliday } from '@/lib/types';
 
 interface LeaveModalProps {
     isOpen: boolean;
@@ -12,29 +14,71 @@ interface LeaveModalProps {
     initialEndDate?: string;
     existingLeaveId?: string;
     isDemo?: boolean;
+    holidays?: PublicHoliday[];
 }
+
+const REASONS = [
+    { value: 'Sick', label: 'Sick Leave', placeholder: 'Briefly describe (e.g. Fever, Migraine)' },
+    { value: 'Personal', label: 'Personal Leave', placeholder: 'e.g. Renewing passport, Bank appointment' },
+    { value: 'Emergency', label: 'Emergency', placeholder: 'e.g. Family emergency, Urgent repairs' },
+    { value: 'Other', label: 'Other', placeholder: 'e.g. Friend’s wedding, Family event' },
+];
 
 export function LeaveModal({
     isOpen, onClose, onSubmit, onRemove,
     initialStartDate = '', initialEndDate = '',
-    existingLeaveId, isDemo
+    existingLeaveId, isDemo, holidays = []
 }: LeaveModalProps) {
+    // Mode State
+    const [isRangeMode, setIsRangeMode] = useState(false);
+
+    // Form State
     const [startDate, setStartDate] = useState(initialStartDate);
-    const [endDate, setEndDate] = useState(initialEndDate);
-    const [reason, setReason] = useState('');
+    const [endDate, setEndDate] = useState(initialEndDate || initialStartDate);
+    const [reasonType, setReasonType] = useState('Personal');
+    const [reasonDetails, setReasonDetails] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
-    const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
-    if (isOpen !== prevIsOpen) {
-        setPrevIsOpen(isOpen);
+    // Initialize state when modal opens
+    useEffect(() => {
         if (isOpen) {
             setStartDate(initialStartDate);
+            // Detect range mode if editing existing leave with diff dates
+            const isRange = !!(initialEndDate && initialEndDate !== initialStartDate);
+            setIsRangeMode(isRange);
             setEndDate(initialEndDate || initialStartDate);
-            setReason('');
+            setReasonType('Personal');
+            setReasonDetails('');
         }
-    }
+    }, [isOpen, initialStartDate, initialEndDate]);
+
+    // Ensure End Date syncs with Start Date in Single Mode
+    useEffect(() => {
+        if (!isRangeMode) {
+            setEndDate(startDate);
+        }
+    }, [startDate, isRangeMode]);
 
     if (!isOpen) return null;
+
+    // --- Validation Logic ---
+    const today = startOfToday();
+    const startObj = startDate ? parseISO(startDate) : null;
+    const endObj = endDate ? parseISO(endDate) : null;
+
+    // Sick Leave Validation: Only allowed for Today or Tomorrow
+    // Logic: If user selects Sick, check dates. Or restrict Sick option based on dates.
+    // Spec: "Ensure sick leave appears only for today or today+1"
+    const canSelectSick = startObj && differenceInCalendarDays(startObj, today) <= 1;
+
+    // Filter Reasons
+    const availableReasons = REASONS.filter(r => r.value !== 'Sick' || canSelectSick);
+
+    // Holiday Overlap Check
+    const overlappingHoliday = (startObj && endObj) ? holidays.find(h => {
+        const hDate = parseISO(h.date);
+        return isWithinInterval(hDate, { start: startObj, end: endObj });
+    }) : null;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -44,7 +88,18 @@ export function LeaveModal({
             setIsLoading(false);
             return;
         }
-        await onSubmit({ startDate, endDate, reason });
+
+        // Final payload construction
+        const finalDetails = reasonType === 'Other'
+            ? reasonDetails
+            : `${reasonType}: ${reasonDetails} `;
+
+        await onSubmit({
+            startDate,
+            endDate: isRangeMode ? endDate : startDate,
+            reason: finalDetails
+        });
+
         setIsLoading(false);
         onClose();
     };
@@ -62,161 +117,160 @@ export function LeaveModal({
     };
 
     const isExisting = !!existingLeaveId;
-
-    // Logic: Auto-detect Type
-    const getLeaveDetails = () => {
-        if (!startDate) return { type: 'Unknown', status: 'Unknown', className: '', isSick: false };
-        const start = new Date(startDate);
-        const now = new Date();
-        now.setHours(0, 0, 0, 0);
-        const startMidnight = new Date(start);
-        startMidnight.setHours(0, 0, 0, 0);
-
-        const diffTime = startMidnight.getTime() - now.getTime();
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-        // 0 = Today, 1 = Tomorrow
-        const isSick = diffDays >= 0 && diffDays <= 1;
-
-        return {
-            type: isSick ? 'Sick Leave' : 'Planned Leave',
-            status: isSick ? 'Auto Approved' : 'Pending Approval',
-            className: isSick
-                ? 'text-gray-900 border border-gray-300 bg-gray-50'
-                : 'text-gray-900 border border-gray-300 bg-white',
-            isSick
-        };
-    };
-
-    const details = getLeaveDetails();
+    const currentReasonConfig = REASONS.find(r => r.value === reasonType) || REASONS[1];
 
     return (
-        <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/50 backdrop-blur-sm p-0 md:p-4 animate-in fade-in duration-200">
-            {/* Modal Container */}
-            <div className="bg-white rounded-t-[var(--radius-xl)] md:rounded-[var(--radius-xl)] shadow-xl w-full md:max-w-md overflow-hidden flex flex-col max-h-[85vh] md:max-h-[90vh] animate-in slide-in-from-bottom-10 duration-300">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+            <div className="bg-white rounded-[var(--radius-xl)] shadow-xl w-full max-w-md overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
 
-                <div className="p-6 overflow-y-auto">
-                    <div className="flex justify-between items-start mb-6">
-                        <div>
-                            <h2 className="text-xl font-bold text-gray-900">
-                                {isExisting ? 'Manage Leave' : (details.isSick ? 'Mark Sick Leave' : 'Request Leave')}
-                            </h2>
-                            {details.isSick && !isExisting && (
-                                <p className="text-sm text-gray-500 mt-1">
-                                    Sick leave for today/tomorrow is auto-approved.
-                                </p>
-                            )}
+                {/* Header */}
+                <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                    <div>
+                        <h2 className="text-xl font-bold text-gray-900">
+                            {isExisting ? 'Manage Leave' : 'New Request'}
+                        </h2>
+                        <p className="text-sm text-gray-500">Select dates and reason</p>
+                    </div>
+                    {isExisting && (
+                        <div className="px-2 py-1 rounded bg-amber-100 text-amber-800 text-[10px] font-bold uppercase tracking-wide">
+                            Editing
                         </div>
-                        {startDate && (
-                            <div className={`px-2.5 py-1 rounded-lg text-[10px] uppercase font-bold tracking-wide ${details.className}`}>
-                                {isExisting ? 'Editing' : details.status}
+                    )}
+                </div>
+
+                <div className="p-6 overflow-y-auto max-h-[70vh]">
+                    <form onSubmit={handleSubmit} className="space-y-6">
+
+                        {/* Mode Toggle */}
+                        {!isExisting && (
+                            <div className="flex bg-slate-100 p-1 rounded-lg">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsRangeMode(false)}
+                                    className={`flex - 1 text - sm font - medium py - 1.5 rounded - md transition - all ${!isRangeMode ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'} `}
+                                >
+                                    Single Day
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setIsRangeMode(true)}
+                                    className={`flex - 1 text - sm font - medium py - 1.5 rounded - md transition - all ${isRangeMode ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'} `}
+                                >
+                                    Date Range
+                                </button>
                             </div>
                         )}
-                    </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-6">
+                        {/* Dates */}
                         <div className="grid grid-cols-2 gap-4">
-                            <Input
-                                label="Start Date"
-                                type="date"
-                                value={startDate}
-                                onChange={(e) => setStartDate(e.target.value)}
-                                required
-                                disabled={isLoading}
-                                className="font-medium"
-                            />
-                            <Input
-                                label="End Date"
-                                type="date"
-                                value={endDate}
-                                onChange={(e) => setEndDate(e.target.value)}
-                                required
-                                disabled={isLoading}
-                                className="font-medium"
-                            />
+                            <div className={isRangeMode ? "" : "col-span-2"}>
+                                <label className="text-xs font-semibold text-gray-700 mb-1.5 block">Start Date</label>
+                                <Input
+                                    type="date"
+                                    value={startDate}
+                                    onChange={(e) => setStartDate(e.target.value)}
+                                    required
+                                    disabled={isLoading}
+                                    className="font-medium"
+                                />
+                            </div>
+                            {isRangeMode && (
+                                <div>
+                                    <label className="text-xs font-semibold text-gray-700 mb-1.5 block">End Date</label>
+                                    <Input
+                                        type="date"
+                                        value={endDate}
+                                        onChange={(e) => setEndDate(e.target.value)}
+                                        required
+                                        min={startDate}
+                                        disabled={isLoading}
+                                        className="font-medium"
+                                    />
+                                </div>
+                            )}
                         </div>
 
-                        {/* Quick Template */}
-                        {!isExisting && (
-                            <div className="space-y-3">
-                                <label className="text-sm font-semibold text-gray-900 block">
-                                    {details.isSick ? 'Quick Sick Reasons' : 'Quick Presets'}
+                        {/* Reason Selection */}
+                        <div className="space-y-4">
+                            <div>
+                                <label className="text-xs font-semibold text-gray-700 mb-1.5 block">Choose a Reason</label>
+                                <Select
+                                    value={reasonType}
+                                    onChange={(e) => setReasonType(e.target.value)}
+                                    options={availableReasons}
+                                />
+                            </div>
+
+                            <div>
+                                <label className="text-xs font-semibold text-gray-700 mb-1.5 block">
+                                    Details {reasonType !== 'Other' && '(Optional)'}
                                 </label>
-                                <div className="grid grid-cols-2 gap-2">
-                                    {(details.isSick
-                                        ? ['Sick Leave']
-                                        : ['Planned Leave']
-                                    ).map(opt => (
-                                        <button
-                                            key={opt}
-                                            type="button"
-                                            onClick={() => setReason(opt)}
-                                            className={`text-xs p-2 rounded-lg border transition-all font-medium ${reason === opt ? 'bg-[#f0216a] text-white border-[#f0216a]' : 'bg-white border-slate-200 hover:border-slate-400 text-slate-700'}`}
-                                        >
-                                            {opt}
-                                        </button>
-                                    ))}
+                                <textarea
+                                    className="flex w-full rounded-xl border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--color-brand-pink)] disabled:cursor-not-allowed disabled:opacity-50 resize-none border-slate-200"
+                                    rows={3}
+                                    value={reasonDetails}
+                                    onChange={(e) => setReasonDetails(e.target.value)}
+                                    placeholder={currentReasonConfig.placeholder}
+                                    required={reasonType === 'Other'}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Warnings */}
+                        {overlappingHoliday && (
+                            <div className="bg-amber-50 text-amber-800 text-xs p-3 rounded-lg flex items-start gap-2">
+                                <span>📅</span>
+                                <div>
+                                    <span className="font-bold block mb-0.5">Holiday Overlap</span>
+                                    Your selection overlaps with {overlappingHoliday.name} ({format(parseISO(overlappingHoliday.date), 'MMM d')}).
                                 </div>
                             </div>
                         )}
 
-                        <div>
-                            <label className="text-sm font-semibold text-gray-900 block mb-2">
-                                {details.isSick ? 'Reason (Optional)' : 'Reason for Leave'}
-                            </label>
-                            <textarea
-                                className="w-full rounded-xl border border-slate-200 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#f0216a]/20 focus:border-[#f0216a] transition-all resize-none text-[#1A1A1A]"
-                                rows={3}
-                                value={reason}
-                                onChange={(e) => setReason(e.target.value)}
-                                placeholder={details.isSick ? "Not feeling well..." : "Please describe your leave..."}
-                                required
-                            />
-                        </div>
-
-                        {isExisting && (
-                            <div className="p-3 bg-gray-50 border border-gray-100 text-gray-600 rounded-lg text-xs flex items-center gap-2">
+                        {reasonType === 'Sick' && (
+                            <div className="bg-blue-50 text-blue-800 text-xs p-3 rounded-lg flex items-start gap-2">
                                 <span>ℹ️</span>
-                                Updating a leave will reset its status to Pending.
+                                <div>
+                                    <span className="font-bold block mb-0.5">Auto-Approval</span>
+                                    Sick leave for today/tomorrow is automatically approved.
+                                </div>
                             </div>
                         )}
 
-                        <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
-                            {isExisting ? (
-                                <>
-                                    <Button
-                                        type="button"
-                                        variant="ghost"
-                                        className="text-red-600 hover:text-red-700 hover:bg-red-50 mr-auto"
-                                        onClick={async () => {
-                                            if (!confirm('Are you sure you want to cancel this leave?')) return;
-                                            await handleRemove();
-                                        }}
-                                        disabled={isLoading}
-                                    >
-                                        Cancel Leave
-                                    </Button>
-                                    <Button type="button" variant="ghost" onClick={onClose} disabled={isLoading}>
-                                        Close
-                                    </Button>
-                                    <Button type="submit" isLoading={isLoading} className="bg-[#f0216a] hover:bg-[#d61b5c] text-white">
-                                        Update Leave
-                                    </Button>
-                                </>
-                            ) : (
-                                <>
-                                    <Button type="button" variant="ghost" onClick={onClose} disabled={isLoading}>
-                                        Cancel
-                                    </Button>
-                                    <Button
-                                        type="submit"
-                                        isLoading={isLoading}
-                                        className="bg-[#f0216a] hover:bg-[#d61b5c] text-white border-none"
-                                    >
-                                        {details.isSick ? 'Confirm Sick Leave' : 'Submit Request'}
-                                    </Button>
-                                </>
+                        {isExisting && (
+                            <div className="bg-amber-50 text-amber-800 text-xs p-3 rounded-lg flex items-start gap-2">
+                                <span>⚠️</span>
+                                Note: Editing a leave request will reset its status to 'Pending'.
+                            </div>
+                        )}
+
+                        {/* Actions */}
+                        <div className="flex justify-end gap-3 pt-2">
+                            {isExisting && (
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    className="text-red-600 hover:text-red-700 hover:bg-red-50 mr-auto"
+                                    onClick={async () => {
+                                        if (!confirm('Are you sure you want to cancel this leave?')) return;
+                                        await handleRemove();
+                                    }}
+                                    disabled={isLoading}
+                                >
+                                    Cancel Request
+                                </Button>
                             )}
+
+                            <Button type="button" variant="ghost" onClick={onClose} disabled={isLoading}>
+                                Close
+                            </Button>
+                            <Button
+                                type="submit"
+                                isLoading={isLoading}
+                                className="bg-[#f0216a] hover:bg-[#d61b5c] text-white border-none min-w-[100px]"
+                            >
+                                {isExisting ? 'Update' : 'Confirm'}
+                            </Button>
                         </div>
                     </form>
                 </div>
@@ -224,4 +278,3 @@ export function LeaveModal({
         </div>
     );
 }
-
