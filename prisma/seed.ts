@@ -68,47 +68,117 @@ const MOCK_USERS = [
         password: 'password123',
         department: 'Design',
         employeeId: 'E-004',
+    },
+    {
+        id: 'emp-005',
+        name: 'Amith Employee',
+        email: 'amith@twistopen.in',
+        role: 'employee',
+        password: 'password123',
+        department: 'Product',
+        employeeId: 'E-005'
     }
 ];
 
 async function main() {
     console.log(`Start seeding ...`)
+
+    // Seed Users
     for (const u of MOCK_USERS) {
-        const user = await prisma.user.upsert({
+        await prisma.user.upsert({
             where: { email: u.email },
             update: {},
-            create: {
-                id: u.id,
-                email: u.email,
-                name: u.name,
-                password: u.password,
-                role: u.role,
-                department: u.department,
-                employeeId: u.employeeId,
-            },
+            create: u,
         })
-        console.log(`Created user with id: ${user.id}`)
+        console.log(`Created user with id: ${u.id}`)
     }
 
-    // Seed Leaves for Alice (emp-001) to test Calendar States
-    const ALICE_LEAVES = [
-        { id: 'l-seed-001', startDate: '2025-12-08', endDate: '2025-12-08', type: 'sick', status: 'approved', reason: 'Sick: Migraine', userId: 'emp-001' },
-        { id: 'l-seed-002', startDate: '2025-12-15', endDate: '2025-12-17', type: 'planned', status: 'pending', reason: 'Personal: Vacation', userId: 'emp-001' },
-        { id: 'l-seed-003', startDate: '2025-12-22', endDate: '2025-12-22', type: 'planned', status: 'rejected', reason: 'Other: Urgent work', userId: 'emp-001' }
-    ];
+    // --- Leaves for Alice (Existing) ---
+    await prisma.leave.create({
+        data: {
+            userId: 'emp-001',
+            startDate: '2025-12-08',
+            endDate: '2025-12-08',
+            reason: 'Sick Leave',
+            type: 'sick',
+            status: 'approved'
+        }
+    });
 
-    for (const l of ALICE_LEAVES) {
-        await prisma.leave.upsert({
-            where: { id: l.id },
-            update: {
-                status: l.status, // Ensure status is updated if re-run
-                startDate: l.startDate
-            },
-            create: l
-        });
-        console.log(`Created leave ${l.status} for Alice`);
-    }
-    console.log(`Seeding finished.`)
+    await prisma.leave.create({
+        data: {
+            userId: 'emp-001',
+            startDate: '2025-12-15',
+            endDate: '2025-12-17',
+            reason: 'Planned Vacation',
+            type: 'planned',
+            status: 'pending'
+        }
+    });
+
+    await prisma.leave.create({
+        data: {
+            userId: 'emp-001',
+            startDate: '2025-12-22',
+            endDate: '2025-12-22',
+            reason: 'Urgent Work',
+            type: 'planned',
+            status: 'rejected'
+        }
+    });
+    console.log("Seeded Alice's leaves");
+
+    // --- Leaves for Amith (New Requirement) ---
+    const amithId = 'emp-005';
+
+    // 1. Dec 5, 2025: Approved (Completed)
+    await prisma.leave.create({
+        data: {
+            userId: amithId,
+            startDate: '2025-12-05',
+            endDate: '2025-12-05',
+            reason: 'Sick Leave (Completed)',
+            type: 'sick',
+            status: 'approved'
+        }
+    });
+
+    // 2. Dec 10, 2025: Rejected
+    await prisma.leave.create({
+        data: {
+            userId: amithId,
+            startDate: '2025-12-10',
+            endDate: '2025-12-10',
+            reason: 'Personal Leave',
+            type: 'planned',
+            status: 'rejected'
+        }
+    });
+
+    // 3. Dec 22, 2025: Pending
+    await prisma.leave.create({
+        data: {
+            userId: amithId,
+            startDate: '2025-12-22',
+            endDate: '2025-12-22',
+            reason: 'Personal Leave',
+            type: 'planned',
+            status: 'pending'
+        }
+    });
+
+    // 4. Dec 23, 2025: Approved (Upcoming)
+    await prisma.leave.create({
+        data: {
+            userId: amithId,
+            startDate: '2025-12-23',
+            endDate: '2025-12-23',
+            reason: 'Planned Leave',
+            type: 'planned',
+            status: 'approved'
+        }
+    });
+    console.log("Seeded Amith's leaves");
 
     // Seed Holidays
     for (const h of PUBLIC_HOLIDAYS_SEED) {
@@ -119,6 +189,7 @@ async function main() {
         });
     }
     console.log(`Seeded ${PUBLIC_HOLIDAYS_SEED.length} holidays.`);
+    console.log(`Seeding finished.`)
 }
 
 main()
