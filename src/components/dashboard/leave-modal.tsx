@@ -47,9 +47,23 @@ export function LeaveModal({
     const [isLoading, setIsLoading] = useState(false);
 
     // Sync EndDate when StartDate changes in Single Mode
-    // We use an explicit handler for StartDate change instead of effect to avoid cascade
+    // Also update Reason default based on date distance
     const handleStartDateChange = (val: string) => {
         setStartDate(val);
+
+        // Smart Default Logic
+        if (val) {
+            const s = parseISO(val);
+            const today = startOfToday();
+            const diff = differenceInCalendarDays(s, today);
+            // "For today and today + 1, set the default reason = Sick Leave."
+            if (diff >= 0 && diff <= 1) {
+                setReasonType('Sick');
+            } else {
+                setReasonType('Personal');
+            }
+        }
+
         if (!isRangeMode) {
             setEndDate(val);
         }
@@ -142,7 +156,11 @@ export function LeaveModal({
                             <div className="flex bg-slate-100 p-1 rounded-[10px] shadow-inner select-none">
                                 <button
                                     type="button"
-                                    onClick={() => setIsRangeMode(false)}
+                                    onClick={() => {
+                                        setIsRangeMode(false);
+                                        // Reset end date to start date when switching to single
+                                        if (startDate) setEndDate(startDate);
+                                    }}
                                     className={`flex-1 text-sm font-semibold py-2 rounded-lg transition-all duration-200 ${!isRangeMode
                                         ? 'bg-white text-gray-900 shadow-[0_1px_3px_0_rgba(0,0,0,0.1)] ring-1 ring-black/5'
                                         : 'text-gray-500 hover:text-gray-900'}`}
@@ -163,36 +181,44 @@ export function LeaveModal({
 
                         {/* Dates */}
                         <div className="grid grid-cols-2 gap-4">
-                            {/* Start Date: Always occupies 1 column. In Single mode, the second col is empty. */}
-                            <div>
-                                <label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 flex items-center gap-1.5">
-                                    <Calendar className="w-3.5 h-3.5" />
-                                    From Date
+                            {/* Start Date */}
+                            <div className="relative">
+                                {/* Label based on mode */}
+                                <label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block">
+                                    {isRangeMode ? 'From' : 'Date'}
                                 </label>
-                                <Input
-                                    type="date"
-                                    value={startDate}
-                                    onChange={(e) => handleStartDateChange(e.target.value)}
-                                    required
-                                    disabled={isLoading}
-                                    className="font-medium text-gray-900"
-                                />
-                            </div>
-                            {isRangeMode && (
-                                <div>
-                                    <label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 flex items-center gap-1.5">
-                                        <Calendar className="w-3.5 h-3.5" />
-                                        To Date
-                                    </label>
+                                <div className="relative">
                                     <Input
                                         type="date"
-                                        value={endDate}
-                                        onChange={(e) => setEndDate(e.target.value)}
+                                        value={startDate}
+                                        onChange={(e) => handleStartDateChange(e.target.value)}
                                         required
-                                        min={startDate}
                                         disabled={isLoading}
-                                        className="font-medium text-gray-900"
+                                        className="font-medium text-gray-900 pr-9" // Padding for icon
                                     />
+                                    {/* Calendar Icon Absolute Right */}
+                                    <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+                                </div>
+                            </div>
+
+                            {/* End Date - Only in Range Mode */}
+                            {isRangeMode && (
+                                <div className="relative">
+                                    <label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block">
+                                        To
+                                    </label>
+                                    <div className="relative">
+                                        <Input
+                                            type="date"
+                                            value={endDate}
+                                            onChange={(e) => setEndDate(e.target.value)}
+                                            required
+                                            min={startDate}
+                                            disabled={isLoading}
+                                            className="font-medium text-gray-900 pr-9"
+                                        />
+                                        <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+                                    </div>
                                 </div>
                             )}
                         </div>

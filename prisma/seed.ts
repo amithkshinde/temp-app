@@ -3,6 +3,26 @@ import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
+// 2026 Holidays + Dec 2025
+const PUBLIC_HOLIDAYS_SEED = [
+    { id: 'h-1', date: '2026-01-01', name: "New Year's Day", type: 'public' },
+    { id: 'h-2', date: '2026-01-14', name: "Pongal / Makar Sankranti", type: 'public' },
+    { id: 'h-3', date: '2026-03-04', name: "Holi", type: 'public' },
+    { id: 'h-4', date: '2026-03-20', name: "Eid ul-Fitr", type: 'public' },
+    { id: 'h-5', date: '2026-04-03', name: "Good Friday", type: 'public' },
+    { id: 'h-6', date: '2026-04-14', name: "Vishu", type: 'public' },
+    { id: 'h-7', date: '2026-05-01', name: "Labour Day", type: 'public' },
+    { id: 'h-8', date: '2026-08-15', name: "Independence Day", type: 'public' },
+    { id: 'h-9', date: '2026-08-25', name: "Eid-e-Milad", type: 'public' },
+    { id: 'h-10', date: '2026-08-26', name: "Onam", type: 'public' },
+    { id: 'h-11', date: '2026-09-14', name: "Ganesh Chaturthi", type: 'public' },
+    { id: 'h-12', date: '2026-10-02', name: "Gandhi Jayanti", type: 'public' },
+    { id: 'h-13', date: '2026-10-20', name: "Dussehra / Vijayadashami", type: 'public' },
+    { id: 'h-14', date: '2026-11-08', name: "Diwali / Deepavali", type: 'public' },
+    { id: 'h-15', date: '2026-12-25', name: "Christmas", type: 'public' },
+    { id: 'h-16', date: '2025-12-25', name: "Christmas", type: 'public' },
+];
+
 const MOCK_USERS = [
     {
         id: 'emp-001',
@@ -87,6 +107,16 @@ async function main() {
         console.log(`Created leave ${l.status} for Alice`);
     }
     console.log(`Seeding finished.`)
+
+    // Seed Holidays
+    for (const h of PUBLIC_HOLIDAYS_SEED) {
+        await prisma.holiday.upsert({
+            where: { id: h.id },
+            update: { date: h.date, name: h.name },
+            create: h
+        });
+    }
+    console.log(`Seeded ${PUBLIC_HOLIDAYS_SEED.length} holidays.`);
 }
 
 main()
