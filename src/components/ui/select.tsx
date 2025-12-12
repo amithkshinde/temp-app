@@ -17,7 +17,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
                 )}
                 <div className="relative">
                     <select
-                        className={`flex h-11 w-full rounded-xl border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--color-brand-pink)] disabled:cursor-not-allowed disabled:opacity-50 appearance-none ${error ? 'border-red-500' : 'border-slate-200'
+                        className={`flex h-11 w-full rounded-xl border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--color-brand-pink)] disabled:cursor-not-allowed disabled:opacity-50 appearance-none text-gray-900 placeholder:text-gray-500 ${error ? 'border-red-500' : 'border-slate-200'
                             } ${className}`}
                         ref={ref}
                         {...props}

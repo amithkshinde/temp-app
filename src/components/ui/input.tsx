@@ -24,12 +24,50 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
                 )}
                 <div className="relative">
                     <input
-                        className={`flex h-11 w-full rounded-xl border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--color-brand-pink)] disabled:cursor-not-allowed disabled:opacity-50 text-[#1A1A1A] opacity-100 ${error ? 'border-red-500' : 'border-slate-200'
-                            } ${className} ${isPassword ? 'pr-10' : ''}`}
+                        className={`flex h-11 w-full rounded-xl border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--color-brand-pink)] disabled:cursor-not-allowed disabled:opacity-50 text-gray-900 opacity-100 ${error ? 'border-red-500' : 'border-slate-200'
+                            } ${className} ${isPassword ? 'pr-10' : ''} [--date-icon-position:right]`}
                         ref={ref}
                         type={isPassword ? (showPassword ? 'text' : 'password') : type}
+                        style={{ colorScheme: 'light' }}
                         {...props}
                     />
+                    <style jsx>{`
+                        input[type="date"]::-webkit-calendar-picker-indicator {
+                            background: transparent;
+                            bottom: 0;
+                            color: transparent;
+                            cursor: pointer;
+                            height: auto;
+                            left: 0;
+                            position: absolute;
+                            right: 0;
+                            top: 0;
+                            width: auto;
+                            z-index: 10; 
+                            /* Using a custom icon or leveraging lucide icon overlay would be cleaner, but standard requested "Move calendar icon to far right" */
+                            /* Native solution: */
+                        }
+                        /* Re-style: We want the icon visible on right. */
+                    `}</style>
+                    {/* Wait, the request is "move user-agent indicator". 
+                        Resetting: The easiest way to consistently style date inputs in React/Tailwind without a custom component is using flex row-reverse is unreliable.
+                        Better: Absolute positioning the indicator.
+                     */}
+                    <style jsx global>{`
+                        input[type="date"] {
+                            position: relative;
+                        }
+                        input[type="date"]::-webkit-calendar-picker-indicator {
+                            position: absolute;
+                            right: 12px;
+                            opacity: 0.6;
+                            cursor: pointer;
+                        }
+                        input[type="date"]::-webkit-calendar-picker-indicator:hover {
+                            opacity: 1;
+                        }
+                    `}</style>
+
                     {isPassword && (
                         <button
                             type="button"
