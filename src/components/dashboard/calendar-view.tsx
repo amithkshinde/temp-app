@@ -93,46 +93,54 @@ export function CalendarView({
                     let borderClass = "border-slate-200";
                     let textClass = "text-gray-900";
 
-                    if (!isCurrentMonth) {
-                        bgClass = "bg-[#FAFAFA]";
-                        borderClass = "border-slate-100";
-                        textClass = "text-gray-300";
-                    }
-                    else if (isPast) {
-                        bgClass = "bg-slate-50";
-                        textClass = "text-gray-400";
-                    }
-                    else if (holiday) {
-                        bgClass = "bg-amber-50/50";
-                        borderClass = "border-amber-100 border-dashed";
-                    }
-                    else if (dayLeaves.length > 0) {
+                    // Prioritize Leaves over "Past" or "Weekend"
+                    if (dayLeaves.length > 0) {
                         const hasApproved = dayLeaves.some(l => l.status === 'approved');
                         const hasPending = dayLeaves.some(l => l.status === 'pending');
                         const hasRejected = dayLeaves.some(l => l.status === 'rejected');
 
                         if (hasApproved) {
-                            bgClass = "bg-green-50";
-                            borderClass = "border-green-200";
+                            bgClass = "bg-green-100"; // Increased intensity
+                            borderClass = "border-green-300";
+                            textClass = "text-green-900 font-medium";
                         } else if (hasPending) {
                             bgClass = "bg-yellow-50";
-                            borderClass = "border-yellow-200 border-dashed";
+                            borderClass = "border-yellow-400 border-dashed"; // Stronger border
+                            textClass = "text-yellow-900 font-medium";
                         } else if (hasRejected) {
                             bgClass = "bg-red-50";
-                            borderClass = "border-red-200";
+                            borderClass = "border-red-300";
+                            textClass = "text-red-900 line-through decoration-red-400"; // Visual cue for rejected
                         }
-                    } else if (isWknd) {
+                    }
+                    else if (holiday) {
+                        // Holidays also high priority
+                        bgClass = "bg-amber-100";
+                        borderClass = "border-amber-300 border-dashed";
+                        textClass = "text-amber-900 font-bold";
+                    }
+                    else if (!isCurrentMonth) {
                         bgClass = "bg-[#FAFAFA]";
                         borderClass = "border-slate-100";
+                        textClass = "text-gray-300";
+                    }
+                    else if (isWknd) {
+                        bgClass = "bg-slate-50"; // Slightly darker than workdays
+                        borderClass = "border-slate-200";
+                        textClass = "text-gray-400";
+                    }
+                    else if (isPast) {
+                        // Past workdays without leaves
+                        bgClass = "bg-white";
                         textClass = "text-gray-400";
                     }
 
                     if (isToday(day)) {
-                        borderClass = "border-blue-600 ring-1 ring-blue-600";
-                        textClass = "text-blue-700 font-bold";
+                        borderClass = "border-blue-600 ring-2 ring-blue-100";
+                        textClass = cn(textClass, "font-bold text-blue-700");
                     }
 
-                    const isDisabled = isPast && !isToday(day); // Today should be clickable
+                    const isDisabled = isPast && !isToday(day) && dayLeaves.length === 0; // Allow clicking past leaves
 
                     const containerClasses = cn(
                         "min-h-[4rem] rounded-lg p-1.5 flex flex-col items-start justify-start text-xs transition-all border relative",
