@@ -59,8 +59,10 @@ export function LeaveModal({
             // "For today and today + 1, set the default reason = Sick Leave."
             if (diff >= 0 && diff <= 1) {
                 setReasonType('Sick');
+                setReasonDetails('Sick Leave');
             } else {
                 setReasonType('Personal');
+                if (reasonDetails === 'Sick Leave') setReasonDetails('');
             }
         }
 
@@ -229,28 +231,34 @@ export function LeaveModal({
                                 <label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block">Choose a Reason</label>
                                 <Select
                                     value={reasonType}
-                                    onChange={(e) => setReasonType(e.target.value)}
+                                    onChange={(e) => {
+                                        const val = e.target.value;
+                                        setReasonType(val);
+                                        if (val === 'Sick') {
+                                            setReasonDetails('Sick Leave');
+                                        } else if (reasonDetails === 'Sick Leave') {
+                                            setReasonDetails('');
+                                        }
+                                    }}
                                     options={availableReasons}
                                     className="font-medium text-gray-900"
                                 />
                             </div>
 
-                            {/* Details: Hide if Sick Leave */}
-                            {reasonType !== 'Sick' && (
-                                <div className="animate-in fade-in slide-in-from-top-2 duration-200">
-                                    <label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block">
-                                        Details {reasonType !== 'Other' && '(Optional)'}
-                                    </label>
-                                    <textarea
-                                        className="flex w-full rounded-xl border border-slate-200 bg-transparent px-3 py-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--color-brand-pink)] disabled:cursor-not-allowed disabled:opacity-50 resize-none text-gray-900 placeholder:text-gray-500"
-                                        rows={3}
-                                        value={reasonDetails}
-                                        onChange={(e) => setReasonDetails(e.target.value)}
-                                        placeholder={currentReasonConfig.placeholder}
-                                        required={reasonType === 'Other'}
-                                    />
-                                </div>
-                            )}
+                            {/* Details: Always visible now, auto-filled for Sick */}
+                            <div className="animate-in fade-in slide-in-from-top-2 duration-200">
+                                <label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block">
+                                    Details {reasonType !== 'Other' && '(Optional)'}
+                                </label>
+                                <textarea
+                                    className="flex w-full rounded-xl border border-slate-200 bg-transparent px-3 py-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--color-brand-pink)] disabled:cursor-not-allowed disabled:opacity-50 resize-none text-gray-900 placeholder:text-gray-500"
+                                    rows={3}
+                                    value={reasonDetails}
+                                    onChange={(e) => setReasonDetails(e.target.value)}
+                                    placeholder={currentReasonConfig.placeholder}
+                                    required={reasonType === 'Other'}
+                                />
+                            </div>
                         </div>
 
                         {/* Warnings */}
@@ -310,7 +318,7 @@ export function LeaveModal({
                         </div>
                     </form>
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }
