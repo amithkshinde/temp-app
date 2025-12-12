@@ -1,15 +1,14 @@
 import { LeaveBalance } from '@/lib/types';
-import { TrendingUp, Calendar, Users, Layout } from 'lucide-react';
+import { Users, Layout } from 'lucide-react';
 
 interface StatsStripProps {
     balance?: LeaveBalance | null;
     isLoading: boolean;
-    holidayUsage?: { count: number; limit: number };
     role?: 'employee' | 'management';
     onLeaveTodayCount?: number; // Pass this for management view
 }
 
-export function StatsStrip({ balance, isLoading, holidayUsage, role = 'employee', onLeaveTodayCount = 0 }: StatsStripProps) {
+export function StatsStrip({ balance, isLoading, role = 'employee', onLeaveTodayCount = 0 }: StatsStripProps) {
     if (isLoading) {
         return <div className="animate-pulse h-24 bg-slate-100 rounded-xl w-full"></div>;
     }

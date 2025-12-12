@@ -108,7 +108,6 @@ export async function POST(request: Request) {
         // Check if explicitly marked as Sick in reason AND within allowed window (Today/Tomorrow)
         // Note: Frontend formats reason as "Sick: ..." or just "Sick"
         const isReasonSick = reason.toLowerCase().startsWith('sick');
-        const isDateValidForSick = diffDays <= 1 && diffDays >= -1; // Allow today, tomorrow (and maybe yesterday if reporting late? Stick to requirement "today or today+1")
         // User Requirement: "today or today+1". 
         // Strict adherence: diffDays >= 0 && diffDays <= 1.
 

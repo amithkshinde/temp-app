@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { differenceInCalendarDays, startOfToday, parseISO, isWithinInterval, format } from 'date-fns';
@@ -30,34 +30,29 @@ export function LeaveModal({
     existingLeaveId, isDemo, holidays = []
 }: LeaveModalProps) {
     // Mode State
-    const [isRangeMode, setIsRangeMode] = useState(false);
+    // Detect range mode if editing existing leave with diff dates
+    const initialIsRange = !!(initialEndDate && initialEndDate !== initialStartDate);
+    const [isRangeMode, setIsRangeMode] = useState(initialIsRange);
 
     // Form State
     const [startDate, setStartDate] = useState(initialStartDate);
-    const [endDate, setEndDate] = useState(initialEndDate || initialStartDate);
+
+    // Auto-sync EndDate on init: if not range mode, EndDate = StartDate
+    const derivedInitialEndDate = initialIsRange ? (initialEndDate || initialStartDate) : initialStartDate;
+
+    const [endDate, setEndDate] = useState(derivedInitialEndDate);
     const [reasonType, setReasonType] = useState('Personal');
     const [reasonDetails, setReasonDetails] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
-    // Initialize state when modal opens
-    useEffect(() => {
-        if (isOpen) {
-            setStartDate(initialStartDate);
-            // Detect range mode if editing existing leave with diff dates
-            const isRange = !!(initialEndDate && initialEndDate !== initialStartDate);
-            setIsRangeMode(isRange);
-            setEndDate(initialEndDate || initialStartDate);
-            setReasonType('Personal');
-            setReasonDetails('');
-        }
-    }, [isOpen, initialStartDate, initialEndDate]);
-
-    // Ensure End Date syncs with Start Date in Single Mode
-    useEffect(() => {
+    // Sync EndDate when StartDate changes in Single Mode
+    // We use an explicit handler for StartDate change instead of effect to avoid cascade
+    const handleStartDateChange = (val: string) => {
+        setStartDate(val);
         if (!isRangeMode) {
-            setEndDate(startDate);
+            setEndDate(val);
         }
-    }, [startDate, isRangeMode]);
+    };
 
     if (!isOpen) return null;
 
@@ -168,7 +163,7 @@ export function LeaveModal({
                                 <Input
                                     type="date"
                                     value={startDate}
-                                    onChange={(e) => setStartDate(e.target.value)}
+                                    onChange={(e) => handleStartDateChange(e.target.value)}
                                     required
                                     disabled={isLoading}
                                     className="font-medium"
@@ -240,7 +235,7 @@ export function LeaveModal({
                         {isExisting && (
                             <div className="bg-amber-50 text-amber-800 text-xs p-3 rounded-lg flex items-start gap-2">
                                 <span>⚠️</span>
-                                Note: Editing a leave request will reset its status to 'Pending'.
+                                Note: Editing a leave request will reset its status to &apos;Pending&apos;.
                             </div>
                         )}
 

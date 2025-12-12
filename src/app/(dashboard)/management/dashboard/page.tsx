@@ -53,8 +53,8 @@ export default function ManagerDashboard() {
             if (balanceRes.ok) setBalance(await balanceRes.json());
             if (holidaysRes.ok) setHolidays(await holidaysRes.json());
 
-        } catch (_error) {
-            console.error("Failed to fetch data", _error);
+        } catch (error) {
+            console.error("Failed to fetch data", error);
         } finally {
             setIsLoading(false);
         }
@@ -77,7 +77,7 @@ export default function ManagerDashboard() {
             if (!res.ok) throw new Error('Failed to approve');
             addNotification('Leave updated successfully', 'success', user?.id || '');
             fetchAllData();
-        } catch (error) {
+        } catch {
             setLeaves(previousLeaves);
             addNotification('Action couldn’t be completed.', 'error', user?.id || '');
         }
@@ -91,7 +91,7 @@ export default function ManagerDashboard() {
             if (!res.ok) throw new Error('Failed to reject');
             addNotification('Leave updated successfully', 'success', user?.id || '');
             fetchAllData();
-        } catch (error) {
+        } catch {
             setLeaves(previousLeaves);
             addNotification('Action couldn’t be completed.', 'error', user?.id || '');
         }

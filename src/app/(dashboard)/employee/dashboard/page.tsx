@@ -2,19 +2,16 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 import { StatsStrip } from '@/components/dashboard/stats-strip';
 import { CalendarView } from '@/components/dashboard/calendar-view';
 import { LeaveModal } from '@/components/dashboard/leave-modal';
 import { Leave, LeaveBalance } from '@/lib/types';
+import { format } from 'date-fns';
 import { PublicHoliday } from '@/data/holiday-data';
-import { format, parseISO } from 'date-fns';
 import { useNotifications } from '@/context/NotificationContext';
 import { NotificationCenter } from '@/components/ui/notification-center';
 import { UpcomingLeavesPanel } from '@/components/dashboard/upcoming-leaves-panel';
 import { usePolling } from '@/hooks/use-polling';
-
 import { LeaveHistory } from '@/components/dashboard/leave-history';
 import { MobileFAB } from '@/components/dashboard/mobile-fab';
 import { HolidaySelectionModal } from '@/components/dashboard/holiday-selection-modal';
@@ -22,7 +19,7 @@ import { UserMenu } from '@/components/dashboard/user-menu';
 
 
 export default function EmployeeDashboard() {
-    const { user, logout } = useAuth();
+    const { user } = useAuth();
     const { addNotification } = useNotifications();
 
 
@@ -196,7 +193,6 @@ export default function EmployeeDashboard() {
                 <StatsStrip
                     balance={balance}
                     isLoading={isLoading}
-                    holidayUsage={{ count: selectedHolidayIds.length, limit: 10 }}
                     role="employee"
                 />
 
