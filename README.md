@@ -40,12 +40,25 @@ Double-click `run_win.cmd` in your folder.
 npm install
 ```
 
+### Database Setup (Required)
+Initialize the SQLite database and seed it with test data (Users, Leaves, Holidays):
+
+```bash
+# Generate Prisma Client
+npx prisma generate
+
+# Push schema to database (creates dev.db)
+npx prisma db push
+
+# Seed database with initial data
+npx tsx prisma/seed.ts
+```
+
 ### Environment Variables
-Create a `.env.local` file (optional, as defaults are mocked):
+Create a `.env` file if needed, but the default `DATABASE_URL` is configured for local SQLite.
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:3000
-JWT_SECRET=this-is-a-secret-key-for-demo-only
+DATABASE_URL="file:./dev.db"
 ```
 
 ### Running the App
@@ -63,29 +76,19 @@ npm run storybook
 # Open http://localhost:6006
 ```
 
-### Running Tests
-
-```bash
-# Unit & Integration Tests requires configuration
-# npm test 
-
-# Automated Smoke Test (E2E Simulation)
-node scripts/smoke-test.js
-```
-
 ## Project Structure
 
 - `src/app`: Next.js App Router pages and API routes.
 - `src/components`: Reusable UI components (Calendar, Stats, etc.).
 - `src/lib`: Utilities, types, and helper functions.
 - `src/context`: React Context providers (Auth, Notification).
-- `src/data`: In-memory mock data (resets on server restart).
+- `prisma`: Database schema and seed script.
 
 ## Demo Credentials
 
 | Role | Email | Password |
 |------|-------|----------|
-| **Employee** | `alice@company.com` | `password123` |
-| **Manager** | `david@company.com` | `password123` |
+| **Employee** | `alice@twistopen.in` | `password123` |
+| **Manager** | `bob@twistopen.in` | `password123` |
 
 *Or use the "Explore Demo" buttons on the login page.*
