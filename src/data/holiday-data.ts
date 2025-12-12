@@ -18,9 +18,10 @@ export const PUBLIC_HOLIDAYS_2026: PublicHoliday[] = [
     { id: 'h-13', date: '2026-10-20', name: "Dussehra / Vijayadashami", type: 'public' },
     { id: 'h-14', date: '2026-11-08', name: "Diwali / Deepavali", type: 'public' },
     { id: 'h-15', date: '2026-12-25', name: "Christmas", type: 'public' },
+    { id: 'h-16', date: '2025-12-25', name: "Christmas", type: 'public' },
 ];
 
-// In-memory store for demo purposes (initialized with 2026 data)
+// In-memory store for demo purposes (initialized with 2026 data + Dec 2025)
 export let MOCK_HOLIDAYS: PublicHoliday[] = [...PUBLIC_HOLIDAYS_2026];
 
 // Helper functions (Pseudo-backend logic)
@@ -44,7 +45,7 @@ export const updateHoliday = (id: string, updates: Partial<PublicHoliday>) => {
 };
 
 // Mock User Selections Store
-export let USER_HOLIDAY_SELECTIONS: Record<string, string[]> = {};
+export const USER_HOLIDAY_SELECTIONS: Record<string, string[]> = {};
 
 export const toggleUserSelection = (userId: string, holidayId: string) => {
     if (!USER_HOLIDAY_SELECTIONS[userId]) {

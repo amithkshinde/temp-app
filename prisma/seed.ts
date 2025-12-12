@@ -67,6 +67,25 @@ async function main() {
         })
         console.log(`Created user with id: ${user.id}`)
     }
+
+    // Seed Leaves for Alice (emp-001) to test Calendar States
+    const ALICE_LEAVES = [
+        { id: 'l-seed-001', startDate: '2025-12-08', endDate: '2025-12-08', type: 'sick', status: 'approved', reason: 'Sick: Migraine', userId: 'emp-001' },
+        { id: 'l-seed-002', startDate: '2025-12-15', endDate: '2025-12-17', type: 'planned', status: 'pending', reason: 'Personal: Vacation', userId: 'emp-001' },
+        { id: 'l-seed-003', startDate: '2025-12-22', endDate: '2025-12-22', type: 'planned', status: 'rejected', reason: 'Other: Urgent work', userId: 'emp-001' }
+    ];
+
+    for (const l of ALICE_LEAVES) {
+        await prisma.leave.upsert({
+            where: { id: l.id },
+            update: {
+                status: l.status, // Ensure status is updated if re-run
+                startDate: l.startDate
+            },
+            create: l
+        });
+        console.log(`Created leave ${l.status} for Alice`);
+    }
     console.log(`Seeding finished.`)
 }
 
