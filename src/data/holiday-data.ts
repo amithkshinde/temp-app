@@ -1,62 +1,59 @@
+import { PublicHoliday } from '@/lib/types';
 
-import { PublicHoliday } from "@/lib/types";
+export type { PublicHoliday };
 
-// Public Holidays 2025 (Hardcoded)
-export const PUBLIC_HOLIDAYS_2025: PublicHoliday[] = [
-    { id: 'h1', date: '2025-01-01', name: "New Year's Day", type: 'public' },
-    { id: 'h2', date: '2025-01-14', name: "Pongal", type: 'public' },
-    { id: 'h3', date: '2025-03-14', name: "Holi", type: 'public' },
-    { id: 'h4', date: '2025-03-31', name: "Eid ul-Fitr", type: 'public' },
-    { id: 'h5', date: '2025-04-14', name: "Vishu / Tamil New Year", type: 'public' },
-    { id: 'h6', date: '2025-04-18', name: "Good Friday", type: 'public' },
-    { id: 'h7', date: '2025-05-01', name: "Labour Day", type: 'public' },
-    { id: 'h8', date: '2025-08-15', name: "Independence Day", type: 'public' },
-    { id: 'h9', date: '2025-08-27', name: "Ganesh Chaturthi", type: 'public' },
-    { id: 'h10', date: '2025-09-04', name: "Onam", type: 'public' },
-    { id: 'h11', date: '2025-09-05', name: "Eid E Milad", type: 'public' },
-    { id: 'h12', date: '2025-10-02', name: "Gandhi Jayanti / Dussehra", type: 'public' },
-    { id: 'h13', date: '2025-10-20', name: "Diwali", type: 'public' },
-    { id: 'h14', date: '2025-12-25', name: "Christmas", type: 'public' },
+export const PUBLIC_HOLIDAYS_2026: PublicHoliday[] = [
+    { id: 'h-1', date: '2026-01-01', name: "New Year's Day", type: 'public' },
+    { id: 'h-2', date: '2026-01-14', name: "Pongal / Makar Sankranti", type: 'public' },
+    { id: 'h-3', date: '2026-03-04', name: "Holi", type: 'public' },
+    { id: 'h-4', date: '2026-03-20', name: "Eid ul-Fitr", type: 'public' },
+    { id: 'h-5', date: '2026-04-03', name: "Good Friday", type: 'public' },
+    { id: 'h-6', date: '2026-04-14', name: "Vishu", type: 'public' },
+    { id: 'h-7', date: '2026-05-01', name: "Labour Day", type: 'public' },
+    { id: 'h-8', date: '2026-08-15', name: "Independence Day", type: 'public' },
+    { id: 'h-9', date: '2026-08-25', name: "Eid-e-Milad", type: 'public' },
+    { id: 'h-10', date: '2026-08-26', name: "Onam", type: 'public' },
+    { id: 'h-11', date: '2026-09-14', name: "Ganesh Chaturthi", type: 'public' },
+    { id: 'h-12', date: '2026-10-02', name: "Gandhi Jayanti", type: 'public' },
+    { id: 'h-13', date: '2026-10-20', name: "Dussehra / Vijayadashami", type: 'public' },
+    { id: 'h-14', date: '2026-11-08', name: "Diwali / Deepavali", type: 'public' },
+    { id: 'h-15', date: '2026-12-25', name: "Christmas", type: 'public' },
 ];
 
-export type { PublicHoliday } from "@/lib/types";
+// In-memory store for demo purposes (initialized with 2026 data)
+export let MOCK_HOLIDAYS: PublicHoliday[] = [...PUBLIC_HOLIDAYS_2026];
 
-export function getPublicHolidays() {
-    return PUBLIC_HOLIDAYS_2025;
-}
+// Helper functions (Pseudo-backend logic)
+export const getPublicHolidays = async () => {
+    return MOCK_HOLIDAYS;
+};
 
-export const MOCK_HOLIDAYS = PUBLIC_HOLIDAYS_2025;
+export const addHoliday = (holiday: PublicHoliday) => {
+    MOCK_HOLIDAYS.push(holiday);
+};
 
-export function addHoliday(holiday: PublicHoliday) {
-    PUBLIC_HOLIDAYS_2025.push(holiday);
-}
+export const removeHoliday = (id: string) => {
+    MOCK_HOLIDAYS = MOCK_HOLIDAYS.filter(h => h.id !== id);
+};
 
-export function updateHoliday(id: string, updatedData: Partial<PublicHoliday>) {
-    const index = PUBLIC_HOLIDAYS_2025.findIndex(h => h.id === id);
+export const updateHoliday = (id: string, updates: Partial<PublicHoliday>) => {
+    const index = MOCK_HOLIDAYS.findIndex(h => h.id === id);
     if (index !== -1) {
-        PUBLIC_HOLIDAYS_2025[index] = { ...PUBLIC_HOLIDAYS_2025[index], ...updatedData };
+        MOCK_HOLIDAYS[index] = { ...MOCK_HOLIDAYS[index], ...updates };
     }
-}
+};
 
-export function removeHoliday(id: string) {
-    const index = PUBLIC_HOLIDAYS_2025.findIndex(h => h.id === id);
-    if (index !== -1) {
-        PUBLIC_HOLIDAYS_2025.splice(index, 1);
-    }
-}
+// Mock User Selections Store
+export let USER_HOLIDAY_SELECTIONS: Record<string, string[]> = {};
 
-// Mock User Selections: { userId: [holidayId1, holidayId2] }
-export const USER_HOLIDAY_SELECTIONS: Record<string, string[]> = {};
-
-export function toggleUserSelection(userId: string, holidayId: string) {
+export const toggleUserSelection = (userId: string, holidayId: string) => {
     if (!USER_HOLIDAY_SELECTIONS[userId]) {
         USER_HOLIDAY_SELECTIONS[userId] = [];
     }
-
-    const current = USER_HOLIDAY_SELECTIONS[userId];
-    if (current.includes(holidayId)) {
-        USER_HOLIDAY_SELECTIONS[userId] = current.filter(id => id !== holidayId);
+    const index = USER_HOLIDAY_SELECTIONS[userId].indexOf(holidayId);
+    if (index === -1) {
+        USER_HOLIDAY_SELECTIONS[userId].push(holidayId);
     } else {
-        USER_HOLIDAY_SELECTIONS[userId] = [...current, holidayId];
+        USER_HOLIDAY_SELECTIONS[userId].splice(index, 1);
     }
-}
+};

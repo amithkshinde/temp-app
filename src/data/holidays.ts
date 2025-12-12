@@ -3,7 +3,7 @@
 export * from './holiday-data';
 // Explicit re-exports if star export fails for some reason or types
 export {
-    PUBLIC_HOLIDAYS_2025,
+    PUBLIC_HOLIDAYS_2026,
     getPublicHolidays,
     MOCK_HOLIDAYS,
     addHoliday,

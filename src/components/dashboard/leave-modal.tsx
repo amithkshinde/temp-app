@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { differenceInCalendarDays, startOfToday, parseISO, isWithinInterval, format } from 'date-fns';
 import { Select } from '@/components/ui/select';
 import { PublicHoliday } from '@/lib/types';
+import { Calendar } from 'lucide-react';
 
 interface LeaveModalProps {
     isOpen: boolean;
@@ -146,7 +147,7 @@ export function LeaveModal({
                                         ? 'bg-white text-gray-900 shadow-[0_1px_3px_0_rgba(0,0,0,0.1)] ring-1 ring-black/5'
                                         : 'text-gray-500 hover:text-gray-900'}`}
                                 >
-                                    Single Day
+                                    Single-Date
                                 </button>
                                 <button
                                     type="button"
@@ -155,15 +156,19 @@ export function LeaveModal({
                                         ? 'bg-white text-gray-900 shadow-[0_1px_3px_0_rgba(0,0,0,0.1)] ring-1 ring-black/5'
                                         : 'text-gray-500 hover:text-gray-900'}`}
                                 >
-                                    Date Range
+                                    Multi-Day
                                 </button>
                             </div>
                         )}
 
                         {/* Dates */}
                         <div className="grid grid-cols-2 gap-4">
-                            <div className={isRangeMode ? "" : "col-span-2"}>
-                                <label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block">Start Date</label>
+                            {/* Start Date: Always occupies 1 column. In Single mode, the second col is empty. */}
+                            <div>
+                                <label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 flex items-center gap-1.5">
+                                    <Calendar className="w-3.5 h-3.5" />
+                                    From Date
+                                </label>
                                 <Input
                                     type="date"
                                     value={startDate}
@@ -175,7 +180,10 @@ export function LeaveModal({
                             </div>
                             {isRangeMode && (
                                 <div>
-                                    <label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block">End Date</label>
+                                    <label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 flex items-center gap-1.5">
+                                        <Calendar className="w-3.5 h-3.5" />
+                                        To Date
+                                    </label>
                                     <Input
                                         type="date"
                                         value={endDate}
@@ -233,10 +241,9 @@ export function LeaveModal({
                         {reasonType === 'Sick' && (
                             <div className="bg-blue-50 text-blue-800 text-xs p-3 rounded-lg flex items-start gap-2">
                                 <span>ℹ️</span>
-                                <div>
-                                    <span className="font-bold block mb-0.5">Auto-Approval</span>
-                                    Sick leave for today/tomorrow is automatically approved.
-                                </div>
+                                <span className="font-medium">
+                                    Sick leave is automatically approved.
+                                </span>
                             </div>
                         )}
 
