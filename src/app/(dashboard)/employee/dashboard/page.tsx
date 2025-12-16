@@ -12,7 +12,7 @@ import { useNotifications } from '@/context/NotificationContext';
 import { NotificationCenter } from '@/components/ui/notification-center';
 import { UpcomingLeavesPanel } from '@/components/dashboard/upcoming-leaves-panel';
 import { usePolling } from '@/hooks/use-polling';
-import { LeaveHistory } from '@/components/dashboard/leave-history';
+
 import { MobileFAB } from '@/components/dashboard/mobile-fab';
 import { HolidaySelectionModal } from '@/components/dashboard/holiday-selection-modal';
 import { UserMenu } from '@/components/dashboard/user-menu';
@@ -209,9 +209,7 @@ export default function EmployeeDashboard() {
                             onDateClick={handleDateClick}
                             onHolidayClick={handleHolidayClick}
                         />
-                        <div className="mt-8">
-                            <LeaveHistory leaves={leaves} />
-                        </div>
+
                     </div>
 
                     <div className="w-full lg:w-80 space-y-6">
