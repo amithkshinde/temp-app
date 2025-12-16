@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { findOverlappingLeave } from '@/lib/leave-utils';
+import { Leave, PublicHoliday } from '@/lib/types';
 import { differenceInCalendarDays, startOfToday, parseISO, isWithinInterval, format } from 'date-fns';
 import { Select } from '@/components/ui/select';
-import { PublicHoliday } from '@/lib/types';
 import { Calendar } from 'lucide-react';
 
 interface LeaveModalProps {
@@ -16,6 +17,7 @@ interface LeaveModalProps {
     existingLeaveId?: string;
     isDemo?: boolean;
     holidays?: PublicHoliday[];
+    leaves?: Leave[];
 }
 
 const REASONS = [
@@ -28,7 +30,7 @@ const REASONS = [
 export function LeaveModal({
     isOpen, onClose, onSubmit, onRemove,
     initialStartDate = '', initialEndDate = '',
-    existingLeaveId, isDemo, holidays = []
+    existingLeaveId, isDemo, holidays = [], leaves = []
 }: LeaveModalProps) {
     // Mode State
     // Detect range mode if editing existing leave with diff dates
@@ -92,11 +94,20 @@ export function LeaveModal({
         return isWithinInterval(hDate, { start: startObj, end: endObj });
     }) : null;
 
+    // Existing Leave Overlap Check
+    const overlappingLeave = (startObj && endObj && leaves) ? findOverlappingLeave(startObj, endObj, leaves, existingLeaveId) : null;
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
         if (isDemo) {
             alert('This is a demo. Actions are disabled.');
+            setIsLoading(false);
+            return;
+        }
+
+        if (overlappingLeave) {
+            alert(`Cannot request leave: You already have a leave for this period (${overlappingLeave.status}).`);
             setIsLoading(false);
             return;
         }
@@ -285,6 +296,15 @@ export function LeaveModal({
                             <div className="bg-amber-50 text-amber-800 text-xs p-3 rounded-lg flex items-start gap-2">
                                 <span>⚠️</span>
                                 Note: Editing a leave request will reset its status to &apos;Pending&apos;.
+                            </div>
+                        )}
+
+                        {overlappingLeave && (
+                            <div className="bg-red-50 text-red-800 text-xs p-3 rounded-lg flex items-start gap-2">
+                                <span>⛔</span>
+                                <div className="font-medium">
+                                    You already have a {overlappingLeave.status} leave for this period ({overlappingLeave.startDate}).
+                                </div>
                             </div>
                         )}
 

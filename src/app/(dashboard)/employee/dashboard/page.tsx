@@ -16,6 +16,7 @@ import { LeaveHistory } from '@/components/dashboard/leave-history';
 import { MobileFAB } from '@/components/dashboard/mobile-fab';
 import { HolidaySelectionModal } from '@/components/dashboard/holiday-selection-modal';
 import { UserMenu } from '@/components/dashboard/user-menu';
+import { deduplicateLeaves } from '@/lib/leave-utils';
 
 
 export default function EmployeeDashboard() {
@@ -45,7 +46,10 @@ export default function EmployeeDashboard() {
                 fetch(`/api/users/${user.id}/holiday-selection`)
             ]);
 
-            if (leavesRes.ok) setLeaves(await leavesRes.json());
+            if (leavesRes.ok) {
+                const rawLeaves = await leavesRes.json();
+                setLeaves(deduplicateLeaves(rawLeaves));
+            }
             if (balanceRes.ok) setBalance(await balanceRes.json());
             if (holidaysRes.ok) setHolidays(await holidaysRes.json());
             if (selectionRes.ok) setSelectedHolidayIds(await selectionRes.json());
@@ -291,6 +295,7 @@ export default function EmployeeDashboard() {
                         existingLeaveId={selectedLeave?.id}
                         isDemo={user?.demo}
                         holidays={holidays}
+                        leaves={leaves}
                     />
                 )}
             </div>
