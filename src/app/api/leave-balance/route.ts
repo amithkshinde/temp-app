@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { DEMO_USER_EMPLOYEE, DEMO_BALANCE } from '@/lib/demo-data';
 import { eachDayOfInterval, isWeekend, format, parseISO } from 'date-fns';
 
 // Define minimal types to satisfy linter without depending on potentially stale generated types
@@ -43,6 +44,11 @@ export async function GET(request: Request) {
 
     if (!userId) {
         return NextResponse.json({ error: 'User ID required' }, { status: 400 });
+    }
+
+    // Demo Mode Interception
+    if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true' && userId === DEMO_USER_EMPLOYEE.id) {
+        return NextResponse.json(DEMO_BALANCE);
     }
 
     try {

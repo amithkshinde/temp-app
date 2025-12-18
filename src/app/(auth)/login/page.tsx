@@ -9,7 +9,7 @@ import { Eye, EyeOff } from 'lucide-react';
 import Image from 'next/image';
 
 export default function LoginPage() {
-    const { login } = useAuth();
+    const { login, loginAsDemo } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -129,6 +129,19 @@ export default function LoginPage() {
                         Create an account
                     </Link>
                 </div>
+
+                {process.env.NEXT_PUBLIC_DEMO_MODE === 'true' && (
+                    <div className="pt-4 border-t border-slate-100 mt-6 text-center">
+                        <p className="text-xs text-gray-500 mb-3 uppercase tracking-wider font-semibold">Demo Mode</p>
+                        <Button
+                            variant="outline"
+                            className="w-full border-dashed border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-800"
+                            onClick={() => loginAsDemo('employee')}
+                        >
+                            View as Demo Employee
+                        </Button>
+                    </div>
+                )}
             </div>
         </div>
     );

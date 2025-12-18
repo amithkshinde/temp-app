@@ -13,6 +13,21 @@ export async function PUT(
         const body = await request.json();
         const { startDate, endDate, reason } = body;
 
+        // Demo Mode Interception for PUT
+        if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true' && id.startsWith('demo-')) {
+            // Mock success
+            return NextResponse.json({
+                id,
+                userId: 'demo-emp',
+                startDate,
+                endDate,
+                reason,
+                status: 'pending',
+                type: 'planned',
+                updatedAt: new Date().toISOString()
+            });
+        }
+
         const existingLeave = await prisma.leave.findUnique({ where: { id } });
         if (!existingLeave) {
             return NextResponse.json({ error: 'Leave not found' }, { status: 404 });
@@ -109,6 +124,11 @@ export async function DELETE(
     try {
         const params = await props.params;
         const id = params.id;
+
+        // Demo Mode Interception for DELETE
+        if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true' && id.startsWith('demo-')) {
+            return NextResponse.json({ success: true });
+        }
 
         const leave = await prisma.leave.findUnique({ where: { id } });
 

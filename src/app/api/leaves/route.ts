@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { notifyManagement } from '@/lib/notifications';
+import { DEMO_USER_EMPLOYEE, DEMO_LEAVES } from '@/lib/demo-data';
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
@@ -17,6 +18,12 @@ export async function GET(request: Request) {
         if (!userId) {
             return NextResponse.json([]);
         }
+
+        // Demo Mode Interception
+        if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true' && userId === DEMO_USER_EMPLOYEE.id) {
+            return NextResponse.json(DEMO_LEAVES);
+        }
+
         whereClause.userId = userId;
     }
 
@@ -74,6 +81,25 @@ export async function POST(request: Request) {
 
         if (!userId || !startDate || !endDate || !reason) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+        }
+
+        // Demo Mode Interception for POST
+        if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true' && userId === DEMO_USER_EMPLOYEE.id) {
+            // Mock success for create
+            const newLeave = {
+                id: `demo-new-${Date.now()}`,
+                userId,
+                startDate,
+                endDate,
+                reason,
+                status: 'pending',
+                type: reason.toLowerCase().startsWith('sick') ? 'sick' : 'planned',
+                createdAt: new Date().toISOString()
+            };
+            // If sick, auto-approve mock
+            if (newLeave.type === 'sick') newLeave.status = 'approved';
+
+            return NextResponse.json(newLeave);
         }
 
         // 1. Duplicate Check

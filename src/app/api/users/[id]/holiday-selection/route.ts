@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { DEMO_USER_EMPLOYEE, DEMO_HOLIDAY_SELECTIONS } from '@/lib/demo-data';
 
 export async function POST(
     request: Request,
@@ -10,6 +11,19 @@ export async function POST(
     try {
         const body = await request.json();
         const { holidayId } = body;
+
+        // Demo Interception
+        if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true' && userId === DEMO_USER_EMPLOYEE.id) {
+            // Return mock success without persisting
+            // Calculate new count based on existing static + toggle logic? 
+            // Or just return simulated success. Frontend updates optimistically anyway.
+            // Let's pretend we have 4 selected, and if we toggle one, we just return success.
+            return NextResponse.json({
+                success: true,
+                selectedCount: DEMO_HOLIDAY_SELECTIONS.length, // Static for now, or we could simulate toggle logic in memory if really needed, but requirement is just "works"
+                selections: DEMO_HOLIDAY_SELECTIONS
+            });
+        }
 
         // Toggle logic: Check if exists
         const existing = await prisma.holidaySelection.findUnique({
@@ -69,6 +83,10 @@ export async function GET(
 ) {
     const params = await props.params;
     const userId = params.id;
+
+    if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true' && userId === DEMO_USER_EMPLOYEE.id) {
+        return NextResponse.json(DEMO_HOLIDAY_SELECTIONS);
+    }
 
     // Fetch user's selections
     const selections = await prisma.holidaySelection.findMany({
