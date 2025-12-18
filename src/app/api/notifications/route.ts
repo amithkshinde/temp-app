@@ -1,6 +1,7 @@
 
 import { NextResponse } from 'next/server';
 import { MOCK_NOTIFICATIONS, addNotification } from '@/data/notifications';
+import { DEMO_NOTIFICATIONS, DEMO_USER_EMPLOYEE } from '@/lib/demo-data';
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
@@ -8,6 +9,10 @@ export async function GET(request: Request) {
 
     if (!userId) {
         return NextResponse.json({ error: 'User ID required' }, { status: 400 });
+    }
+
+    if (userId === DEMO_USER_EMPLOYEE.id) {
+        return NextResponse.json(DEMO_NOTIFICATIONS);
     }
 
     const userNotifs = MOCK_NOTIFICATIONS.filter(n => n.userId === userId);

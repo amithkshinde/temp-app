@@ -1,15 +1,17 @@
 import { Leave } from '@/lib/types';
-import { format, parseISO } from 'date-fns';
+import { getLeaveVisualStatus, getVisualConfig } from '@/lib/leave-utils';
+import { format, parseISO, isSameDay } from 'date-fns';
 
 interface UpcomingLeavesPanelProps {
     leaves: Leave[];
     isLoading: boolean;
     onLeaveClick?: (leave: Leave) => void;
+    className?: string;
 }
 
-export function UpcomingLeavesPanel({ leaves, isLoading, onLeaveClick }: UpcomingLeavesPanelProps) {
+export function UpcomingLeavesPanel({ leaves, isLoading, onLeaveClick, className }: UpcomingLeavesPanelProps) {
     if (isLoading) {
-        return <div className="w-80 h-64 animate-pulse bg-slate-50 rounded-xl shrink-0"></div>;
+        return <div className={`w-80 h-64 animate-pulse bg-slate-50 rounded-xl shrink-0 ${className}`}></div>;
     }
 
     const today = new Date();
@@ -20,8 +22,8 @@ export function UpcomingLeavesPanel({ leaves, isLoading, onLeaveClick }: Upcomin
         .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
 
     return (
-        <div className="w-80 bg-white rounded-[var(--radius-xl)] shadow-sm border border-slate-200 p-4 h-fit shrink-0">
-            <h3 className="text-xs text-gray-500 font-medium tracking-wide uppercase mb-1">
+        <div className={`w-80 bg-white rounded-[var(--radius-xl)] shadow-sm border border-slate-200 p-4 flex flex-col ${className}`}>
+            <h3 className="text-sm text-gray-900 font-semibold tracking-tight mb-3 shrink-0">
                 Upcoming Leaves
             </h3>
 
@@ -30,38 +32,39 @@ export function UpcomingLeavesPanel({ leaves, isLoading, onLeaveClick }: Upcomin
                     No upcoming leaves scheduled.
                 </div>
             ) : (
-                <div className="space-y-3">
+                <div className="space-y-3 flex-1 overflow-y-auto pr-1 min-h-0">
                     {upcomingLeaves.map(leave => {
                         const startDate = parseISO(leave.startDate);
                         const endDate = parseISO(leave.endDate);
+                        const singleDay = isSameDay(startDate, endDate);
+
+                        // Date Format: "Dec 25 – Dec 26, 2025"
+                        const dateString = singleDay
+                            ? format(startDate, 'MMM d, yyyy')
+                            : `${format(startDate, 'MMM d')} – ${format(endDate, 'MMM d, yyyy')}`;
 
 
                         // Fallback type if legacy data missing it
                         const type = leave.type || (leave.status === 'approved' ? 'Sick' : 'Planned');
                         const isSick = type === 'sick' || type === 'Sick';
 
+                        const visualStatus = getLeaveVisualStatus(leave);
+                        const config = getVisualConfig(visualStatus);
+
                         return (
                             <div
                                 key={leave.id}
-                                className="p-3 rounded-lg bg-white border border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer group"
+                                className={`p-3 rounded-lg bg-white border hover:bg-slate-50 transition-colors cursor-pointer group ${config.border}`}
                                 onClick={() => onLeaveClick?.(leave)}
                             >
                                 <div className="flex justify-between items-start mb-1">
                                     <div className="flex flex-col">
                                         <span className="font-bold text-gray-900 text-sm">
-                                            {format(startDate, 'MMM d, yyyy')}
-                                        </span>
-                                        <span className="text-[10px] text-gray-500 font-medium">
-                                            {leave.startDate !== leave.endDate ? `Until ${format(endDate, 'MMM d')} ` : 'Single Day'}
+                                            {dateString}
                                         </span>
                                     </div>
-                                    <span className={`text-[10px] uppercase font-bold px-1.5 py-0.5 rounded border ${leave.status === 'approved'
-                                        ? 'bg-gray-50 text-gray-700 border-gray-200'
-                                        : leave.status === 'rejected'
-                                            ? 'bg-gray-50 text-gray-400 border-gray-200 line-through'
-                                            : 'bg-white text-gray-600 border-dashed border-gray-300'
-                                        }`}>
-                                        {leave.status}
+                                    <span className={`text-[10px] uppercase font-bold px-1.5 py-0.5 rounded border ${config.bg} ${config.text} ${config.border}`}>
+                                        {visualStatus === 'past' ? 'Past' : leave.status}
                                     </span>
                                 </div>
 

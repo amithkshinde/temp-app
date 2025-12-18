@@ -33,11 +33,16 @@ export function HolidaySelectionModal({
     if (!isOpen) return null;
 
     const toggleSelection = (id: string) => {
-        setSelected(prev =>
-            prev.includes(id)
-                ? prev.filter(x => x !== id)
-                : [...prev, id]
-        );
+        setSelected(prev => {
+            if (prev.includes(id)) {
+                return prev.filter(x => x !== id);
+            } else {
+                if (prev.length >= 10) {
+                    return prev; // Limit reached
+                }
+                return [...prev, id];
+            }
+        });
     };
 
     const handleSave = async () => {
@@ -61,7 +66,12 @@ export function HolidaySelectionModal({
                 <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-slate-50/50 flex-shrink-0">
                     <div>
                         <h2 className="text-xl font-bold text-gray-900">Select Public Holidays</h2>
-                        <p className="text-xs text-gray-500 mt-1">Select the holidays you wish to observe ({selected.length} selected).</p>
+                        <p className="text-xs text-gray-500 mt-1">
+                            {selected.length >= 10
+                                ? <span className="text-orange-600 font-semibold">Limit reached (10 max). Unselect to change.</span>
+                                : `Select up to 10 holidays (${selected.length}/10 selected).`
+                            }
+                        </p>
                     </div>
                     <Button variant="ghost" size="sm" onClick={onClose} className="h-8 w-8 p-0 rounded-full">
                         <X size={18} />
@@ -81,14 +91,17 @@ export function HolidaySelectionModal({
                     <div className="space-y-2">
                         {filteredHolidays.map(h => {
                             const isSelected = selected.includes(h.id);
+                            const isDisabled = !isSelected && selected.length >= 10;
                             return (
                                 <div
                                     key={h.id}
-                                    className={`flex items-center justify-between p-3 rounded-lg border transition-all cursor-pointer ${isSelected
-                                            ? 'bg-pink-50 border-[var(--color-brand-pink)]'
-                                            : 'bg-slate-50 border-slate-100 hover:border-slate-200'
+                                    className={`flex items-center justify-between p-3 rounded-lg border transition-all ${isSelected
+                                            ? 'bg-pink-50 border-[var(--color-brand-pink)] cursor-pointer'
+                                            : isDisabled
+                                                ? 'bg-gray-50 border-gray-100 opacity-60 cursor-not-allowed'
+                                                : 'bg-slate-50 border-slate-100 hover:border-slate-200 cursor-pointer'
                                         }`}
-                                    onClick={() => toggleSelection(h.id)}
+                                    onClick={() => !isDisabled && toggleSelection(h.id)}
                                 >
                                     <div className="flex items-center gap-3">
                                         <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${isSelected ? 'bg-[var(--color-brand-pink)] border-[var(--color-brand-pink)] text-white' : 'border-gray-300 bg-white'

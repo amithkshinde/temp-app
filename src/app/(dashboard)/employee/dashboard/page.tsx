@@ -200,7 +200,7 @@ export default function EmployeeDashboard() {
                     role="employee"
                 />
 
-                <div className="flex flex-col lg:flex-row gap-6">
+                <div className="flex flex-col lg:flex-row gap-6 items-stretch">
                     <div className="flex-1 min-w-0">
                         <CalendarView
                             leaves={leaves}
@@ -212,10 +212,10 @@ export default function EmployeeDashboard() {
 
                     </div>
 
-                    <div className="w-full lg:w-80 space-y-6">
-                        <div className="bg-white rounded-[var(--radius-xl)] shadow-sm border border-slate-200 p-4">
-                            <div className="flex justify-between items-center mb-1">
-                                <h3 className="text-xs text-gray-500 font-medium tracking-wide uppercase">Public Holidays</h3>
+                    <div className="w-full lg:w-80 flex flex-col gap-6">
+                        <div className="bg-white rounded-[var(--radius-xl)] shadow-sm border border-slate-200 p-4 shrink-0">
+                            <div className="flex justify-between items-center mb-2">
+                                <h3 className="text-sm text-gray-900 font-semibold tracking-tight">Public Holidays</h3>
                                 <button
                                     className="text-xs font-medium text-[var(--color-brand-pink)] hover:text-[#d01b5b] hover:underline transition-colors p-0 bg-transparent border-none appearance-none cursor-pointer"
                                     onClick={() => setIsHolidayModalOpen(true)}
@@ -226,6 +226,33 @@ export default function EmployeeDashboard() {
                             <p className="text-xs text-gray-500 mb-0">
                                 You have selected {selectedHolidayIds.length} / 10 holidays.
                             </p>
+
+                            {/* Next Holiday Section */}
+                            {(() => {
+                                const today = new Date();
+                                today.setHours(0, 0, 0, 0);
+                                const nextHoliday = holidays
+                                    .filter(h => selectedHolidayIds.includes(h.id))
+                                    .map(h => ({ ...h, dateObj: new Date(h.date) }))
+                                    .filter(h => h.dateObj >= today)
+                                    .sort((a, b) => a.dateObj.getTime() - b.dateObj.getTime())[0];
+
+                                if (!nextHoliday) return null;
+
+                                return (
+                                    <div className="mt-4 pt-3 border-t border-slate-100">
+                                        <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider mb-2">Next Holiday</p>
+                                        <div className="flex justify-between items-center group">
+                                            <span className="text-sm font-medium text-gray-900 truncate group-hover:text-[var(--color-brand-pink)] transition-colors">
+                                                {nextHoliday.name}
+                                            </span>
+                                            <span className="text-xs text-gray-500 whitespace-nowrap bg-slate-50 px-2 py-1 rounded border border-slate-100">
+                                                {format(nextHoliday.dateObj, 'd MMM yyyy')}
+                                            </span>
+                                        </div>
+                                    </div>
+                                );
+                            })()}
                         </div>
 
                         <UpcomingLeavesPanel
@@ -235,6 +262,7 @@ export default function EmployeeDashboard() {
                                 setSelectedLeave(leave);
                                 setIsModalOpen(true);
                             }}
+                            className="flex-1 min-h-0"
                         />
                     </div>
                 </div>

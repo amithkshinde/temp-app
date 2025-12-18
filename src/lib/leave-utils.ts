@@ -141,7 +141,6 @@ export function findOverlappingLeave(
         l.id !== ignoreLeaveId
     );
 
-    // Also we might want to ensure we don't overlap with "Pending" or "Approved" leaves.
     return activeLeaves.find(l => {
         const lStart = parseISO(l.startDate);
         const lEnd = parseISO(l.endDate);
@@ -151,4 +150,74 @@ export function findOverlappingLeave(
             { inclusive: true }
         );
     });
+}
+
+/**
+ * Determines the visual status of a leave.
+ * Priority: 
+ * 1. Past (endDate < today) -> 'past'
+ * 2. Status (approved/pending/rejected)
+ */
+export function getLeaveVisualStatus(leave: Leave): 'past' | 'approved' | 'pending' | 'rejected' | 'cancelled' {
+    if (leave.status === 'cancelled') return 'cancelled';
+
+    // Check if past
+    const end = parseISO(leave.endDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (end < today) {
+        return 'past';
+    }
+
+    return leave.status;
+}
+
+/**
+ * Returns Tailwind classes for a given visual status.
+ */
+export function getVisualConfig(status: 'past' | 'approved' | 'pending' | 'rejected' | 'cancelled') {
+    switch (status) {
+        case 'past':
+            return {
+                bg: 'bg-slate-100',
+                border: 'border-slate-300',
+                text: 'text-gray-500',
+                indicator: 'bg-gray-400',
+                label: 'Past Leave'
+            };
+        case 'approved':
+            return {
+                bg: 'bg-green-100',
+                border: 'border-green-300',
+                text: 'text-green-900 font-medium',
+                indicator: 'bg-green-500',
+                label: 'Approved'
+            };
+        case 'pending':
+            return {
+                bg: 'bg-yellow-50',
+                border: 'border-yellow-400 border-dashed',
+                text: 'text-yellow-900 font-medium',
+                indicator: 'bg-yellow-400',
+                label: 'Pending'
+            };
+        case 'rejected':
+            return {
+                bg: 'bg-red-50',
+                border: 'border-red-300',
+                text: 'text-red-900 line-through decoration-red-400',
+                indicator: 'bg-red-400',
+                label: 'Rejected'
+            };
+        case 'cancelled':
+        default:
+            return {
+                bg: 'bg-gray-50',
+                border: 'border-gray-200',
+                text: 'text-gray-400',
+                indicator: 'bg-gray-300',
+                label: 'Cancelled'
+            };
+    }
 }

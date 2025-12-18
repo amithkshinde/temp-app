@@ -18,30 +18,30 @@ export function StatsStrip({ balance, isLoading, role = 'employee', onLeaveToday
             <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-4">
                 {/* 1. Total Leaves */}
                 <div className="rounded-[var(--radius-xl)] border border-slate-200 shadow-sm p-4 flex flex-col justify-center bg-white h-24">
-                    <p className="text-xs text-gray-500 font-medium tracking-wide uppercase mb-1">Total Leaves</p>
-                    <p className="text-2xl font-bold text-gray-900">
+                    <p className="text-sm text-gray-900 font-semibold tracking-tight mb-1">Total Leaves</p>
+                    <p className="text-[26px] font-bold text-gray-900">
                         {((balance?.allocated || 0) + (balance?.carriedForward || 0)) || 0}
                     </p>
                 </div>
 
                 {/* 2. Taken */}
                 <div className="rounded-[var(--radius-xl)] border border-slate-200 shadow-sm p-4 flex flex-col justify-center bg-white h-24">
-                    <p className="text-xs text-gray-500 font-medium tracking-wide uppercase mb-1">Taken</p>
-                    <p className="text-2xl font-bold text-gray-900">{balance?.taken ?? 0}</p>
+                    <p className="text-sm text-gray-900 font-semibold tracking-tight mb-1">Taken</p>
+                    <p className="text-[26px] font-bold text-gray-900">{balance?.taken ?? 0}</p>
                 </div>
 
                 {/* 3. Remaining */}
                 <div className="rounded-[var(--radius-xl)] border border-slate-200 shadow-sm p-4 flex flex-col justify-center bg-white h-24">
-                    <p className="text-xs text-gray-500 font-medium tracking-wide uppercase mb-1">Remaining</p>
-                    <p className="text-2xl font-bold text-[#f0216a]">
+                    <p className="text-sm text-gray-900 font-semibold tracking-tight mb-1">Remaining</p>
+                    <p className="text-[26px] font-bold text-[#f0216a]">
                         {((balance?.allocated || 0) + (balance?.carriedForward || 0) - (balance?.taken || 0)) || 0}
                     </p>
                 </div>
 
                 {/* 4. Carried Forward */}
                 <div className="rounded-[var(--radius-xl)] border border-slate-200 shadow-sm p-4 flex flex-col justify-center bg-white h-24">
-                    <p className="text-xs text-gray-500 font-medium tracking-wide uppercase mb-1">Carried Forward</p>
-                    <p className="text-2xl font-bold text-gray-900">{balance?.carriedForward ?? 0}</p>
+                    <p className="text-sm text-gray-900 font-semibold tracking-tight mb-1">Carried Forward</p>
+                    <p className="text-[26px] font-bold text-gray-900">{balance?.carriedForward ?? 0}</p>
                 </div>
             </div>
         );
@@ -57,7 +57,7 @@ export function StatsStrip({ balance, isLoading, role = 'employee', onLeaveToday
                         <Users size={20} />
                     </div>
                     <div>
-                        <p className="text-xs text-gray-500 font-medium tracking-wide uppercase">On Leave Today</p>
+                        <p className="text-sm text-gray-900 font-semibold tracking-tight">On Leave Today</p>
                         <p className="text-3xl font-bold text-gray-900">{onLeaveTodayCount}</p>
                     </div>
                 </div>
@@ -68,7 +68,7 @@ export function StatsStrip({ balance, isLoading, role = 'employee', onLeaveToday
                         <Layout size={20} />
                     </div>
                     <div>
-                        <p className="text-xs text-slate-400 font-medium tracking-wide uppercase">Team Health</p>
+                        <p className="text-sm text-slate-400 font-semibold tracking-tight">Team Health</p>
                         <p className="text-sm text-slate-400 italic">Coming soon</p>
                     </div>
                 </div>

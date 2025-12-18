@@ -11,6 +11,7 @@ interface NotificationContextType {
     unreadCount: number;
     addNotification: (message: string, type: 'info' | 'success' | 'warning' | 'error', targetUserId: string) => void;
     markAsRead: (id: string) => void;
+    dismissNotification: (id: string) => void;
     markAllAsRead: () => void;
     clearAll: () => void;
 }
@@ -72,6 +73,10 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
         // We'd ideally have an endpoint for single mark read, but for now we rely on re-fetch or assume client state is enough for session
     };
 
+    const dismissNotification = (id: string) => {
+        setAllNotifications(prev => prev.filter(n => n.id !== id));
+    };
+
     const markAllAsRead = async () => {
         if (!user) return;
 
@@ -95,7 +100,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     const unreadCount = notifications.filter(n => !n.read).length;
 
     return (
-        <NotificationContext.Provider value={{ notifications, unreadCount, addNotification, markAsRead, markAllAsRead, clearAll }}>
+        <NotificationContext.Provider value={{ notifications, unreadCount, addNotification, markAsRead, dismissNotification, markAllAsRead, clearAll }}>
             {children}
             <ToastContainer />
         </NotificationContext.Provider>

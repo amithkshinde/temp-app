@@ -1,8 +1,14 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { DEMO_HOLIDAYS } from '@/lib/demo-data';
 
 export async function GET() {
     try {
+        if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true') {
+            // Return static demo list
+            return NextResponse.json(DEMO_HOLIDAYS);
+        }
+
         const holidays = await prisma.holiday.findMany();
         return NextResponse.json(holidays);
     } catch {

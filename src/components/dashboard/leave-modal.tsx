@@ -43,10 +43,28 @@ export function LeaveModal({
     // Auto-sync EndDate on init: if not range mode, EndDate = StartDate
     const derivedInitialEndDate = initialIsRange ? (initialEndDate || initialStartDate) : initialStartDate;
 
+    // Helper for Smart Defaults
+    const getSmartDefaults = (date: string) => {
+        if (!date) return { type: 'Personal', details: '' };
+        const s = parseISO(date);
+        const today = startOfToday();
+        const diff = differenceInCalendarDays(s, today);
+        if (diff >= 0 && diff <= 1) return { type: 'Sick', details: 'Sick Leave' };
+        return { type: 'Personal', details: '' };
+    };
+
+    const initialDefaults = getSmartDefaults(initialStartDate);
+
     const [endDate, setEndDate] = useState(derivedInitialEndDate);
-    const [reasonType, setReasonType] = useState('Personal');
-    const [reasonDetails, setReasonDetails] = useState('');
+    const [reasonType, setReasonType] = useState(initialDefaults.type);
+    const [reasonDetails, setReasonDetails] = useState(initialDefaults.details);
     const [isLoading, setIsLoading] = useState(false);
+
+    // Progressive Disclosure State
+    // Details are hidden by default for new requests, but shown for:
+    // 1. Existing leaves (Edit mode)
+    const initialShowDetails = !!existingLeaveId;
+    const [showDetails, setShowDetails] = useState(initialShowDetails);
 
     // Sync EndDate when StartDate changes in Single Mode
     // Also update Reason default based on date distance
@@ -62,9 +80,13 @@ export function LeaveModal({
             if (diff >= 0 && diff <= 1) {
                 setReasonType('Sick');
                 setReasonDetails('Sick Leave');
+                // Don't auto-show details, let it be hidden but pre-filled
             } else {
                 setReasonType('Personal');
-                if (reasonDetails === 'Sick Leave') setReasonDetails('');
+                if (reasonDetails === 'Sick Leave') {
+                    setReasonDetails('');
+                    setShowDetails(false); // Hide details again if reverting from Sick default
+                }
             }
         }
 
@@ -142,6 +164,11 @@ export function LeaveModal({
     const isExisting = !!existingLeaveId;
     const currentReasonConfig = REASONS.find(r => r.value === reasonType) || REASONS[1];
 
+    // Read-Only Logic for Past Approved Leaves (All Modes)
+    const currentLeave = (isExisting && leaves) ? leaves.find(l => l.id === existingLeaveId) : null;
+    const isPastApproved = currentLeave?.status === 'approved' && parseISO(currentLeave.endDate) < startOfToday();
+    const isReadOnly = isPastApproved;
+
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
             <div className="bg-white rounded-[var(--radius-xl)] shadow-xl w-full max-w-md overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
@@ -176,7 +203,8 @@ export function LeaveModal({
                                     }}
                                     className={`flex-1 text-sm font-semibold py-2 rounded-lg transition-all duration-200 ${!isRangeMode
                                         ? 'bg-white text-gray-900 shadow-[0_1px_3px_0_rgba(0,0,0,0.1)] ring-1 ring-black/5'
-                                        : 'text-gray-500 hover:text-gray-900'}`}
+                                        : 'text-gray-500 hover:text-gray-900'} ${isReadOnly ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                    disabled={isReadOnly}
                                 >
                                     Single-Date
                                 </button>
@@ -185,7 +213,8 @@ export function LeaveModal({
                                     onClick={() => setIsRangeMode(true)}
                                     className={`flex-1 text-sm font-semibold py-2 rounded-lg transition-all duration-200 ${isRangeMode
                                         ? 'bg-white text-gray-900 shadow-[0_1px_3px_0_rgba(0,0,0,0.1)] ring-1 ring-black/5'
-                                        : 'text-gray-500 hover:text-gray-900'}`}
+                                        : 'text-gray-500 hover:text-gray-900'} ${isReadOnly ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                    disabled={isReadOnly}
                                 >
                                     Multi-Day
                                 </button>
@@ -206,7 +235,7 @@ export function LeaveModal({
                                         value={startDate}
                                         onChange={(e) => handleStartDateChange(e.target.value)}
                                         required
-                                        disabled={isLoading}
+                                        disabled={isLoading || isReadOnly}
                                         className="font-medium text-gray-900 pr-9" // Padding for icon
                                     />
                                     {/* Calendar Icon Absolute Right */}
@@ -227,7 +256,7 @@ export function LeaveModal({
                                             onChange={(e) => setEndDate(e.target.value)}
                                             required
                                             min={startDate}
-                                            disabled={isLoading}
+                                            disabled={isLoading || isReadOnly}
                                             className="font-medium text-gray-900 pr-9"
                                         />
                                         <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
@@ -253,22 +282,37 @@ export function LeaveModal({
                                     }}
                                     options={availableReasons}
                                     className="font-medium text-gray-900"
+                                    disabled={isReadOnly}
                                 />
                             </div>
 
-                            {/* Details: Always visible now, auto-filled for Sick */}
-                            <div className="animate-in fade-in slide-in-from-top-2 duration-200">
-                                <label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block">
-                                    Details {reasonType !== 'Other' && '(Optional)'}
-                                </label>
-                                <textarea
-                                    className="flex w-full rounded-xl border border-slate-200 bg-transparent px-3 py-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--color-brand-pink)] disabled:cursor-not-allowed disabled:opacity-50 resize-none text-gray-900 placeholder:text-gray-500"
-                                    rows={3}
-                                    value={reasonDetails}
-                                    onChange={(e) => setReasonDetails(e.target.value)}
-                                    placeholder={currentReasonConfig.placeholder}
-                                    required={reasonType === 'Other'}
-                                />
+                            {/* Details: Progressive Disclosure */}
+                            <div className="animate-in fade-in slide-in-from-top-2 duration-200 space-y-2">
+                                {!showDetails ? (
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowDetails(true)}
+                                        className="text-xs font-semibold text-gray-500 hover:text-gray-900 hover:underline transition-colors flex items-center gap-1"
+                                    >
+                                        + Add details
+                                    </button>
+                                ) : (
+                                    <>
+                                        <label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block">
+                                            Details {reasonType !== 'Other' && '(Optional)'}
+                                        </label>
+                                        <textarea
+                                            autoFocus={!isExisting && !isReadOnly} // Auto-focus when revealed in create mode
+                                            className="flex w-full rounded-xl border border-slate-200 bg-transparent px-3 py-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--color-brand-pink)] disabled:cursor-not-allowed disabled:opacity-50 resize-none text-gray-900 placeholder:text-gray-500"
+                                            rows={3}
+                                            value={reasonDetails}
+                                            onChange={(e) => setReasonDetails(e.target.value)}
+                                            placeholder={currentReasonConfig.placeholder}
+                                            required={reasonType === 'Other'}
+                                            disabled={isReadOnly}
+                                        />
+                                    </>
+                                )}
                             </div>
                         </div>
 
@@ -292,7 +336,7 @@ export function LeaveModal({
                             </div>
                         )}
 
-                        {isExisting && (
+                        {isExisting && !isReadOnly && (
                             <div className="bg-amber-50 text-amber-800 text-xs p-3 rounded-lg flex items-start gap-2">
                                 <span>⚠️</span>
                                 Note: Editing a leave request will reset its status to &apos;Pending&apos;.
@@ -310,31 +354,44 @@ export function LeaveModal({
 
                         {/* Actions */}
                         <div className="flex justify-end gap-3 pt-2">
-                            {isExisting && (
-                                <Button
-                                    type="button"
-                                    variant="ghost"
-                                    className="text-red-600 hover:text-red-700 hover:bg-red-50 mr-auto"
-                                    onClick={async () => {
-                                        if (!confirm('Are you sure you want to cancel this leave?')) return;
-                                        await handleRemove();
-                                    }}
-                                    disabled={isLoading}
-                                >
-                                    Cancel Request
-                                </Button>
-                            )}
+                            {isReadOnly ? (
+                                <div className="flex items-center gap-4 w-full">
+                                    <span className="text-xs text-gray-500 italic mr-auto">
+                                        Past leaves cannot be edited.
+                                    </span>
+                                    <Button type="button" variant="ghost" onClick={onClose}>
+                                        Close
+                                    </Button>
+                                </div>
+                            ) : (
+                                <>
+                                    {isExisting && (
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            className="text-red-600 hover:text-red-700 hover:bg-red-50 mr-auto"
+                                            onClick={async () => {
+                                                if (!confirm('Are you sure you want to cancel this leave?')) return;
+                                                await handleRemove();
+                                            }}
+                                            disabled={isLoading}
+                                        >
+                                            Cancel Request
+                                        </Button>
+                                    )}
 
-                            <Button type="button" variant="ghost" onClick={onClose} disabled={isLoading}>
-                                Close
-                            </Button>
-                            <Button
-                                type="submit"
-                                isLoading={isLoading}
-                                className="bg-[#f0216a] hover:bg-[#d61b5c] text-white border-none min-w-[100px]"
-                            >
-                                {isExisting ? 'Update' : 'Confirm'}
-                            </Button>
+                                    <Button type="button" variant="ghost" onClick={onClose} disabled={isLoading}>
+                                        Close
+                                    </Button>
+                                    <Button
+                                        type="submit"
+                                        isLoading={isLoading}
+                                        className="bg-[#f0216a] hover:bg-[#d61b5c] text-white border-none min-w-[100px]"
+                                    >
+                                        {isExisting ? 'Update' : 'Confirm'}
+                                    </Button>
+                                </>
+                            )}
                         </div>
                     </form>
                 </div>

@@ -2,8 +2,8 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
-import Link from "next/link";
-import { LogOut, FileText } from "lucide-react";
+
+import { LogOut } from "lucide-react";
 
 export function UserMenu() {
     const { user, logout } = useAuth();
@@ -49,14 +49,7 @@ export function UserMenu() {
                     </div>
 
                     <div className="border-t border-slate-100">
-                        <Link
-                            href="/employee/summary"
-                            className="flex items-center gap-2 w-full px-4 py-2.5 text-xs font-medium text-gray-600 hover:bg-slate-50 hover:text-gray-900 transition-colors"
-                            onClick={() => setIsOpen(false)}
-                        >
-                            <FileText size={14} />
-                            Yearly Summary
-                        </Link>
+
 
                         <button
                             onClick={logout}

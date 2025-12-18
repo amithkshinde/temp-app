@@ -6,7 +6,7 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "../ui/button";
 
 export function NotificationCenter() {
-    const { notifications, unreadCount, markAsRead, markAllAsRead, clearAll } = useNotifications();
+    const { notifications, unreadCount, markAsRead, dismissNotification, markAllAsRead, clearAll } = useNotifications();
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -78,7 +78,7 @@ export function NotificationCenter() {
                                 {notifications.map((notif) => (
                                     <li
                                         key={notif.id}
-                                        className={`p-4 hover:bg-gray-50 transition-colors cursor-pointer ${!notif.read ? 'bg-blue-50/30' : ''}`}
+                                        className={`p-4 hover:bg-gray-50 transition-colors cursor-pointer group ${!notif.read ? 'bg-blue-50/30' : ''}`}
                                         onClick={() => markAsRead(notif.id)}
                                     >
                                         <div className="flex gap-3 items-start">
@@ -96,6 +96,16 @@ export function NotificationCenter() {
                                             {!notif.read && (
                                                 <div className="w-2 h-2 rounded-full bg-[var(--color-brand-pink)] mt-2"></div>
                                             )}
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    dismissNotification(notif.id);
+                                                }}
+                                                className="p-1 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors opacity-0 group-hover:opacity-100"
+                                                title="Dismiss"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                            </button>
                                         </div>
                                     </li>
                                 ))}
