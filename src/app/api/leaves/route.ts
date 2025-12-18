@@ -11,6 +11,9 @@ export async function GET(request: Request) {
     const scope = searchParams.get('scope'); // 'team'
     const date = searchParams.get('date'); // 'YYYY-MM-DD'
 
+    console.log('[DEBUG API] /api/leaves hit');
+    console.log('[DEBUG API] NEXT_PUBLIC_DEMO_MODE:', process.env.NEXT_PUBLIC_DEMO_MODE);
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let whereClause: any = {};
 
