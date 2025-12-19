@@ -20,6 +20,7 @@ interface CalendarViewProps {
     onHolidayClick?: (holidayId: string) => void;
     mode?: 'personal' | 'team';
     onLeaveClick?: (leave: Leave) => void; // For Manager to approve
+    className?: string;
 }
 
 export function CalendarView({
@@ -30,6 +31,7 @@ export function CalendarView({
     onHolidayClick,
     mode = 'personal',
     onLeaveClick,
+    className,
 }: CalendarViewProps) {
     const [currentMonth, setCurrentMonth] = useState(new Date());
 
@@ -67,7 +69,7 @@ export function CalendarView({
     const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
 
     return (
-        <div className="bg-white rounded-[var(--radius-xl)] shadow-sm border border-slate-200 p-4">
+        <div className={cn("bg-white rounded-[var(--radius-xl)] shadow-sm border border-slate-200 p-4", className)}>
             <div className="relative flex items-center justify-center mb-6">
                 <Button variant="ghost" onClick={prevMonth} size="sm" className="absolute left-0">←</Button>
                 <h2 className="text-base text-gray-700 font-bold tracking-wide uppercase">

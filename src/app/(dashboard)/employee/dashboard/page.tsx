@@ -210,6 +210,7 @@ export default function EmployeeDashboard() {
                             selectedHolidayIds={selectedHolidayIds}
                             onDateClick={handleDateClick}
                             onHolidayClick={handleHolidayClick}
+                            className="h-full"
                         />
                     </div>
 
