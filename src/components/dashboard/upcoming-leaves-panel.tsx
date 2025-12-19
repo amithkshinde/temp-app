@@ -1,6 +1,7 @@
 import { Leave } from '@/lib/types';
 import { getLeaveVisualStatus, getVisualConfig } from '@/lib/leave-utils';
 import { format, parseISO, isSameDay } from 'date-fns';
+import { ScrollContainer } from '@/components/ui/scroll-container';
 
 interface UpcomingLeavesPanelProps {
     leaves: Leave[];
@@ -32,7 +33,7 @@ export function UpcomingLeavesPanel({ leaves, isLoading, onLeaveClick, className
                     No upcoming leaves scheduled.
                 </div>
             ) : (
-                <div className="space-y-3 flex-1 overflow-y-auto pr-1 min-h-0">
+                <ScrollContainer className="flex-1 min-h-0" contentClassName="pr-2 space-y-3">
                     {upcomingLeaves.map(leave => {
                         const startDate = parseISO(leave.startDate);
                         const endDate = parseISO(leave.endDate);
@@ -82,7 +83,7 @@ export function UpcomingLeavesPanel({ leaves, isLoading, onLeaveClick, className
                             </div>
                         );
                     })}
-                </div>
+                </ScrollContainer>
             )}
         </div>
     );
