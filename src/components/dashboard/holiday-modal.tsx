@@ -104,12 +104,12 @@ export function HolidayModal({ isOpen, onClose, onAdd, existingHolidays, onDelet
                         </ScrollContainer>
                     </div>
                 </div>
-            </div>
 
-            <div className="p-6 border-t border-gray-100 bg-slate-50 flex justify-end">
-                <Button variant="outline" onClick={onClose}>Done</Button>
+
+                <div className="p-6 border-t border-gray-100 bg-slate-50 flex justify-end">
+                    <Button variant="outline" onClick={onClose}>Done</Button>
+                </div>
             </div>
         </div>
-        </div >
     );
 }

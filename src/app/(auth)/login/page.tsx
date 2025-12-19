@@ -113,7 +113,7 @@ export default function LoginPage() {
                     {/* Primary CTA */}
                     <Button
                         type="submit"
-                        className="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium h-11 rounded-xl shadow-lg shadow-slate-200 transition-all active:scale-[0.98]"
+                        className="w-full font-medium h-11 rounded-xl shadow-lg shadow-pink-100 transition-all active:scale-[0.98]"
                         isLoading={isLoading}
                     >
                         Login

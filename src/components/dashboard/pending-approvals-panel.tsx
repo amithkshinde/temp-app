@@ -2,6 +2,7 @@
 import { Leave, User } from '@/lib/types';
 import { format, parseISO, differenceInDays } from 'date-fns';
 import { Button } from '@/components/ui/button';
+import { ScrollContainer } from '@/components/ui/scroll-container';
 import { Check } from 'lucide-react';
 
 interface PendingApprovalsPanelProps {

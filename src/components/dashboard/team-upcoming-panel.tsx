@@ -1,6 +1,7 @@
 
 import { Leave, User } from '@/lib/types';
 import { format, parseISO, isAfter, startOfToday } from 'date-fns';
+import { ScrollContainer } from '@/components/ui/scroll-container';
 // import { cn } from '@/lib/utils'; // Unused
 
 interface TeamUpcomingPanelProps {

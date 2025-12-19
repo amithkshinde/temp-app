@@ -1,10 +1,10 @@
-
 "use client";
 
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowLeft, ChevronLeft, ChevronRight, Filter, Search, X } from 'lucide-react';
+import { ArrowLeft, ChevronLeft, ChevronRight, Filter, Search, X, Calendar as CalendarIcon } from 'lucide-react';
+import { ScrollContainer } from '@/components/ui/scroll-container';
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isWeekend, parseISO } from 'date-fns';
 import { Department, Leave, User } from '@/lib/types';
 import { cn } from '@/lib/utils';

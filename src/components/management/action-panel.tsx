@@ -1,5 +1,6 @@
 import { Leave } from '@/lib/types';
 import { Button } from '@/components/ui/button';
+import { ScrollContainer } from '@/components/ui/scroll-container';
 import { format } from 'date-fns';
 
 interface ActionPanelProps {
