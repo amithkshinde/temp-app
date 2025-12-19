@@ -276,8 +276,7 @@ export function CalendarView({
                                                 }}
                                                 className={cn(
                                                     "text-[9px] px-1 rounded text-white truncate w-full cursor-pointer hover:opacity-90 transition-opacity font-medium shadow-sm",
-                                                    config.indicator,
-                                                    visualStatus === 'rejected' && "decoration-line-through"
+                                                    config.indicator
                                                 )}
                                             >
                                                 {leave.userName || leave.userId}

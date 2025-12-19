@@ -171,9 +171,9 @@ export default function EmployeeDashboard() {
     };
 
     return (
-        <div className="min-h-screen bg-[var(--color-bg)] p-8">
-            <div className="max-w-5xl mx-auto space-y-6">
-                <header className="flex justify-between items-center">
+        <div className="h-screen overflow-hidden bg-[var(--color-bg)] p-8 flex flex-col">
+            <div className="max-w-5xl mx-auto w-full flex-1 flex flex-col gap-6 min-h-0">
+                <header className="flex justify-between items-center shrink-0">
                     <div>
                         <h1 className="text-3xl font-bold text-gray-900">Welcome, {user?.name.split(' ')[0]}!</h1>
                         <p className="text-gray-500">Here’s your leave overview</p>
@@ -185,7 +185,7 @@ export default function EmployeeDashboard() {
                 </header>
 
                 {showSickRibbon && (
-                    <div className="w-full bg-orange-100 border border-orange-200 text-orange-800 px-6 py-3 rounded-xl flex items-center justify-center gap-3 animate-in slide-in-from-top-4 fade-in">
+                    <div className="w-full bg-orange-100 border border-orange-200 text-orange-800 px-6 py-3 rounded-xl flex items-center justify-center gap-3 animate-in slide-in-from-top-4 fade-in shrink-0">
                         <span className="text-xl">🍵</span>
                         <div>
                             <p className="font-bold text-sm">Sick Leave Recorded for Today</p>
@@ -194,14 +194,16 @@ export default function EmployeeDashboard() {
                     </div>
                 )}
 
-                <StatsStrip
-                    balance={balance}
-                    isLoading={isLoading}
-                    role="employee"
-                />
+                <div className="shrink-0">
+                    <StatsStrip
+                        balance={balance}
+                        isLoading={isLoading}
+                        role="employee"
+                    />
+                </div>
 
-                <div className="flex flex-col lg:flex-row gap-6 items-stretch">
-                    <div className="flex-1 min-w-0">
+                <div className="flex-1 min-h-0 flex flex-col lg:flex-row gap-6 items-stretch">
+                    <div className="flex-1 min-w-0 overflow-y-auto no-scrollbar">
                         <CalendarView
                             leaves={leaves}
                             holidays={holidays}
@@ -209,61 +211,62 @@ export default function EmployeeDashboard() {
                             onDateClick={handleDateClick}
                             onHolidayClick={handleHolidayClick}
                         />
-
                     </div>
 
-                    <div className="w-full lg:w-80 flex flex-col gap-6">
-                        <div className="bg-white rounded-[var(--radius-xl)] shadow-sm border border-slate-200 p-4 shrink-0">
-                            <div className="flex justify-between items-center mb-2">
-                                <h3 className="text-sm text-gray-900 font-semibold tracking-tight">Public Holidays</h3>
-                                <button
-                                    className="text-xs font-medium text-[var(--color-brand-pink)] hover:text-[#d01b5b] hover:underline transition-colors p-0 bg-transparent border-none appearance-none cursor-pointer"
-                                    onClick={() => setIsHolidayModalOpen(true)}
-                                >
-                                    Manage
-                                </button>
-                            </div>
-                            <p className="text-xs text-gray-500 mb-0">
-                                You have selected {selectedHolidayIds.length} / 10 holidays.
-                            </p>
+                    <div className="w-full lg:w-80 relative">
+                        <div className="flex flex-col gap-6 lg:absolute lg:inset-0">
+                            <div className="bg-white rounded-[var(--radius-xl)] shadow-sm border border-slate-200 p-4 shrink-0">
+                                <div className="flex justify-between items-center mb-2">
+                                    <h3 className="text-sm text-gray-900 font-semibold tracking-tight">Public Holidays</h3>
+                                    <button
+                                        className="text-xs font-medium text-[var(--color-brand-pink)] hover:text-[#d01b5b] hover:underline transition-colors p-0 bg-transparent border-none appearance-none cursor-pointer"
+                                        onClick={() => setIsHolidayModalOpen(true)}
+                                    >
+                                        Manage
+                                    </button>
+                                </div>
+                                <p className="text-xs text-gray-500 mb-0">
+                                    You have selected {selectedHolidayIds.length} / 10 holidays.
+                                </p>
 
-                            {/* Next Holiday Section */}
-                            {(() => {
-                                const today = new Date();
-                                today.setHours(0, 0, 0, 0);
-                                const nextHoliday = holidays
-                                    .filter(h => selectedHolidayIds.includes(h.id))
-                                    .map(h => ({ ...h, dateObj: new Date(h.date) }))
-                                    .filter(h => h.dateObj >= today)
-                                    .sort((a, b) => a.dateObj.getTime() - b.dateObj.getTime())[0];
+                                {/* Next Holiday Section */}
+                                {(() => {
+                                    const today = new Date();
+                                    today.setHours(0, 0, 0, 0);
+                                    const nextHoliday = holidays
+                                        .filter(h => selectedHolidayIds.includes(h.id))
+                                        .map(h => ({ ...h, dateObj: new Date(h.date) }))
+                                        .filter(h => h.dateObj >= today)
+                                        .sort((a, b) => a.dateObj.getTime() - b.dateObj.getTime())[0];
 
-                                if (!nextHoliday) return null;
+                                    if (!nextHoliday) return null;
 
-                                return (
-                                    <div className="mt-4 pt-3 border-t border-slate-100">
-                                        <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider mb-2">Next Holiday</p>
-                                        <div className="flex justify-between items-center group">
-                                            <span className="text-sm font-medium text-gray-900 truncate group-hover:text-[var(--color-brand-pink)] transition-colors">
-                                                {nextHoliday.name}
-                                            </span>
-                                            <span className="text-xs text-gray-500 whitespace-nowrap bg-slate-50 px-2 py-1 rounded border border-slate-100">
-                                                {format(nextHoliday.dateObj, 'd MMM yyyy')}
-                                            </span>
+                                    return (
+                                        <div className="mt-4 pt-3 border-t border-slate-100">
+                                            <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider mb-2">Next Holiday</p>
+                                            <div className="flex justify-between items-center group">
+                                                <span className="text-sm font-medium text-gray-900 truncate group-hover:text-[var(--color-brand-pink)] transition-colors">
+                                                    {nextHoliday.name}
+                                                </span>
+                                                <span className="text-xs text-gray-500 whitespace-nowrap bg-slate-50 px-2 py-1 rounded border border-slate-100">
+                                                    {format(nextHoliday.dateObj, 'd MMM yyyy')}
+                                                </span>
+                                            </div>
                                         </div>
-                                    </div>
-                                );
-                            })()}
-                        </div>
+                                    );
+                                })()}
+                            </div>
 
-                        <UpcomingLeavesPanel
-                            leaves={leaves}
-                            isLoading={isLoading}
-                            onLeaveClick={(leave) => {
-                                setSelectedLeave(leave);
-                                setIsModalOpen(true);
-                            }}
-                            className="flex-1 min-h-0"
-                        />
+                            <UpcomingLeavesPanel
+                                leaves={leaves}
+                                isLoading={isLoading}
+                                onLeaveClick={(leave) => {
+                                    setSelectedLeave(leave);
+                                    setIsModalOpen(true);
+                                }}
+                                className="flex-1 min-h-0"
+                            />
+                        </div>
                     </div>
                 </div>
 

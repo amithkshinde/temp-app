@@ -206,7 +206,7 @@ export function getVisualConfig(status: 'past' | 'approved' | 'pending' | 'rejec
             return {
                 bg: 'bg-red-50',
                 border: 'border-red-300',
-                text: 'text-red-900 line-through decoration-red-400',
+                text: 'text-red-900',
                 indicator: 'bg-red-400',
                 label: 'Rejected'
             };

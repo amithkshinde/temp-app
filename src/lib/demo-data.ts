@@ -3,7 +3,7 @@ import { User, Leave, LeaveBalance, PublicHoliday } from './types';
 export const DEMO_USER_EMPLOYEE: User = {
     id: 'demo-emp',
     name: 'Demo Employee',
-    email: 'demo.employee@example.com',
+    email: 'amith@twistopen.in',
     role: 'employee',
     demo: true,
     department: 'Engineering',
@@ -103,6 +103,29 @@ export const DEMO_LEAVES: Leave[] = [
         reason: 'Christmas Break',
         status: 'approved',
         createdAt: `${currentYear}-11-01`,
+        type: 'planned',
+        userName: 'Demo Employee'
+    },
+    // New Requested Leaves
+    {
+        id: 'demo-leave-rejected-new',
+        userId: 'demo-emp',
+        startDate: getRelativeDate(10),
+        endDate: getRelativeDate(10),
+        reason: 'Personal: Day trip',
+        status: 'rejected',
+        createdAt: getRelativeDate(-1),
+        type: 'planned',
+        userName: 'Demo Employee'
+    },
+    {
+        id: 'demo-leave-jan-new',
+        userId: 'demo-emp',
+        startDate: `${currentYear + 1}-01-08`,
+        endDate: `${currentYear + 1}-01-08`,
+        reason: 'Planned: Family Visit',
+        status: 'approved',
+        createdAt: `${currentYear}-12-15`,
         type: 'planned',
         userName: 'Demo Employee'
     }
