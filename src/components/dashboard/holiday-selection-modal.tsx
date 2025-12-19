@@ -122,15 +122,15 @@ export function HolidaySelectionModal({
                             <p className="text-center text-gray-400 py-8">No holidays found.</p>
                         )}
                     </div>
-            </div>
+                </ScrollContainer>
 
-            <div className="p-6 border-t border-gray-100 bg-slate-50 flex justify-end gap-3 flex-shrink-0">
-                <Button variant="outline" onClick={onClose} disabled={isLoading}>Cancel</Button>
-                <Button onClick={handleSave} disabled={isLoading} className="bg-[var(--color-brand-pink)] hover:opacity-90 text-white">
-                    {isLoading ? 'Saving...' : `Save Selection (${selected.length})`}
-                </Button>
+                <div className="p-6 border-t border-gray-100 bg-slate-50 flex justify-end gap-3 flex-shrink-0">
+                    <Button variant="outline" onClick={onClose} disabled={isLoading}>Cancel</Button>
+                    <Button onClick={handleSave} disabled={isLoading} className="bg-[var(--color-brand-pink)] hover:opacity-90 text-white">
+                        {isLoading ? 'Saving...' : `Save Selection (${selected.length})`}
+                    </Button>
+                </div>
             </div>
-        </div>
         </div >
     );
 }

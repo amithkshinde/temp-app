@@ -101,6 +101,7 @@ export function HolidayModal({ isOpen, onClose, onAdd, existingHolidays, onDelet
                             {existingHolidays.length === 0 && (
                                 <p className="text-sm text-gray-400 text-center py-4">No holidays defined.</p>
                             )}
+                        </ScrollContainer>
                     </div>
                 </div>
             </div>

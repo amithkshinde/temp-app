@@ -395,8 +395,8 @@ export function LeaveModal({
                             )}
                         </div>
                     </form>
-            </div>
-        </div >
+                </ScrollContainer>
+            </div >
         </div >
     );
 }
