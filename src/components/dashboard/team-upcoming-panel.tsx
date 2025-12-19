@@ -34,7 +34,7 @@ export function TeamUpcomingPanel({ leaves, users, isLoading }: TeamUpcomingPane
         <div className="w-80 bg-white rounded-[var(--radius-xl)] shadow-sm border border-slate-100 p-6 h-fit shrink-0">
             <h3 className="text-lg font-bold text-gray-900 mb-4">Upcoming Leaves</h3>
 
-            <div className="space-y-4 max-h-[600px] overflow-y-auto custom-scrollbar pr-1">
+            <ScrollContainer className="max-h-[600px]" contentClassName="pr-2 space-y-4">
                 {upcomingLeaves.map(leave => {
                     const user = users.find(u => u.id === leave.userId);
 
@@ -60,7 +60,7 @@ export function TeamUpcomingPanel({ leaves, users, isLoading }: TeamUpcomingPane
                         No upcoming approved leaves.
                     </div>
                 )}
-            </div>
+            </ScrollContainer>
         </div>
     );
 }

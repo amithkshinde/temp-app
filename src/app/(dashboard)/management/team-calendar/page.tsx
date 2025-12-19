@@ -191,7 +191,7 @@ export default function TeamCalendarPage() {
                     </div>
 
                     {/* Body (Employees) */}
-                    <div className="flex-1 overflow-y-auto overflow-x-hidden">
+                    <ScrollContainer className="flex-1 min-h-0" contentClassName="overflow-x-hidden">
                         {filteredUsers.map(user => {
                             // Find leaves for this user in this month
                             const userLeaves = leaves.filter(l =>
@@ -248,34 +248,36 @@ export default function TeamCalendarPage() {
                                 No employees found.
                             </div>
                         )}
-                    </div>
+                    </ScrollContainer>
                 </div>
             </div>
 
             {/* Details Modal (Simple Overlay) */}
-            {selectedLeave && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-200">
-                    <div className="bg-white rounded-xl shadow-xl w-full max-w-sm p-6 space-y-4 animate-in zoom-in-95 duration-200">
-                        <div className="flex justify-between items-start">
-                            <h3 className="text-lg font-bold text-gray-900">{selectedLeave.reason}</h3>
-                            <button onClick={() => setSelectedLeave(null)} className="text-gray-400 hover:text-gray-600">
-                                <X size={16} />
-                                <span className="sr-only">Close</span>
-                            </button>
-                            {/* Force update */}
-                        </div>
-                        <div className="space-y-2 text-sm text-gray-600">
-                            <p><span className="font-semibold text-gray-900">Employee:</span> {users.find(u => u.id === selectedLeave.userId)?.name || 'Unknown'}</p>
-                            <p><span className="font-semibold text-gray-900">Duration:</span> {leaveDuration(selectedLeave)} days</p>
-                            <p><span className="font-semibold text-gray-900">Dates:</span> {selectedLeave.startDate} to {selectedLeave.endDate}</p>
-                            <p><span className="font-semibold text-gray-900">Status:</span> <span className="capitalize">{selectedLeave.status}</span></p>
-                        </div>
-                        <div className="pt-2">
-                            <Button onClick={() => setSelectedLeave(null)} className="w-full">Close</Button>
+            {
+                selectedLeave && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-200">
+                        <div className="bg-white rounded-xl shadow-xl w-full max-w-sm p-6 space-y-4 animate-in zoom-in-95 duration-200">
+                            <div className="flex justify-between items-start">
+                                <h3 className="text-lg font-bold text-gray-900">{selectedLeave.reason}</h3>
+                                <button onClick={() => setSelectedLeave(null)} className="text-gray-400 hover:text-gray-600">
+                                    <X size={16} />
+                                    <span className="sr-only">Close</span>
+                                </button>
+                                {/* Force update */}
+                            </div>
+                            <div className="space-y-2 text-sm text-gray-600">
+                                <p><span className="font-semibold text-gray-900">Employee:</span> {users.find(u => u.id === selectedLeave.userId)?.name || 'Unknown'}</p>
+                                <p><span className="font-semibold text-gray-900">Duration:</span> {leaveDuration(selectedLeave)} days</p>
+                                <p><span className="font-semibold text-gray-900">Dates:</span> {selectedLeave.startDate} to {selectedLeave.endDate}</p>
+                                <p><span className="font-semibold text-gray-900">Status:</span> <span className="capitalize">{selectedLeave.status}</span></p>
+                            </div>
+                            <div className="pt-2">
+                                <Button onClick={() => setSelectedLeave(null)} className="w-full">Close</Button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
             {/* CSS helper for stripes */}
             <style jsx global>{`
@@ -284,7 +286,7 @@ export default function TeamCalendarPage() {
                     background-size: 10px 10px;
                 }
             `}</style>
-        </div>
+        </div >
     );
 }
 

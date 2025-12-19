@@ -28,7 +28,8 @@ export function ActionPanel({ date, leaves, onApprove, onReject, isLoading }: Ac
                 <p className="text-sm text-slate-500">{leaves.length} people on leave</p>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-6 space-y-4">
+            <ScrollContainer className="flex-1 min-h-0" contentClassName="p-6 space-y-4">
+                {/* ... existing content ... */}
                 {leaves.length === 0 && (
                     <p className="text-sm text-slate-400 text-center py-4">No leaves for this date.</p>
                 )}
@@ -72,7 +73,7 @@ export function ActionPanel({ date, leaves, onApprove, onReject, isLoading }: Ac
                         )}
                     </div>
                 ))}
-            </div>
+            </ScrollContainer>
         </div>
     );
 }

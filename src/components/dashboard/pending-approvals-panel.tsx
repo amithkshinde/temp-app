@@ -40,7 +40,7 @@ export function PendingApprovalsPanel({ leaves, users, onApprove, onReject, isLo
                 </span>
             </div>
 
-            <div className="space-y-4 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
+            <ScrollContainer className="max-h-[300px]" contentClassName="pr-2 space-y-4">
                 {leaves.map(leave => {
                     const user = users.find(u => u.id === leave.userId);
                     const startDate = parseISO(leave.startDate);
@@ -84,7 +84,7 @@ export function PendingApprovalsPanel({ leaves, users, onApprove, onReject, isLo
                         </div>
                     );
                 })}
-            </div>
+            </ScrollContainer>
         </div>
     );
 }
