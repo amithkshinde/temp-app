@@ -6,6 +6,7 @@ import { Leave, PublicHoliday } from '@/lib/types';
 import { differenceInCalendarDays, startOfToday, parseISO, isWithinInterval, format } from 'date-fns';
 import { Select } from '@/components/ui/select';
 import { Calendar } from 'lucide-react';
+import { ScrollContainer } from '@/components/ui/scroll-container';
 
 interface LeaveModalProps {
     isOpen: boolean;
@@ -188,7 +189,7 @@ export function LeaveModal({
                     )}
                 </div>
 
-                <div className="p-6 overflow-y-auto max-h-[70vh]">
+                <ScrollContainer className="max-h-[70vh]" contentClassName="p-6">
                     <form onSubmit={handleSubmit} className="space-y-6">
 
                         {/* Mode Toggle - Segmented Control */}
@@ -394,8 +395,8 @@ export function LeaveModal({
                             )}
                         </div>
                     </form>
-                </div>
-            </div >
+            </div>
+        </div >
         </div >
     );
 }

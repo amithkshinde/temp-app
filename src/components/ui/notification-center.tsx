@@ -111,21 +111,21 @@ export function NotificationCenter() {
                                 ))}
                             </ul>
                         )}
-                </div>
+                    </ScrollContainer>
 
                     {notifications.length > 0 && (
-                <div className="p-2 border-t border-slate-100 bg-gray-50 rounded-b-[var(--radius-xl)]">
-                    <button
-                        onClick={clearAll}
-                        className="w-full py-2 text-xs text-center text-gray-500 hover:text-red-500 flex items-center justify-center gap-2 transition-colors"
-                    >
-                        <Trash2 className="w-3 h-3" /> Clear History
-                    </button>
+                        <div className="p-2 border-t border-slate-100 bg-gray-50 rounded-b-[var(--radius-xl)]">
+                            <button
+                                onClick={clearAll}
+                                className="w-full py-2 text-xs text-center text-gray-500 hover:text-red-500 flex items-center justify-center gap-2 transition-colors"
+                            >
+                                <Trash2 className="w-3 h-3" /> Clear History
+                            </button>
+                        </div>
+                    )}
                 </div>
-            )}
-        </div>
-    )
-}
+            )
+            }
         </div >
     );
 }

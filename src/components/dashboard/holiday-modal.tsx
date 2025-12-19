@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { X } from 'lucide-react';
 import { PublicHoliday } from '@/lib/types';
+import { ScrollContainer } from '@/components/ui/scroll-container';
 
 interface HolidayModalProps {
     isOpen: boolean;
@@ -75,7 +76,7 @@ export function HolidayModal({ isOpen, onClose, onAdd, existingHolidays, onDelet
                     {/* Existing List */}
                     <div className="space-y-3">
                         <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">Existing Holidays (2025)</h3>
-                        <div className="max-h-60 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
+                        <ScrollContainer className="max-h-60" contentClassName="pr-2 space-y-2">
                             {existingHolidays.sort((a, b) => a.date.localeCompare(b.date)).map(h => (
                                 <div key={h.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-100 group hover:border-slate-200 transition-colors">
                                     <div className="flex items-center gap-3">
@@ -100,14 +101,14 @@ export function HolidayModal({ isOpen, onClose, onAdd, existingHolidays, onDelet
                             {existingHolidays.length === 0 && (
                                 <p className="text-sm text-gray-400 text-center py-4">No holidays defined.</p>
                             )}
-                        </div>
                     </div>
                 </div>
+            </div>
 
-                <div className="p-6 border-t border-gray-100 bg-slate-50 flex justify-end">
-                    <Button variant="outline" onClick={onClose}>Done</Button>
-                </div>
+            <div className="p-6 border-t border-gray-100 bg-slate-50 flex justify-end">
+                <Button variant="outline" onClick={onClose}>Done</Button>
             </div>
         </div>
+        </div >
     );
 }

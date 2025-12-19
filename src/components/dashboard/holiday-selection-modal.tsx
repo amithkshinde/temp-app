@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { X, Check } from 'lucide-react';
 import { PublicHoliday } from '@/lib/types';
 import { Input } from '@/components/ui/input';
+import { ScrollContainer } from '@/components/ui/scroll-container';
 
 interface HolidaySelectionModalProps {
     isOpen: boolean;
@@ -87,7 +88,7 @@ export function HolidaySelectionModal({
                     />
                 </div>
 
-                <div className="p-6 overflow-y-auto custom-scrollbar flex-1">
+                <ScrollContainer className="flex-1 min-h-0" contentClassName="p-6">
                     <div className="space-y-2">
                         {filteredHolidays.map(h => {
                             const isSelected = selected.includes(h.id);
@@ -96,10 +97,10 @@ export function HolidaySelectionModal({
                                 <div
                                     key={h.id}
                                     className={`flex items-center justify-between p-3 rounded-lg border transition-all ${isSelected
-                                            ? 'bg-pink-50 border-[var(--color-brand-pink)] cursor-pointer'
-                                            : isDisabled
-                                                ? 'bg-gray-50 border-gray-100 opacity-60 cursor-not-allowed'
-                                                : 'bg-slate-50 border-slate-100 hover:border-slate-200 cursor-pointer'
+                                        ? 'bg-pink-50 border-[var(--color-brand-pink)] cursor-pointer'
+                                        : isDisabled
+                                            ? 'bg-gray-50 border-gray-100 opacity-60 cursor-not-allowed'
+                                            : 'bg-slate-50 border-slate-100 hover:border-slate-200 cursor-pointer'
                                         }`}
                                     onClick={() => !isDisabled && toggleSelection(h.id)}
                                 >
@@ -121,15 +122,15 @@ export function HolidaySelectionModal({
                             <p className="text-center text-gray-400 py-8">No holidays found.</p>
                         )}
                     </div>
-                </div>
+            </div>
 
-                <div className="p-6 border-t border-gray-100 bg-slate-50 flex justify-end gap-3 flex-shrink-0">
-                    <Button variant="outline" onClick={onClose} disabled={isLoading}>Cancel</Button>
-                    <Button onClick={handleSave} disabled={isLoading} className="bg-[var(--color-brand-pink)] hover:opacity-90 text-white">
-                        {isLoading ? 'Saving...' : `Save Selection (${selected.length})`}
-                    </Button>
-                </div>
+            <div className="p-6 border-t border-gray-100 bg-slate-50 flex justify-end gap-3 flex-shrink-0">
+                <Button variant="outline" onClick={onClose} disabled={isLoading}>Cancel</Button>
+                <Button onClick={handleSave} disabled={isLoading} className="bg-[var(--color-brand-pink)] hover:opacity-90 text-white">
+                    {isLoading ? 'Saving...' : `Save Selection (${selected.length})`}
+                </Button>
             </div>
         </div>
+        </div >
     );
 }
