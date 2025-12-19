@@ -2,6 +2,7 @@ import { Leave } from '@/lib/types';
 import { getLeaveVisualStatus, getVisualConfig } from '@/lib/leave-utils';
 import { format, parseISO, isSameDay } from 'date-fns';
 import { ScrollContainer } from '@/components/ui/scroll-container';
+import { DateCard } from '@/components/ui/date-card';
 
 interface UpcomingLeavesPanelProps {
     leaves: Leave[];
@@ -53,34 +54,30 @@ export function UpcomingLeavesPanel({ leaves, isLoading, onLeaveClick, className
                         const config = getVisualConfig(visualStatus);
 
                         return (
-                            <div
+                            <DateCard
                                 key={leave.id}
-                                className={`p-3 rounded-lg bg-white border hover:bg-slate-50 transition-colors cursor-pointer group ${config.border}`}
-                                onClick={() => onLeaveClick?.(leave)}
-                            >
-                                <div className="flex justify-between items-start mb-1">
-                                    <div className="flex flex-col">
-                                        <span className="font-bold text-gray-900 text-sm">
-                                            {dateString}
-                                        </span>
-                                    </div>
+                                title={dateString}
+                                borderColor={config.border}
+                                rightElement={
                                     <span className={`text-[10px] uppercase font-bold px-1.5 py-0.5 rounded border ${config.bg} ${config.text} ${config.border}`}>
                                         {visualStatus === 'past' ? 'Past' : leave.status}
                                     </span>
-                                </div>
-
-                                <div className="flex items-center justify-between mt-2">
-                                    <div className="flex items-center gap-2">
-                                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${isSick ? 'bg-white text-gray-700 border-gray-300' : 'bg-gray-100 text-gray-900 border-gray-200'
-                                            }`}>
-                                            {isSick ? 'Sick Leave' : 'Planned Leave'}
+                                }
+                                bottomElement={
+                                    <>
+                                        <div className="flex items-center gap-2">
+                                            <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${isSick ? 'bg-white text-gray-700 border-gray-300' : 'bg-gray-100 text-gray-900 border-gray-200'
+                                                }`}>
+                                                {isSick ? 'Sick Leave' : 'Planned Leave'}
+                                            </span>
+                                        </div>
+                                        <span className="text-xs text-[#f0216a] opacity-0 group-hover:opacity-100 transition-opacity font-bold hover:underline">
+                                            Edit
                                         </span>
-                                    </div>
-                                    <span className="text-xs text-[#f0216a] opacity-0 group-hover:opacity-100 transition-opacity font-bold hover:underline">
-                                        Edit
-                                    </span>
-                                </div>
-                            </div>
+                                    </>
+                                }
+                                onClick={() => onLeaveClick?.(leave)}
+                            />
                         );
                     })}
                 </ScrollContainer>

@@ -12,9 +12,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
         let variantStyles = "";
         if (variant === 'primary') {
-            variantStyles = "bg-[var(--color-brand-pink)] text-white hover:opacity-90 active:scale-95 shadow-sm text-xs";
+            variantStyles = "bg-[var(--color-brand-pink)] text-white hover:opacity-90 active:scale-95 shadow-sm text-[14px]";
         } else if (variant === 'secondary') {
-            variantStyles = "bg-slate-100 text-slate-900 border border-[#D9DEE3] hover:bg-[#E4E8EC] hover:shadow-sm text-xs";
+            variantStyles = "bg-slate-100 text-slate-900 border border-[#D9DEE3] hover:bg-[#E4E8EC] hover:shadow-sm text-[14px]";
         } else if (variant === 'outline') {
             variantStyles = "border border-slate-200 bg-white hover:bg-slate-100 text-slate-900 text-xs";
         } else if (variant === 'ghost') {
@@ -22,6 +22,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         }
 
         let sizeStyles = "h-11 px-8 py-2";
+        if (size === 'default' && ['primary', 'secondary', 'outline'].includes(variant)) {
+            sizeStyles = "py-1 px-4";
+        }
         if (size === 'sm') sizeStyles = "h-9 rounded-lg px-3";
         if (size === 'lg') sizeStyles = "h-12 rounded-lg px-8";
         if (size === 'icon') sizeStyles = "h-10 w-10";

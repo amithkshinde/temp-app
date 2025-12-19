@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { X } from 'lucide-react';
 import { PublicHoliday } from '@/lib/types';
 import { ScrollContainer } from '@/components/ui/scroll-container';
+import { DateCard } from '@/components/ui/date-card';
 
 interface HolidayModalProps {
     isOpen: boolean;
@@ -78,25 +79,27 @@ export function HolidayModal({ isOpen, onClose, onAdd, existingHolidays, onDelet
                         <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">Existing Holidays (2025)</h3>
                         <ScrollContainer className="max-h-60" contentClassName="pr-2 space-y-2">
                             {existingHolidays.sort((a, b) => a.date.localeCompare(b.date)).map(h => (
-                                <div key={h.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-100 group hover:border-slate-200 transition-colors">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-2 h-2 rounded-full bg-purple-400" />
-                                        <div>
-                                            <p className="font-medium text-sm text-gray-900">{h.name}</p>
-                                            <p className="text-xs text-gray-500">{h.date}</p>
-                                        </div>
-                                    </div>
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() => {
-                                            if (confirm(`Delete ${h.name}?`)) onDelete(h.id);
-                                        }}
-                                        className="text-red-500 hover:text-red-700 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-opacity"
-                                    >
-                                        Delete
-                                    </Button>
-                                </div>
+                                <DateCard
+                                    key={h.id}
+                                    title={h.name}
+                                    subtitle={h.date}
+                                    // Make bg white to match "Upcoming" style (was slate-50)
+                                    bgColor="bg-white"
+                                    borderColor="border-slate-100 group-hover:border-slate-200"
+                                    rightElement={
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                if (confirm(`Delete ${h.name}?`)) onDelete(h.id);
+                                            }}
+                                            className="h-8 text-red-500 hover:text-red-700 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-opacity"
+                                        >
+                                            Delete
+                                        </Button>
+                                    }
+                                />
                             ))}
                             {existingHolidays.length === 0 && (
                                 <p className="text-sm text-gray-400 text-center py-4">No holidays defined.</p>

@@ -17,6 +17,7 @@ import { MobileFAB } from '@/components/dashboard/mobile-fab';
 import { HolidaySelectionModal } from '@/components/dashboard/holiday-selection-modal';
 import { UserMenu } from '@/components/dashboard/user-menu';
 import { deduplicateLeaves } from '@/lib/leave-utils';
+import { DateCard } from '@/components/ui/date-card';
 
 
 export default function EmployeeDashboard() {
@@ -245,14 +246,18 @@ export default function EmployeeDashboard() {
                                     return (
                                         <div className="mt-4 pt-3 border-t border-slate-100">
                                             <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider mb-2">Next Holiday</p>
-                                            <div className="flex justify-between items-center group">
-                                                <span className="text-sm font-medium text-gray-900 truncate group-hover:text-[var(--color-brand-pink)] transition-colors">
-                                                    {nextHoliday.name}
-                                                </span>
-                                                <span className="text-xs text-gray-500 whitespace-nowrap bg-slate-50 px-2 py-1 rounded border border-slate-100">
-                                                    {format(nextHoliday.dateObj, 'd MMM yyyy')}
-                                                </span>
-                                            </div>
+                                            <DateCard
+                                                title={nextHoliday.name}
+                                                // User Req: "Right-aligned. Same typography as Upcoming Leaves date text."
+                                                // DateCard title is: font-bold text-gray-900 text-sm
+                                                // We want the DATE to look like that on the right.
+                                                rightElement={
+                                                    <span className="font-normal text-gray-900 text-[10px]">
+                                                        {format(nextHoliday.dateObj, 'MMM d, yyyy')}
+                                                    </span>
+                                                }
+                                                className="border-slate-200"
+                                            />
                                         </div>
                                     );
                                 })()}
