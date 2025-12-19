@@ -1,24 +1,17 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
-import { Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, Check } from 'lucide-react';
 import Image from 'next/image';
 
 export default function LoginPage() {
     const { login, loginAsDemo } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
-    useEffect(() => {
-        console.log('[DEBUG] Login Page Mount');
-        console.log('[DEBUG] NEXT_PUBLIC_DEMO_MODE:', process.env.NEXT_PUBLIC_DEMO_MODE);
-        console.log('[DEBUG] NODE_ENV:', process.env.NODE_ENV);
-    }, []);
-    const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
 
@@ -36,7 +29,7 @@ export default function LoginPage() {
 
             const res = await login(email, password);
             if (!res.success) {
-                setError(res.error || 'Hmm, that didn&rsquo;t match. Try again?');
+                setError(res.error || 'Invalid credentials. Please try again.');
             }
         } catch {
             setError('Something went wrong. Please try again.');
@@ -46,36 +39,35 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg)] p-4">
-            <div className="w-full max-w-md space-y-10 bg-white p-10 rounded-[var(--radius-xl)] shadow-xl border border-slate-200">
-
-                <div className="text-center space-y-6 flex flex-col items-center">
-                    <div className="w-full flex justify-center">
+        <div className="min-h-screen grid place-items-center bg-slate-50 p-4">
+            <div className="w-full max-w-[400px] bg-white rounded-2xl shadow-xl p-8 border border-white/50">
+                {/* Header */}
+                <div className="flex flex-col items-center text-center">
+                    <div className="relative w-12 h-12 mb-6">
                         <Image
                             src="/twist-logo.png"
-                            alt="Twist Open"
-                            width={144}
-                            height={280}
-                            className="h-24 w-auto object-contain"
+                            alt="Logo"
+                            fill
+                            className="object-contain"
                             priority
                         />
                     </div>
-                    <h1 className="text-2xl font-bold tracking-tight text-[#1a1a1a]">Twist Open Leave Tracker</h1>
+                    <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Welcome</h1>
+                    <p className="text-sm text-gray-500 mt-2">Log in to manage your leaves</p>
                 </div>
 
-                <form className="space-y-8" onSubmit={handleSubmit}>
-                    <div className="space-y-6">
-
-
-                        <div>
-                            <label className="block text-sm font-bold text-[#4A4A4A] mb-2" htmlFor="email">
-                                Email
-                            </label>
+                {/* Login Form */}
+                <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
+                    <div className="space-y-4">
+                        {/* Email Input */}
+                        <div className="relative">
+                            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10 pointer-events-none">
+                                <Mail size={18} />
+                            </div>
                             <Input
-                                id="email"
                                 type="email"
-                                placeholder="name@company.com"
-                                className="placeholder:text-gray-400"
+                                placeholder="Email address"
+                                className="pl-10"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 disabled={isLoading}
@@ -83,71 +75,87 @@ export default function LoginPage() {
                             />
                         </div>
 
+                        {/* Password Input */}
                         <div>
-                            <label className="block text-sm font-bold text-[#4A4A4A] mb-2" htmlFor="password">
-                                Password
-                            </label>
                             <div className="relative">
+                                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10 pointer-events-none">
+                                    <Lock size={18} />
+                                </div>
                                 <Input
-                                    id="password"
-                                    type={showPassword ? "text" : "password"}
-                                    placeholder="••••••••"
-                                    className="placeholder:text-gray-400 pr-10"
+                                    type="password"
+                                    placeholder="Password"
+                                    className="pl-10"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     disabled={isLoading}
                                     required
                                 />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors focus:outline-none"
-                                    disabled={isLoading}
+                            </div>
+                            {/* Forgot Password Link */}
+                            <div className="flex justify-end mt-2">
+                                <Link
+                                    href="/forgot-password"
+                                    className="text-xs font-medium text-slate-500 hover:text-slate-800 transition-colors"
                                 >
-                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                                </button>
+                                    Forgot password?
+                                </Link>
                             </div>
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-end text-sm">
-                        <Link href="/forgot-password" className="font-bold text-[var(--color-brand-pink)] hover:underline hover:text-pink-700">
-                            Forgot password?
-                        </Link>
-                    </div>
-
                     {error && (
-                        <div className="p-4 text-sm font-medium text-red-600 bg-red-50 rounded-xl border border-red-100">
+                        <div className="p-3 text-sm text-red-600 bg-red-50 rounded-lg flex items-center gap-2">
+                            <span className="shrink-0 w-1 h-4 bg-red-600 rounded-full"></span>
                             {error}
                         </div>
                     )}
 
-                    <Button type="submit" className="w-full font-bold h-11 text-base shadow-lg shadow-pink-100" isLoading={isLoading}>
-                        Log in
+                    {/* Primary CTA */}
+                    <Button
+                        type="submit"
+                        className="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium h-11 rounded-xl shadow-lg shadow-slate-200 transition-all active:scale-[0.98]"
+                        isLoading={isLoading}
+                    >
+                        Login
                     </Button>
                 </form>
 
-
-
-                <div className="text-center text-sm text-[#4A4A4A] font-medium pt-2">
-                    Don&apos;t have an account?{' '}
-                    <Link href="/signup" className="font-bold text-[var(--color-brand-pink)] hover:underline">
-                        Create an account
-                    </Link>
-                </div>
-
+                {/* Demo Mode Section */}
                 {process.env.NEXT_PUBLIC_DEMO_MODE === 'true' && (
-                    <div className="pt-4 border-t border-slate-100 mt-6 text-center">
-                        <p className="text-xs text-gray-500 mb-3 uppercase tracking-wider font-semibold">Demo Mode</p>
-                        <Button
-                            variant="outline"
-                            className="w-full border-dashed border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-800"
-                            onClick={() => loginAsDemo('employee')}
-                        >
-                            View as Demo Employee
-                        </Button>
+                    <div className="mt-8 pt-8 border-t border-slate-100">
+                        <div className="text-center mb-4">
+                            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider bg-white px-2">
+                                Explore demo mode
+                            </span>
+                        </div>
+                        <div className="flex gap-3">
+                            <Button
+                                variant="outline"
+                                className="flex-1 border-slate-200 text-slate-700 hover:bg-slate-50 h-10 font-normal"
+                                onClick={() => loginAsDemo('employee')}
+                            >
+                                As Employee
+                            </Button>
+                            <Button
+                                variant="outline"
+                                className="flex-1 border-slate-200 text-slate-700 hover:bg-slate-50 h-10 font-normal"
+                                onClick={() => loginAsDemo('management')}
+                            >
+                                As Manager
+                            </Button>
+                        </div>
                     </div>
                 )}
+
+                {/* Footer */}
+                <div className="mt-8 text-center">
+                    <p className="text-sm text-slate-500">
+                        Don&apos;t have an account?{' '}
+                        <Link href="/signup" className="font-medium text-slate-900 hover:underline">
+                            Sign up
+                        </Link>
+                    </p>
+                </div>
             </div>
         </div>
     );

@@ -33,7 +33,7 @@ export function UpcomingLeavesPanel({ leaves, isLoading, onLeaveClick, className
                     No upcoming leaves scheduled.
                 </div>
             ) : (
-                <ScrollContainer className="flex-1 min-h-0" contentClassName="pr-2 space-y-3">
+                <ScrollContainer className="flex-1 min-h-0" contentClassName="pr-4 space-y-3">
                     {upcomingLeaves.map(leave => {
                         const startDate = parseISO(leave.startDate);
                         const endDate = parseISO(leave.endDate);
