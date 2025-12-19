@@ -1,5 +1,5 @@
 import { Leave } from "@/lib/types";
-import { eachDayOfInterval, parseISO, areIntervalsOverlapping, isSameDay, format } from "date-fns";
+import { eachDayOfInterval, parseISO, areIntervalsOverlapping, format } from "date-fns";
 
 /**
  * Deduplicates leaves to enforce one effective leave status per date.
@@ -82,7 +82,7 @@ export function deduplicateLeaves(leaves: Leave[]): Leave[] {
                 start: parseISO(leave.startDate),
                 end: parseISO(leave.endDate)
             });
-        } catch (e) {
+        } catch {
             console.warn("Invalid leave range", leave);
             continue;
         }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useNotifications } from "@/context/NotificationContext";
-import { Bell, Trash2, Info, CheckCircle, AlertTriangle, XCircle, MailOpen, X, Check } from "lucide-react";
+import { Bell, Trash2, Info, CheckCircle, AlertTriangle, XCircle, MailOpen } from "lucide-react";
 import { ScrollContainer } from '@/components/ui/scroll-container';
 import { useState, useRef, useEffect } from "react";
 import { Button } from "../ui/button";

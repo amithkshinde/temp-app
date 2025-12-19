@@ -11,7 +11,11 @@ interface ScrollContainerProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export function ScrollContainer({ children, className, contentClassName, ...props }: ScrollContainerProps) {
     const contentRef = useRef<HTMLDivElement>(null);
-    const scrollTrackRef = useRef<HTMLDivElement>(null);
+
+    const [contentHeight, setContentHeight] = useState(0);
+    const [contentScrollHeight, setContentScrollHeight] = useState(0);
+
+    // Restored state
     const [thumbHeight, setThumbHeight] = useState(20);
     const [scrollTop, setScrollTop] = useState(0);
     const [isHovering, setIsHovering] = useState(false);
@@ -19,10 +23,14 @@ export function ScrollContainer({ children, className, contentClassName, ...prop
     const [showThumb, setShowThumb] = useState(false);
     const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-    // Calculate thumb height whenever content changes
+    // Calculate thumb height and store dimensions
     const handleResize = useCallback(() => {
         if (!contentRef.current) return;
         const { clientHeight, scrollHeight } = contentRef.current;
+
+        setContentHeight(clientHeight);
+        setContentScrollHeight(scrollHeight);
+
         const totalHeight = clientHeight;
         const totalScrollableHeight = scrollHeight;
 
@@ -49,31 +57,19 @@ export function ScrollContainer({ children, className, contentClassName, ...prop
         // Also listen to window resize
         window.addEventListener('resize', handleResize);
 
+        const currentRef = contentRef.current;
         return () => {
-            if (contentRef.current) resizeObserver.unobserve(contentRef.current);
+            if (currentRef) resizeObserver.unobserve(currentRef);
             resizeObserver.disconnect();
             window.removeEventListener('resize', handleResize);
         };
+        // Added contentRef as dependency for cleaner effect restart if ref changes (unlikely but safe)
     }, [handleResize]);
 
     // Handle Scroll
     const handleScroll = useCallback(() => {
         if (!contentRef.current) return;
-        const { scrollTop: newScrollTop, scrollHeight, clientHeight } = contentRef.current;
-
-        // Calculate Top Position %
-        const maxScrollTop = scrollHeight - clientHeight;
-        const scrollRatio = newScrollTop / maxScrollTop;
-
-        // Effective max top for thumb
-        // Thumb moves within (clientHeight - thumbHeight)
-        // Wait, simpler math: 
-        // thumbTop = (scrollTop / scrollHeight) * clientHeight ? No.
-        // thumbTop = (scrollTop / maxScrollTop) * (clientHeight - thumbHeight)
-
-        // We just store scrollTop for now to use in render style if we want precise pixel control
-        // But let's calculate the TOP css value here or in render.
-        // We trigger re-render on scroll anyway to move thumb.
+        const { scrollTop: newScrollTop } = contentRef.current;
         setScrollTop(newScrollTop);
 
         // Show thumb
@@ -127,7 +123,8 @@ export function ScrollContainer({ children, className, contentClassName, ...prop
     // Visibility Effect
     useEffect(() => {
         if (isHovering || isDragging) {
-            setShowThumb(true);
+            // redundant: setShowThumb(true); 
+            // We just clear timeout so it doesn't hide while interacting
             if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
         } else {
             // If we just stopped hovering, verify if we should hide
@@ -141,16 +138,17 @@ export function ScrollContainer({ children, className, contentClassName, ...prop
 
 
     // Calculated Top Position for Thumb
-    const getThumbTop = () => {
-        if (!contentRef.current) return 0;
-        const { clientHeight, scrollHeight } = contentRef.current;
-        const maxScrollTop = scrollHeight - clientHeight;
+    const calculateThumbTop = () => {
+        // Use state values instead of ref during render
+        const maxScrollTop = contentScrollHeight - contentHeight;
         if (maxScrollTop <= 0) return 0;
 
-        const maxThumbTop = clientHeight - thumbHeight;
+        const maxThumbTop = contentHeight - thumbHeight;
         const ratio = scrollTop / maxScrollTop;
         return Math.min(maxThumbTop, Math.max(0, ratio * maxThumbTop));
     };
+
+    const thumbTop = calculateThumbTop();
 
     return (
         <div
@@ -180,7 +178,7 @@ export function ScrollContainer({ children, className, contentClassName, ...prop
                     )}
                     style={{
                         height: thumbHeight,
-                        transform: `translateY(${getThumbTop()}px)`,
+                        transform: `translateY(${thumbTop}px)`,
                         cursor: 'grab' // Using grab cursor so user knows it interacts
                     }}
                     onMouseDown={handleMouseDown}

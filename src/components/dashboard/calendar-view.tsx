@@ -101,55 +101,6 @@ export function CalendarView({
                     let textClass = "text-gray-900";
 
 
-
-                    // Prioritize Leaves over "Past" or "Weekend"
-                    if (dayLeaves.length > 0) {
-                        // Determine "Dominant" leave for this day
-                        // Priority: Approved > Pending > Rejected
-                        // But wait, user requirement says: "Holiday > Past > Approved..."
-                        // Let's check status of the leaves.
-
-                        // We need to check if ANY leave on this day is in a state that dictates color.
-                        // If multiple leaves, which one wins? 
-                        // Typically we said "Deduplication" earlier, but here we just render classes.
-                        // Let's pick the "best" one to represent the day.
-                        // Sort by priority: Approved > Pending > Rejected
-                        const visualPriorities = { 'approved': 3, 'pending': 2, 'rejected': 1, 'past': 4 }; // Past overrides all? Wait. 
-                        // User Rule: "Past Leave (grey, overrides Approved color)"
-
-                        // So effectively, we should look at the visual status of the leaves.
-                        // If any leave is 'past' (which it is if endDate < today), it overrides? 
-                        // Wait, if I have a PAST approved leave, it is 'past'.
-                        // If I have a FUTURE approved leave, it is 'approved'.
-
-                        // Let's map leaves to visual statuses first.
-                        // Since `getLeaveVisualStatus` uses the LEAVE's date, it works for the whole leave.
-                        // But here we are on a specific DAY. 
-                        // If a leave started 5 days ago and ends tomorrow, and today is today.
-                        // The leave "status" is Pending. 
-                        // Is it "past"? No, end > today. So it's Pending.
-                        // So the whole leave is colored Pending.
-
-                        // What if we have multiple leaves? (Shouldn't happen with dedup, but let's be safe).
-                        // Let's take the first one found by our filter.
-                        const dominantLeave = dayLeaves[0]; // Simplified as usually 1 per day
-
-                        // Check Visual Status
-                        // We need to import the helper first. But this file is huge.
-                        // I'll assume I can import it. I'll add the import in a separate step or assume it works if I add it to top.
-                        // Actually I need to add the import. I'll do that in a previous step to be safe? 
-                        // No, I can't. 
-                        // I will rely on the fact that I can edit the file.
-
-                        // Wait, I am editing the logic block.
-                        // I will use a simplified logic here if I can't easily import, OR I will add the import.
-                        // I will add the import at the top of the file in a separate call to be clean.
-                        // For now, let's assuming I can access `getLeaveVisualStatus` if I import it.
-
-                        // RE-READING: "Holiday (highest priority)"
-                        // So Holiday check comes first.
-                    }
-
                     if (holiday) {
                         // Holidays also high priority
                         bgClass = "bg-amber-100";

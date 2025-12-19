@@ -5,7 +5,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
-import { Mail, Lock, Check } from 'lucide-react';
+import { Mail, Lock } from 'lucide-react';
 import Image from 'next/image';
 
 export default function LoginPage() {
