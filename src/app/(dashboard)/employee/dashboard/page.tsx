@@ -171,8 +171,8 @@ export default function EmployeeDashboard() {
     };
 
     return (
-        <div className="h-screen overflow-hidden bg-[var(--color-bg)] p-8 flex flex-col">
-            <div className="max-w-5xl mx-auto w-full flex-1 flex flex-col gap-6 min-h-0">
+        <div className="h-screen overflow-hidden bg-[var(--color-bg)] p-6 flex flex-col">
+            <div className="max-w-5xl mx-auto w-full flex-1 flex flex-col gap-4 min-h-0">
                 <header className="flex justify-between items-center shrink-0">
                     <div>
                         <h1 className="text-3xl font-bold text-gray-900">Welcome, {user?.name.split(' ')[0]}!</h1>
@@ -202,8 +202,8 @@ export default function EmployeeDashboard() {
                     />
                 </div>
 
-                <div className="flex-1 min-h-0 flex flex-col lg:flex-row gap-6 items-stretch">
-                    <div className="flex-1 min-w-0 overflow-y-auto no-scrollbar">
+                <div className="flex-1 min-h-0 flex flex-col lg:flex-row gap-4 items-stretch">
+                    <div className="flex-1 min-w-0">
                         <CalendarView
                             leaves={leaves}
                             holidays={holidays}
@@ -214,7 +214,7 @@ export default function EmployeeDashboard() {
                     </div>
 
                     <div className="w-full lg:w-80 relative">
-                        <div className="flex flex-col gap-6 lg:absolute lg:inset-0">
+                        <div className="flex flex-col gap-4 lg:absolute lg:inset-0">
                             <div className="bg-white rounded-[var(--radius-xl)] shadow-sm border border-slate-200 p-4 shrink-0">
                                 <div className="flex justify-between items-center mb-2">
                                     <h3 className="text-sm text-gray-900 font-semibold tracking-tight">Public Holidays</h3>
