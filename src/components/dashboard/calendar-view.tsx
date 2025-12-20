@@ -22,6 +22,8 @@ interface CalendarViewProps {
     onLeaveClick?: (leave: Leave) => void; // For Manager to approve
     className?: string;
     compact?: boolean;
+    currentMonth?: Date;
+    onMonthChange?: (date: Date) => void;
 }
 
 export function CalendarView({
@@ -34,8 +36,18 @@ export function CalendarView({
     onLeaveClick,
     className,
     compact = false,
+    currentMonth: controlledMonth,
+    onMonthChange,
 }: CalendarViewProps) {
-    const [currentMonth, setCurrentMonth] = useState(new Date());
+    const [internalMonth, setInternalMonth] = useState(new Date());
+
+    // Use controlled if provided, else internal
+    const currentMonth = controlledMonth || internalMonth;
+
+    const handleMonthChange = (newDate: Date) => {
+        setInternalMonth(newDate);
+        onMonthChange?.(newDate);
+    };
 
     const monthStart = startOfMonth(currentMonth);
     const monthEnd = endOfMonth(currentMonth);
@@ -67,8 +79,8 @@ export function CalendarView({
         return holidays.find(h => h.date === dStr);
     };
 
-    const nextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
-    const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
+    const nextMonth = () => handleMonthChange(addMonths(currentMonth, 1));
+    const prevMonth = () => handleMonthChange(subMonths(currentMonth, 1));
 
     return (
         <div className={cn("bg-white rounded-[var(--radius-xl)] shadow-sm border border-slate-200 p-4", className)}>
@@ -88,7 +100,7 @@ export function CalendarView({
                 ))}
             </div>
 
-            <div className="grid grid-cols-7 gap-2">
+            <div className="grid grid-cols-7 gap-1">
                 {days.map((day: Date) => {
                     const dayLeaves = getLeavesForDate(day);
                     const holiday = getHolidayForDate(day);
@@ -154,11 +166,16 @@ export function CalendarView({
                     const isLimitReached = selectedHolidayIds.length >= 10;
                     const isUnselectedHoliday = holiday && !isSelectedHoliday;
                     const isSelectionDisabled = isUnselectedHoliday && isLimitReached;
+                    const isPastDate = isPast && !isToday(day);
 
-                    const isDisabled = (isPast && !isToday(day) && dayLeaves.length === 0) || isSelectionDisabled;
+                    // Disabled if:
+                    // 1. Past holiday (selected or not)
+                    // 2. Past empty day (no leaves)
+                    // 3. Selection limit reached for unselected valid holiday
+                    const isDisabled = (isPastDate && (!!holiday || dayLeaves.length === 0)) || isSelectionDisabled;
 
                     const containerClasses = cn(
-                        compact ? "min-h-[3.5rem] p-1" : "min-h-[4rem] p-1.5",
+                        compact ? "min-h-[3rem] p-1" : "min-h-[3.5rem] p-1.5",
                         "rounded-lg flex flex-col items-start justify-start text-xs transition-all border relative",
                         bgClass,
                         borderClass,
@@ -247,7 +264,7 @@ export function CalendarView({
             </div>
 
             {/* Legend */}
-            <div className="flex flex-wrap gap-6 mt-6 text-xs text-gray-600 justify-center">
+            <div className="flex flex-wrap gap-4 mt-2 text-xs text-gray-600 justify-center">
                 <div className="flex items-center gap-2">
                     <div className="w-4 h-4 bg-green-50 border border-green-200 rounded flex items-center justify-center">
                         <div className="w-full h-1.5 bg-green-500 rounded-full mx-1"></div>

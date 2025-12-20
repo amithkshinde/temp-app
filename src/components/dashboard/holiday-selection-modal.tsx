@@ -5,6 +5,7 @@ import { X, Check } from 'lucide-react';
 import { PublicHoliday } from '@/lib/types';
 import { Input } from '@/components/ui/input';
 import { ScrollContainer } from '@/components/ui/scroll-container';
+import { isBefore, startOfToday, parseISO } from 'date-fns';
 
 interface HolidaySelectionModalProps {
     isOpen: boolean;
@@ -92,12 +93,15 @@ export function HolidaySelectionModal({
                     <div className="space-y-2">
                         {filteredHolidays.map(h => {
                             const isSelected = selected.includes(h.id);
-                            const isDisabled = !isSelected && selected.length >= 10;
+                            const today = startOfToday();
+                            const isPast = isBefore(parseISO(h.date), today);
+                            const isDisabled = isPast || (!isSelected && selected.length >= 10);
+
                             return (
                                 <div
                                     key={h.id}
                                     className={`flex items-center justify-between p-3 rounded-lg border transition-all ${isSelected
-                                        ? 'bg-pink-50 border-[var(--color-brand-pink)] cursor-pointer'
+                                        ? `bg-pink-50 border-[var(--color-brand-pink)] ${isPast ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`
                                         : isDisabled
                                             ? 'bg-gray-50 border-gray-100 opacity-60 cursor-not-allowed'
                                             : 'bg-slate-50 border-slate-100 hover:border-slate-200 cursor-pointer'

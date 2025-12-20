@@ -86,7 +86,6 @@ export default function EmployeeDashboard() {
     };
 
     const handleHolidayClick = async (holidayId: string) => {
-        if (user?.demo) return alert('Demo mode: Action disabled');
         if (!user) return;
 
         const isSelected = selectedHolidayIds.includes(holidayId);
@@ -171,6 +170,8 @@ export default function EmployeeDashboard() {
         }
     };
 
+    const [currentMonth, setCurrentMonth] = useState(new Date());
+
     return (
         <div className="h-screen overflow-hidden bg-[var(--color-bg)] p-6 flex flex-col">
             <div className="max-w-5xl mx-auto w-full flex-1 flex flex-col gap-4 min-h-0">
@@ -200,6 +201,7 @@ export default function EmployeeDashboard() {
                         balance={balance}
                         isLoading={isLoading}
                         role="employee"
+                        selectedHolidaysCount={selectedHolidayIds.length}
                     />
                 </div>
 
@@ -212,65 +214,27 @@ export default function EmployeeDashboard() {
                             onDateClick={handleDateClick}
                             onHolidayClick={handleHolidayClick}
                             className="h-full"
+                            currentMonth={currentMonth}
+                            onMonthChange={setCurrentMonth}
                         />
                     </div>
 
                     <div className="w-full lg:w-80 relative">
                         <div className="flex flex-col gap-4 lg:absolute lg:inset-0">
-                            <div className="bg-white rounded-[var(--radius-xl)] shadow-sm border border-slate-200 p-4 shrink-0">
-                                <div className="flex justify-between items-center mb-2">
-                                    <h3 className="text-sm text-gray-900 font-semibold tracking-tight">Public Holidays</h3>
-                                    <button
-                                        className="text-xs font-medium text-[var(--color-brand-pink)] hover:text-[#d01b5b] hover:underline transition-colors p-0 bg-transparent border-none appearance-none cursor-pointer"
-                                        onClick={() => setIsHolidayModalOpen(true)}
-                                    >
-                                        Manage
-                                    </button>
-                                </div>
-                                <p className="text-xs text-gray-500 mb-0">
-                                    You have selected {selectedHolidayIds.length} / 10 holidays.
-                                </p>
 
-                                {/* Next Holiday Section */}
-                                {(() => {
-                                    const today = new Date();
-                                    today.setHours(0, 0, 0, 0);
-                                    const nextHoliday = holidays
-                                        .filter(h => selectedHolidayIds.includes(h.id))
-                                        .map(h => ({ ...h, dateObj: new Date(h.date) }))
-                                        .filter(h => h.dateObj >= today)
-                                        .sort((a, b) => a.dateObj.getTime() - b.dateObj.getTime())[0];
-
-                                    if (!nextHoliday) return null;
-
-                                    return (
-                                        <div className="mt-4 pt-3 border-t border-slate-100">
-                                            <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider mb-2">Next Holiday</p>
-                                            <DateCard
-                                                title={nextHoliday.name}
-                                                // User Req: "Right-aligned. Same typography as Upcoming Leaves date text."
-                                                // DateCard title is: font-bold text-gray-900 text-sm
-                                                // We want the DATE to look like that on the right.
-                                                rightElement={
-                                                    <span className="font-normal text-gray-900 text-[10px]">
-                                                        {format(nextHoliday.dateObj, 'MMM d, yyyy')}
-                                                    </span>
-                                                }
-                                                className="border-slate-200"
-                                            />
-                                        </div>
-                                    );
-                                })()}
-                            </div>
 
                             <UpcomingLeavesPanel
                                 leaves={leaves}
+                                holidays={holidays}
+                                selectedHolidayIds={selectedHolidayIds}
+                                onHolidayClick={handleHolidayClick}
+                                currentMonth={currentMonth}
                                 isLoading={isLoading}
                                 onLeaveClick={(leave) => {
                                     setSelectedLeave(leave);
                                     setIsModalOpen(true);
                                 }}
-                                className="flex-1 min-h-0"
+                                className="flex-1 min-h-0 bg-white rounded-[var(--radius-xl)] shadow-sm border border-slate-200"
                             />
                         </div>
                     </div>
