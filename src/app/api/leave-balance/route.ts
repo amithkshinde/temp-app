@@ -4,11 +4,15 @@ import { DEMO_USER_EMPLOYEE, DEMO_LEAVES, DEMO_HOLIDAYS, DEMO_HOLIDAY_SELECTIONS
 import { eachDayOfInterval, isWeekend, format, parseISO } from 'date-fns';
 
 // Define minimal types to satisfy linter without depending on potentially stale generated types
+// Define minimal types to satisfy linter without depending on potentially stale generated types
 interface Leave {
+    id?: string;
     startDate: string;
     endDate: string;
     status: string;
     type?: string;
+    userId?: string;
+    createdAt?: Date | string;
 }
 
 interface Holiday {
@@ -16,7 +20,6 @@ interface Holiday {
     type: string;
 }
 
-const ANNUAL_ALLOCATION = 24;
 const HOLIDAY_LIMIT = 10;
 
 // Helper to calculate working days excluding weekends and public holidays
@@ -48,8 +51,9 @@ export async function GET(request: Request) {
     }
 
     // Dynamic Data Fetching (Supports Demo & Real)
-    let userLeaves: any[] = [];
-    let publicHolidays: any[] = [];
+    let userLeaves: Leave[] = [];
+    let publicHolidays: Holiday[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let holidaySelections: any[] = [];
 
     try {
@@ -61,12 +65,13 @@ export async function GET(request: Request) {
         const currentQuarterEndMonth = (currentQuarter + 1) * 3;
 
         if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true' && userId === DEMO_USER_EMPLOYEE.id) {
-            userLeaves = DEMO_LEAVES;
+            userLeaves = DEMO_LEAVES as unknown as Leave[];
             publicHolidays = DEMO_HOLIDAYS;
             // Mock Prisma selection format
             holidaySelections = DEMO_HOLIDAY_SELECTIONS.map(id => ({ userId, holidayId: id }));
         } else {
-            [userLeaves, publicHolidays, holidaySelections] = await Promise.all([
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const results = await Promise.all([
                 prisma.leave.findMany({
                     where: { userId }
                 }),
@@ -77,6 +82,9 @@ export async function GET(request: Request) {
                     where: { userId }
                 })
             ]);
+            userLeaves = results[0] as unknown as Leave[];
+            publicHolidays = results[1] as unknown as Holiday[];
+            holidaySelections = results[2];
         }
 
         const publicHolidayDates = publicHolidays.map((h: Holiday) => h.date);

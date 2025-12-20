@@ -17,7 +17,6 @@ import { MobileFAB } from '@/components/dashboard/mobile-fab';
 import { HolidaySelectionModal } from '@/components/dashboard/holiday-selection-modal';
 import { UserMenu } from '@/components/dashboard/user-menu';
 import { deduplicateLeaves } from '@/lib/leave-utils';
-import { DateCard } from '@/components/ui/date-card';
 
 
 export default function EmployeeDashboard() {

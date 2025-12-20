@@ -6,7 +6,6 @@ import { Leave, PublicHoliday } from '@/lib/types';
 import { differenceInCalendarDays, startOfToday, parseISO, isWithinInterval, format } from 'date-fns';
 import { Select } from '@/components/ui/select';
 import { Calendar } from 'lucide-react';
-import { ScrollContainer } from '@/components/ui/scroll-container';
 
 interface LeaveModalProps {
     isOpen: boolean;

@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 import { StatsStrip } from '@/components/dashboard/stats-strip';
@@ -26,7 +25,7 @@ import { Calendar as CalendarIcon, BarChart2 } from 'lucide-react';
 
 
 export default function ManagerDashboard() {
-    const { user, logout } = useAuth();
+    const { user } = useAuth();
     const { addNotification } = useNotifications();
 
     // Data State

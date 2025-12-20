@@ -36,7 +36,6 @@ export function UpcomingLeavesPanel({
     // 1. Filter Leaves in this month
     const monthLeaves = leaves.filter(l => {
         const start = parseISO(l.startDate);
-        const end = parseISO(l.endDate);
         // Check overlap with month? Or just start in month?
         // Usually visual calendar shows if it overlaps. simpler: start date in month.
         return isWithinInterval(start, { start: monthStart, end: monthEnd });
@@ -67,7 +66,7 @@ export function UpcomingLeavesPanel({
                 </div>
             ) : (
                 <ScrollContainer className="flex-1 min-h-0" contentClassName="pr-4 space-y-3">
-                    {combinedEvents.map((event, idx) => {
+                    {combinedEvents.map((event) => {
                         if (event.type === 'leave') {
                             const leave = event.data as Leave;
                             const startDate = parseISO(leave.startDate);
