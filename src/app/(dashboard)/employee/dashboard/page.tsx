@@ -37,12 +37,15 @@ export default function EmployeeDashboard() {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [selectedLeave, setSelectedLeave] = useState<Leave | undefined>(undefined);
 
+    const [currentMonth, setCurrentMonth] = useState(new Date());
+
     const fetchData = useCallback(async () => {
         if (!user) return;
         try {
             const [leavesRes, balanceRes, holidaysRes, selectionRes] = await Promise.all([
                 fetch(`/api/leaves?userId=${user.id}&year=${new Date().getFullYear()}`),
-                fetch(`/api/leave-balance?userId=${user.id}`),
+                // Pass currentMonth to calculate balance as of that month ("Time Travel")
+                fetch(`/api/leave-balance?userId=${user.id}&date=${format(currentMonth, 'yyyy-MM-dd')}`),
                 fetch('/api/holidays'),
                 fetch(`/api/users/${user.id}/holiday-selection`)
             ]);
@@ -60,7 +63,7 @@ export default function EmployeeDashboard() {
         } finally {
             setIsLoading(false);
         }
-    }, [user]);
+    }, [user, currentMonth]);
 
     useEffect(() => {
         fetchData();
@@ -169,8 +172,6 @@ export default function EmployeeDashboard() {
             console.error(err);
         }
     };
-
-    const [currentMonth, setCurrentMonth] = useState(new Date());
 
     return (
         <div className="h-screen overflow-hidden bg-[var(--color-bg)] p-6 flex flex-col">

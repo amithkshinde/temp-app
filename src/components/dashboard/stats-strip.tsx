@@ -23,7 +23,7 @@ export function StatsStrip({ balance, isLoading, role = 'employee', onLeaveToday
                 <div className="rounded-[var(--radius-xl)] border border-slate-200 shadow-sm p-4 flex flex-col justify-center bg-white h-24">
                     <p className="text-sm text-gray-900 font-semibold tracking-tight mb-1">Total Leaves</p>
                     <p className="text-[26px] font-bold text-gray-900">
-                        {((balance?.allocated || 0) + (balance?.carriedForward || 0)) || 0}
+                        {balance?.allocated ?? 16}
                     </p>
                 </div>
 
@@ -37,7 +37,7 @@ export function StatsStrip({ balance, isLoading, role = 'employee', onLeaveToday
                 <div className="rounded-[var(--radius-xl)] border border-slate-200 shadow-sm p-4 flex flex-col justify-center bg-white h-24">
                     <p className="text-sm text-gray-900 font-semibold tracking-tight mb-1">Remaining</p>
                     <p className="text-[26px] font-bold text-[#f0216a]">
-                        {((balance?.allocated || 0) + (balance?.carriedForward || 0) - (balance?.taken || 0)) || 0}
+                        {balance?.remaining ?? 0}
                     </p>
                 </div>
 

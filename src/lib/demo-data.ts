@@ -49,6 +49,18 @@ const getRelativeDate = (days: number) => {
 // 4. Past Approved (-5 days)
 
 export const DEMO_LEAVES: Leave[] = [
+    // Q1 Leaves (Feb) - 3 Days (Scenario: Took 3, Carry 1)
+    {
+        id: 'demo-leave-q1-1',
+        userId: 'demo-emp',
+        startDate: `${currentYear}-02-10`,
+        endDate: `${currentYear}-02-12`,
+        reason: 'Personal: Winter Break',
+        status: 'approved',
+        createdAt: `${currentYear}-01-15`,
+        type: 'planned',
+        userName: 'Demo Employee'
+    },
     {
         id: 'demo-leave-past-approved',
         userId: 'demo-emp',
