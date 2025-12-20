@@ -475,7 +475,6 @@ export function LeaveModal({
                                     variant="ghost"
                                     onClick={onClose}
                                     disabled={isLoading}
-                                    className={mode === 'create' ? "mr-auto" : ""}
                                 >
                                     Cancel
                                 </Button>
@@ -486,7 +485,7 @@ export function LeaveModal({
                                     isLoading={isLoading}
                                     className="bg-[#f0216a] hover:bg-[#d61b5c] text-white border-none min-w-[100px]"
                                 >
-                                    {mode === 'edit' ? 'Update Leave' : 'Create Leave'}
+                                    {mode === 'edit' ? 'Update Leave' : 'Apply Leave'}
                                 </Button>
                             </>
                         )}

@@ -21,6 +21,7 @@ interface CalendarViewProps {
     mode?: 'personal' | 'team';
     onLeaveClick?: (leave: Leave) => void; // For Manager to approve
     className?: string;
+    compact?: boolean;
 }
 
 export function CalendarView({
@@ -32,6 +33,7 @@ export function CalendarView({
     mode = 'personal',
     onLeaveClick,
     className,
+    compact = false,
 }: CalendarViewProps) {
     const [currentMonth, setCurrentMonth] = useState(new Date());
 
@@ -156,7 +158,8 @@ export function CalendarView({
                     const isDisabled = (isPast && !isToday(day) && dayLeaves.length === 0) || isSelectionDisabled;
 
                     const containerClasses = cn(
-                        "min-h-[4rem] rounded-lg p-1.5 flex flex-col items-start justify-start text-xs transition-all border relative",
+                        compact ? "min-h-[3.5rem] p-1" : "min-h-[4rem] p-1.5",
+                        "rounded-lg flex flex-col items-start justify-start text-xs transition-all border relative",
                         bgClass,
                         borderClass,
                         textClass,

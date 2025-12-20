@@ -38,26 +38,26 @@ export function ApprovalModal({ leave, onClose, onApprove, onReject }: ApprovalM
     };
 
     return (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-[var(--radius-xl)] shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-                {/* Header */}
-                <div className="bg-slate-50 p-6 border-b border-slate-100 flex justify-between items-start">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+            <div className="bg-white rounded-[var(--radius-xl)] shadow-xl w-full max-w-md overflow-hidden flex flex-col animate-in zoom-in-95 duration-200" style={{ maxHeight: '90vh' }}>
+                {/* Header - Sticky */}
+                <div className="bg-slate-50/50 p-6 border-b border-slate-100 flex justify-between items-start flex-none">
                     <div>
-                        <h3 className="text-lg font-bold text-gray-900">
+                        <h3 className="text-xl font-bold text-gray-900">
                             Leave Request
                         </h3>
                         <p className="text-sm text-gray-500">
                             Review request details
                         </p>
                     </div>
-                    <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+                    <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
                         <X size={20} />
                     </button>
                 </div>
 
-                {/* Content */}
-                <div className="p-6 space-y-4">
-                    {/* User Info (Mock Name if not present) */}
+                {/* Content - Scrollable */}
+                <div className="p-6 space-y-4 overflow-y-auto flex-1 min-h-0">
+                    {/* User Info */}
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-500">
                             {leave.userName?.[0] || leave.userId[0].toUpperCase()}
@@ -97,8 +97,8 @@ export function ApprovalModal({ leave, onClose, onApprove, onReject }: ApprovalM
                     </div>
                 </div>
 
-                {/* Footer Actions */}
-                <div className="p-4 bg-slate-50 border-t border-slate-100 flex gap-3 justify-end">
+                {/* Footer Actions - Sticky */}
+                <div className="p-6 pt-4 bg-white border-t border-slate-100 flex gap-3 justify-end flex-none">
                     <Button variant="ghost" onClick={onClose} disabled={isSubmitting}>
                         Cancel
                     </Button>

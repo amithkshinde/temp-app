@@ -5,7 +5,11 @@ import { useAuth } from "@/context/AuthContext";
 
 import { LogOut } from "lucide-react";
 
-export function UserMenu() {
+interface UserMenuProps {
+    children?: React.ReactNode;
+}
+
+export function UserMenu({ children }: UserMenuProps) {
     const { user, logout } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -48,8 +52,8 @@ export function UserMenu() {
                         <p className="text-xs text-gray-500 truncate capitalize">{user.role}</p>
                     </div>
 
-                    <div className="border-t border-slate-100">
-
+                    <div className="border-t border-slate-100 py-1">
+                        {children}
 
                         <button
                             onClick={logout}

@@ -20,6 +20,11 @@ import { TeamUpcomingPanel } from '@/components/dashboard/team-upcoming-panel';
 import { DaySummaryModal } from '@/components/dashboard/day-summary-modal';
 import { HolidayModal } from '@/components/dashboard/holiday-modal';
 
+import { UserMenu } from '@/components/dashboard/user-menu';
+import { Calendar as CalendarIcon, BarChart2 } from 'lucide-react';
+
+
+
 export default function ManagerDashboard() {
     const { user, logout } = useAuth();
     const { addNotification } = useNotifications();
@@ -36,6 +41,8 @@ export default function ManagerDashboard() {
     const [selectedLeave, setSelectedLeave] = useState<Leave | null>(null);
     const [summaryDate, setSummaryDate] = useState<Date | null>(null);
     const [isHolidayModalOpen, setIsHolidayModalOpen] = useState(false);
+
+
 
     const fetchAllData = useCallback(async () => {
         if (!user) return;
@@ -121,69 +128,89 @@ export default function ManagerDashboard() {
         } catch (e) { console.error(e); }
     };
 
+
+
     return (
-        <div className="min-h-screen bg-[var(--color-bg)] p-8">
-            <div className="max-w-7xl mx-auto space-y-6">
-                <header className="flex justify-between items-center">
+        <div className="h-screen overflow-hidden bg-[var(--color-bg)] p-6 flex flex-col">
+            <div className="max-w-5xl mx-auto w-full flex-1 flex flex-col gap-4 min-h-0">
+                <header className="flex justify-between items-center shrink-0">
                     <div>
                         <h1 className="text-3xl font-bold text-gray-900">Manager Dashboard</h1>
                         <p className="text-gray-500">Overview and approvals</p>
                     </div>
                     <div className="flex items-center gap-4">
-                        <Button variant="outline" onClick={() => setIsHolidayModalOpen(true)} className="text-xs">
-                            Manage Holidays
-                        </Button>
-                        <Link href="/management/insights">
-                            <Button variant="outline" className="text-xs">Stats & Insights</Button>
-                        </Link>
                         <NotificationCenter />
-                        <span className="text-base font-semibold text-gray-900">{user?.name}</span>
-                        <Button onClick={logout} variant="secondary" className="text-xs">Sign out</Button>
+
+                        <UserMenu>
+                            <button
+                                onClick={() => setIsHolidayModalOpen(true)}
+                                className="flex items-center gap-2 w-full px-4 py-2.5 text-xs font-medium text-gray-700 hover:bg-slate-50 transition-colors text-left"
+                            >
+                                <CalendarIcon size={14} />
+                                Manage Holidays
+                            </button>
+                            <Link href="/management/insights" className="flex items-center gap-2 w-full px-4 py-2.5 text-xs font-medium text-gray-700 hover:bg-slate-50 transition-colors text-left">
+                                <BarChart2 size={14} />
+                                Stats & Insights
+                            </Link>
+                        </UserMenu>
+
                     </div>
                 </header>
 
-                <StatsStrip
-                    balance={balance}
-                    isLoading={isLoading}
-                    role="management"
-                    onLeaveTodayCount={leaves.filter((l: Leave) => {
-                        const today = new Date();
-                        today.setHours(0, 0, 0, 0); // Local
-                        const s = new Date(l.startDate);
-                        s.setHours(0, 0, 0, 0);
-                        const e = new Date(l.endDate);
-                        e.setHours(0, 0, 0, 0);
-                        return l.status === 'approved' && today >= s && today <= e;
-                    }).length}
-                />
+                <div className="shrink-0">
+                    <StatsStrip
+                        balance={balance}
+                        isLoading={isLoading}
+                        role="management"
+                        onLeaveTodayCount={leaves.filter((l: Leave) => {
+                            const today = new Date();
+                            today.setHours(0, 0, 0, 0); // Local
+                            const s = new Date(l.startDate);
+                            s.setHours(0, 0, 0, 0);
+                            const e = new Date(l.endDate);
+                            e.setHours(0, 0, 0, 0);
+                            return l.status === 'approved' && today >= s && today <= e;
+                        }).length}
+                    />
+                </div>
 
-                <div className="flex flex-col lg:flex-row gap-6">
+                <div className="flex-1 min-h-0 flex flex-col lg:flex-row gap-4 items-stretch">
                     <div className="flex-1 min-w-0">
-                        <div className="min-h-[600px]">
-                            <CalendarView
-                                leaves={leaves}
-                                holidays={holidays}
-                                mode="team"
-                                onDateClick={(date) => setSummaryDate(date)}
-                                onLeaveClick={(leave) => setSelectedLeave(leave)}
-                            />
-                        </div>
+                        <CalendarView
+                            leaves={leaves}
+                            holidays={holidays}
+                            mode="team"
+                            onDateClick={(date) => setSummaryDate(date)}
+                            onLeaveClick={(leave) => setSelectedLeave(leave)}
+                            className="h-full"
+                            compact={true}
+                        />
                     </div>
 
-                    <div className="flex flex-col gap-6">
-                        <PendingApprovalsPanel
-                            leaves={leaves.filter(l => l.status === 'pending')}
-                            users={users}
-                            onApprove={handleApprove}
-                            onReject={handleReject}
-                            isLoading={isLoading}
-                        />
+                    <div className="w-full lg:w-80 relative flex flex-col gap-4 min-h-0">
+                        {/* 
+                            Manager Sidebar has 2 panels: Pending Approvals & Team Upcoming.
+                            On Employee side, we used a relative wrapper with absolute inset for the scrolling panel.
+                            Here we have two panels. 
+                            If we want them to fill the height and scroll independently or together?
+                            Let's put them in a flex-col container that scrolls.
+                        */}
+                        <div className="flex-1 overflow-y-auto space-y-4 pr-1">
+                            <PendingApprovalsPanel
+                                leaves={leaves.filter(l => l.status === 'pending')}
+                                users={users}
+                                onApprove={handleApprove}
+                                onReject={handleReject}
+                                isLoading={isLoading}
+                            />
 
-                        <TeamUpcomingPanel
-                            leaves={leaves}
-                            users={users}
-                            isLoading={isLoading}
-                        />
+                            <TeamUpcomingPanel
+                                leaves={leaves}
+                                users={users}
+                                isLoading={isLoading}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -213,6 +240,8 @@ export default function ManagerDashboard() {
                 onDelete={handleDeleteHoliday}
                 existingHolidays={holidays}
             />
+
+
         </div>
     );
 }
