@@ -1,4 +1,4 @@
-import { LeaveBalance, Leave } from '@/lib/types';
+import { LeaveBalance } from '@/lib/types';
 import { Users, Layout } from 'lucide-react';
 
 interface StatsStripProps {
@@ -7,65 +7,44 @@ interface StatsStripProps {
     role?: 'employee' | 'management';
     onLeaveTodayCount?: number; // Pass this for management view
     selectedHolidaysCount?: number;
-    // New Props
-    upcomingApprovedLeaves?: Leave[]; // To calculate next scheduled
-    pendingLeavesCount?: number;
 }
 
-export function StatsStrip({
-    balance,
-    isLoading,
-    role = 'employee',
-    onLeaveTodayCount = 0,
-    selectedHolidaysCount = 0,
-    upcomingApprovedLeaves = [],
-    pendingLeavesCount = 0
-}: StatsStripProps) {
+export function StatsStrip({ balance, isLoading, role = 'employee', onLeaveTodayCount = 0, selectedHolidaysCount = 0 }: StatsStripProps) {
     if (isLoading) {
-        return <div className="animate-pulse h-32 bg-slate-100 rounded-xl w-full"></div>;
+        return <div className="animate-pulse h-24 bg-slate-100 rounded-xl w-full"></div>;
     }
 
     if (role === 'employee') {
-        const nextLeave = upcomingApprovedLeaves.length > 0
-            ? upcomingApprovedLeaves.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())[0]
-            : null;
+        const isMaxHolidays = selectedHolidaysCount >= 10;
 
         return (
             <div className="w-full grid grid-cols-12 gap-6">
-                {/* 1. Total Leave Balance (Showing Remaining as per user request context "Leaves remaining this year") */}
-                <div className="col-span-12 md:col-span-6 lg:col-span-3 rounded-[var(--radius-xl)] border border-slate-200 shadow-sm p-6 flex flex-col justify-center bg-[var(--color-card)] h-32">
-                    <p className="text-sm text-gray-900 font-semibold tracking-tight mb-2">Total Leave Balance</p>
+                {/* 1. Total Leaves */}
+                <div className="col-span-12 md:col-span-6 lg:col-span-3 rounded-[var(--radius-xl)] border border-slate-200 shadow-sm p-6 flex flex-col justify-center bg-white h-32">
+                    <p className="text-sm text-gray-900 font-semibold tracking-tight mb-2">Total Leaves</p>
                     <p className="text-4xl font-bold text-gray-900">
+                        {balance?.allocated ?? 16}
+                    </p>
+                </div>
+
+                {/* 2. Taken */}
+                <div className="col-span-12 md:col-span-6 lg:col-span-3 rounded-[var(--radius-xl)] border border-slate-200 shadow-sm p-6 flex flex-col justify-center bg-[var(--color-card)] h-32">
+                    <p className="text-sm text-gray-900 font-semibold tracking-tight mb-2">Taken</p>
+                    <p className="text-4xl font-bold text-gray-900">{balance?.taken ?? 0}</p>
+                </div>
+
+                {/* 3. Remaining */}
+                <div className="col-span-12 md:col-span-6 lg:col-span-3 rounded-[var(--radius-xl)] border border-slate-200 shadow-sm p-6 flex flex-col justify-center bg-[var(--color-card)] h-32">
+                    <p className="text-sm text-gray-900 font-semibold tracking-tight mb-2">Remaining</p>
+                    <p className="text-4xl font-bold text-[#f0216a]">
                         {balance?.remaining ?? 0}
                     </p>
-                    <p className="text-xs text-gray-500 mt-1">Leaves remaining this year</p>
                 </div>
 
-                {/* 2. Leaves Taken */}
+                {/* 4. Carried Forward */}
                 <div className="col-span-12 md:col-span-6 lg:col-span-3 rounded-[var(--radius-xl)] border border-slate-200 shadow-sm p-6 flex flex-col justify-center bg-[var(--color-card)] h-32">
-                    <p className="text-sm text-gray-900 font-semibold tracking-tight mb-2">Leaves Taken</p>
-                    <p className="text-4xl font-bold text-gray-900">{balance?.taken ?? 0}</p>
-                    <p className="text-xs text-gray-500 mt-1">Used so far</p>
-                </div>
-
-                {/* 3. Upcoming Approved Leaves */}
-                <div className="col-span-12 md:col-span-6 lg:col-span-3 rounded-[var(--radius-xl)] border border-slate-200 shadow-sm p-6 flex flex-col justify-center bg-[var(--color-card)] h-32">
-                    <p className="text-sm text-gray-900 font-semibold tracking-tight mb-2">Upcoming Approved</p>
-                    <div className="flex items-baseline gap-2">
-                        <p className="text-4xl font-bold text-[#f0216a]">
-                            {upcomingApprovedLeaves.length}
-                        </p>
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1 truncate">
-                        {nextLeave ? `Next: ${new Date(nextLeave.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}` : 'No upcoming leaves'}
-                    </p>
-                </div>
-
-                {/* 4. Pending Requests */}
-                <div className="col-span-12 md:col-span-6 lg:col-span-3 rounded-[var(--radius-xl)] border border-slate-200 shadow-sm p-6 flex flex-col justify-center bg-[var(--color-card)] h-32">
-                    <p className="text-sm text-gray-900 font-semibold tracking-tight mb-2">Pending Requests</p>
-                    <p className="text-4xl font-bold text-gray-900">{pendingLeavesCount}</p>
-                    <p className="text-xs text-gray-500 mt-1">Awaiting approval</p>
+                    <p className="text-sm text-gray-900 font-semibold tracking-tight mb-2">Carried Forward</p>
+                    <p className="text-4xl font-bold text-gray-900">{balance?.carriedForward ?? 0}</p>
                 </div>
             </div>
         );
