@@ -11,7 +11,7 @@ export default function DashboardLayout({
 }) {
     return (
         <ProtectedRoute>
-            <div className="h-screen w-screen overflow-hidden bg-muted/40 flex flex-col">
+            <div className="h-screen w-screen overflow-hidden bg-[#f2f2f2] flex flex-col">
                 <DemoBanner />
                 <main className="flex-1 overflow-y-auto w-full">
                     <div className="mx-auto max-w-7xl w-full p-4 md:p-6 lg:p-8">
