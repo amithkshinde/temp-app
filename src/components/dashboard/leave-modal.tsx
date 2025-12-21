@@ -291,9 +291,10 @@ export function LeaveModal({
                                                 onChange={(e) => handleStartDateChange(e.target.value)}
                                                 required
                                                 disabled={isLoading}
-                                                className="font-medium text-gray-900 pr-9"
+                                                className="font-medium text-gray-900 pr-10 appearance-none bg-transparent relative z-10"
+                                                style={{ WebkitAppearance: 'none' }} // Remove weird native styling on iOS
                                             />
-                                            <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+                                            <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none z-0" />
                                         </div>
                                     </div>
                                 )}
@@ -319,9 +320,10 @@ export function LeaveModal({
                                                     required
                                                     min={startDate}
                                                     disabled={isLoading}
-                                                    className="font-medium text-gray-900 pr-9"
+                                                    className="font-medium text-gray-900 pr-10 appearance-none bg-transparent relative z-10"
+                                                    style={{ WebkitAppearance: 'none' }}
                                                 />
-                                                <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+                                                <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none z-0" />
                                             </div>
                                         </div>
                                     )

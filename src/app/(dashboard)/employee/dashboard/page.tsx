@@ -173,14 +173,14 @@ export default function EmployeeDashboard() {
     };
 
     return (
-        <div className="h-screen overflow-hidden bg-[var(--color-bg)] p-6 flex flex-col">
+        <div className="min-h-screen bg-[var(--color-bg)] p-4 lg:p-6 flex flex-col h-auto lg:h-screen lg:overflow-hidden">
             <div className="max-w-5xl mx-auto w-full flex-1 flex flex-col gap-4 min-h-0">
                 <header className="flex justify-between items-center shrink-0">
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-900">Welcome, {user?.name.split(' ')[0]}!</h1>
-                        <p className="text-gray-500">Here’s your leave overview</p>
+                        <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">Welcome, {user?.name.split(' ')[0]}!</h1>
+                        <p className="text-sm lg:text-base text-gray-500">Here’s your leave overview</p>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3 lg:gap-4">
                         <NotificationCenter />
                         <UserMenu />
                     </div>
@@ -202,10 +202,12 @@ export default function EmployeeDashboard() {
                         isLoading={isLoading}
                         role="employee"
                         selectedHolidaysCount={selectedHolidayIds.length}
+                        upcomingLeaves={leaves.filter(l => l.status === 'approved' && new Date(l.startDate) >= new Date(new Date().setHours(0, 0, 0, 0)))}
+                        pendingCount={leaves.filter(l => l.status === 'pending').length}
                     />
                 </div>
 
-                <div className="flex-1 min-h-0 flex flex-col lg:flex-row gap-4 items-stretch">
+                <div className="flex-1 min-h-0 flex flex-col-reverse lg:flex-row gap-4 items-stretch pb-20 lg:pb-0">
                     <div className="flex-1 min-w-0">
                         <CalendarView
                             leaves={leaves}
@@ -213,16 +215,14 @@ export default function EmployeeDashboard() {
                             selectedHolidayIds={selectedHolidayIds}
                             onDateClick={handleDateClick}
                             onHolidayClick={handleHolidayClick}
-                            className="h-full"
+                            className="h-[400px] lg:h-full"
                             currentMonth={currentMonth}
                             onMonthChange={setCurrentMonth}
                         />
                     </div>
 
-                    <div className="w-full lg:w-80 relative">
+                    <div className="w-full lg:w-80 relative shrink-0">
                         <div className="flex flex-col gap-4 lg:absolute lg:inset-0">
-
-
                             <UpcomingLeavesPanel
                                 leaves={leaves}
                                 holidays={holidays}
