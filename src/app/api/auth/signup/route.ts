@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { name, email, password, role, employeeId, department, inviteCode } = body;
+        const { name, email, password, role, inviteCode } = body;
 
         // Basic Validation
         if (!name || !email || !password || !role) {
@@ -26,10 +26,7 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Email already exists' }, { status: 400 });
         }
 
-        // Role specific validation (Simplified: Only Invite Code for Management if exposed, else optional)
-        // Since we removed inputs for EmployeeId/Dept, we don't validate them.
-        // We still support 'management' if role is passed, but for now we default to 'employee' in frontend.
-
+        // Role specific validation (Simplified: Only Invite Code for Management if exposed)
         if (role === 'management') {
             // Mock Invite Code Check
             if (inviteCode !== 'ADMIN-INVITE-2025') {
@@ -44,8 +41,6 @@ export async function POST(request: Request) {
                 email,
                 password, // Note: Storing plain text as per previous MVP. Recommendation: Hash this.
                 role,
-                employeeId: role === 'employee' ? employeeId : undefined,
-                department: role === 'employee' ? department : undefined,
                 inviteCode: role === 'management' ? inviteCode : undefined,
             }
         });

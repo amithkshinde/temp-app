@@ -146,13 +146,14 @@ export async function DELETE(
 
         await prisma.leave.delete({ where: { id } });
 
-        // Notify Manager
-        if (leave.type === 'planned' || leave.status === 'pending') {
-            const user = await prisma.user.findUnique({ where: { id: leave.userId } });
-            await notifyManagement(`Leave Cancelled: ${user?.name}`, `<p>Cancelled.</p>`);
-        }
-
+        // Notify Manager for ALL cancellations
         const user = await prisma.user.findUnique({ where: { id: leave.userId } });
+        await notifyManagement(
+            `Leave Cancelled: ${user?.name}`,
+            `<p>${user?.name} has cancelled their leave request for ${leave.startDate} to ${leave.endDate}.</p>`
+        );
+
+
         const managers = await prisma.user.findMany({ where: { role: 'management' } });
         for (const manager of managers) {
             if (manager.id !== leave.userId) {

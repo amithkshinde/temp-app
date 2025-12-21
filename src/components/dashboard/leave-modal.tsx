@@ -244,7 +244,7 @@ export function LeaveModal({
                         <div className="space-y-6">
 
                             {/* Mode Toggle (Create/Edit only) */}
-                            {mode !== 'view' && !existingLeaveId && (
+                            {mode !== 'view' && (
                                 <div className="flex bg-slate-100 p-1 rounded-[10px] shadow-inner select-none">
                                     <button
                                         type="button"
