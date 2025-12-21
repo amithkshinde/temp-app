@@ -86,6 +86,14 @@ export const getWarningTemplate = (userName: string, usedCount: number) => {
     `, { label: "Manage Holidays", url: "http://localhost:3000/management/holidays" });
 };
 
+export const getEmployeeNotificationTemplate = (leave: Leave, status: 'approved' | 'rejected') => {
+    return generateBaseHtml(`
+        <h2>Leave Request Update</h2>
+        <p>Your leave request for <strong>${leave.startDate}</strong> to <strong>${leave.endDate}</strong> has been <strong>${status.toUpperCase()}</strong>.</p>
+        <p>Reason: ${leave.reason}</p>
+    `, { label: "View Dashboard", url: "http://localhost:3000/employee/dashboard" });
+};
+
 // --- Service ---
 
 export const sendEmail = async (payload: EmailPayload) => {
@@ -117,6 +125,14 @@ CTA Color Check: ${item.html.includes(BRAND_COLOR) ? 'PASS' : 'FAIL'}
 export const notifyManagement = async (subject: string, html: string) => {
     return sendEmail({
         to: MANAGEMENT_EMAIL,
+        subject,
+        html
+    });
+};
+
+export const notifyEmployee = async (email: string, subject: string, html: string) => {
+    return sendEmail({
+        to: email,
         subject,
         html
     });

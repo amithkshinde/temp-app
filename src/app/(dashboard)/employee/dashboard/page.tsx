@@ -198,17 +198,22 @@ export default function EmployeeDashboard() {
                 </div>
             )}
 
-            <div className="col-span-12">
+            <div className="col-span-12 order-1">
                 <StatsStrip
                     balance={balance}
                     isLoading={isLoading}
                     role="employee"
                     selectedHolidaysCount={selectedHolidayIds.length}
+                    upcomingApprovedLeaves={leaves.filter(l => l.status === 'approved' && new Date(l.startDate) >= new Date())}
+                    pendingLeavesCount={leaves.filter(l => l.status === 'pending').length}
                 />
             </div>
 
             {/* Main Content: 2:1 Split (8 cols / 4 cols) */}
-            <div className="col-span-12 lg:col-span-8 flex flex-col gap-6">
+            {/* Desktop: Calendar Left (8), Upcoming Right (4) */}
+            {/* Mobile: Stats (1) -> Upcoming (2) -> Calendar (3) */}
+
+            <div className="col-span-12 lg:col-span-8 flex flex-col gap-6 order-3 lg:order-2">
                 <div className="h-[500px]">
                     <CalendarView
                         leaves={leaves}
@@ -221,20 +226,18 @@ export default function EmployeeDashboard() {
                         onMonthChange={setCurrentMonth}
                     />
                 </div>
-
-                {/* Analytics Chart below Calendar */}
-                <div className="h-80">
-                    <LeaveAnalyticsChart balance={balance} isLoading={isLoading} />
-                </div>
             </div>
 
-            <div className="col-span-12 lg:col-span-4 flex flex-col gap-6 h-full">
-                {/* Right Column Stack */}
-                <div className="flex-1 min-h-[400px]">
-                    <LeaveHistory leaves={leaves} isLoading={isLoading} />
-                </div>
-
-                <PolicySection />
+            <div className="col-span-12 lg:col-span-4 flex flex-col gap-6 h-full order-2 lg:order-3">
+                {/* Right Column: Exact Exhaustive Upcoming List */}
+                <UpcomingLeavesPanel
+                    leaves={leaves}
+                    holidays={holidays}
+                    onEdit={(leave) => {
+                        setSelectedLeave(leave);
+                        setIsModalOpen(true);
+                    }}
+                />
 
                 {/* Use MobileFAB only on small screens */}
                 <div className="block lg:hidden">

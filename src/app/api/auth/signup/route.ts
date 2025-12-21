@@ -26,23 +26,15 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Email already exists' }, { status: 400 });
         }
 
-        // Role specific validation
-        if (role === 'employee') {
-            if (!employeeId || !department) {
-                return NextResponse.json({ error: 'Employee ID and Department are required' }, { status: 400 });
-            }
-            // Check for duplicate employee ID
-            const existingEmpId = await prisma.user.findFirst({ where: { employeeId } });
-            if (existingEmpId) {
-                return NextResponse.json({ error: 'Employee ID already exists' }, { status: 400 });
-            }
-        } else if (role === 'management') {
+        // Role specific validation (Simplified: Only Invite Code for Management if exposed, else optional)
+        // Since we removed inputs for EmployeeId/Dept, we don't validate them.
+        // We still support 'management' if role is passed, but for now we default to 'employee' in frontend.
+
+        if (role === 'management') {
             // Mock Invite Code Check
             if (inviteCode !== 'ADMIN-INVITE-2025') {
                 return NextResponse.json({ error: 'Invalid invite code' }, { status: 403 });
             }
-        } else {
-            return NextResponse.json({ error: 'Invalid role' }, { status: 400 });
         }
 
         // Create User

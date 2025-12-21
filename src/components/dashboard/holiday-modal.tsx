@@ -18,6 +18,7 @@ export function HolidayModal({ isOpen, onClose, onAdd, existingHolidays, onDelet
     const [name, setName] = useState('');
     const [date, setDate] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [holidayToDelete, setHolidayToDelete] = useState<string | null>(null);
 
     if (!isOpen) return null;
 
@@ -92,7 +93,7 @@ export function HolidayModal({ isOpen, onClose, onAdd, existingHolidays, onDelet
                                             size="sm"
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                if (confirm(`Delete ${h.name}?`)) onDelete(h.id);
+                                                setHolidayToDelete(h.id);
                                             }}
                                             className="h-8 text-red-500 hover:text-red-700 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-opacity"
                                         >
@@ -112,6 +113,46 @@ export function HolidayModal({ isOpen, onClose, onAdd, existingHolidays, onDelet
                 <div className="p-6 border-t border-gray-100 bg-slate-50 flex justify-end">
                     <Button variant="outline" onClick={onClose}>Done</Button>
                 </div>
+
+                {/* Delete Confirmation Overlay */}
+                {holidayToDelete && (
+                    <div className="absolute inset-0 z-10 bg-white/90 backdrop-blur-sm flex items-center justify-center p-6 animate-in fade-in duration-200">
+                        <div className="bg-white border border-slate-200 shadow-xl rounded-xl p-6 max-w-sm w-full space-y-4 text-center">
+                            <div className="w-12 h-12 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto">
+                                <span className="text-xl">🗑️</span>
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-bold text-gray-900">Delete Holiday?</h3>
+                                <p className="text-sm text-gray-500">
+                                    Are you sure you want to delete this holiday? This action cannot be undone.
+                                </p>
+                            </div>
+                            <div className="flex gap-2 justify-center">
+                                <Button
+                                    variant="outline"
+                                    onClick={() => setHolidayToDelete(null)}
+                                    disabled={isLoading}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    className="bg-red-600 hover:bg-red-700 text-white border-none"
+                                    onClick={async () => {
+                                        if (holidayToDelete) {
+                                            setIsLoading(true);
+                                            await onDelete(holidayToDelete);
+                                            setIsLoading(false);
+                                            setHolidayToDelete(null);
+                                        }
+                                    }}
+                                    disabled={isLoading}
+                                >
+                                    {isLoading ? 'Deleting...' : 'Delete'}
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

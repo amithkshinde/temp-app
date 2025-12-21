@@ -264,7 +264,7 @@ export function CalendarView({
             </div>
 
             {/* Legend */}
-            <div className="flex flex-wrap gap-4 mt-2 text-xs text-gray-600 justify-center">
+            <div className="flex flex-wrap gap-4 mt-auto text-xs text-gray-600 justify-center pb-2">
                 <div className="flex items-center gap-2">
                     <div className="w-4 h-4 bg-green-50 border border-green-200 rounded flex items-center justify-center">
                         <div className="w-full h-1.5 bg-green-500 rounded-full mx-1"></div>
