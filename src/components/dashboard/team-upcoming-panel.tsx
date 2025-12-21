@@ -32,7 +32,7 @@ export function TeamUpcomingPanel({ leaves, users, isLoading }: TeamUpcomingPane
         .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
 
     return (
-        <div className="w-80 bg-white rounded-[var(--radius-xl)] shadow-sm border border-slate-100 p-6 h-fit shrink-0">
+        <div className="w-80 bg-[var(--color-card)] rounded-[var(--radius-xl)] shadow-sm border border-slate-200 p-6 h-fit shrink-0">
             <h3 className="text-lg font-bold text-gray-900 mb-4">Upcoming Leaves</h3>
 
             <ScrollContainer className="max-h-[600px]" contentClassName="pr-2 space-y-4">

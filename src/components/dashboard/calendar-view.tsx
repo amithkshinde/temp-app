@@ -83,7 +83,7 @@ export function CalendarView({
     const prevMonth = () => handleMonthChange(subMonths(currentMonth, 1));
 
     return (
-        <div className={cn("bg-white rounded-[var(--radius-xl)] shadow-sm border border-slate-200 p-4", className)}>
+        <div className={`flex flex-col rounded-[var(--radius-xl)] shadow-sm bg-[var(--color-card)] border border-slate-200 h-full ${className}`}>
             <div className="relative flex items-center justify-center mb-6">
                 <Button variant="ghost" onClick={prevMonth} size="sm" className="absolute left-0">←</Button>
                 <h2 className="text-base text-gray-700 font-bold tracking-wide uppercase">

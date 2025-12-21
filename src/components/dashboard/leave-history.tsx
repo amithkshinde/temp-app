@@ -1,74 +1,50 @@
-
+import React from 'react';
 import { Leave } from '@/lib/types';
 import { format, parseISO } from 'date-fns';
-import { cn } from '@/lib/utils';
+import { ScrollContainer } from '@/components/ui/scroll-container';
 
 interface LeaveHistoryProps {
     leaves: Leave[];
+    isLoading: boolean;
 }
 
-export function LeaveHistory({ leaves }: LeaveHistoryProps) {
-    if (leaves.length === 0) {
-        return (
-            <div className="bg-white rounded-[var(--radius-xl)] shadow-sm border border-slate-200 p-8 text-center">
-                <p className="text-gray-500 text-sm">No leave history found.</p>
-            </div>
-        );
+export function LeaveHistory({ leaves, isLoading }: LeaveHistoryProps) {
+    if (isLoading) {
+        return <div className="w-full h-40 animate-pulse bg-slate-50 rounded-xl"></div>;
     }
 
-    // Sort by date desc
-    const sortedLeaves = [...leaves].sort((a, b) =>
-        new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
-    );
+    // Mock recent history if leaves are empty or just show actual recent ones
+    // We will show the last 5 leaves regardless of date (past/future) as "History" usually implies log
+    const historyLeaves = [...leaves].sort((a, b) => new Date(b.createdAt || b.startDate).getTime() - new Date(a.createdAt || a.startDate).getTime()).slice(0, 5);
 
     return (
-        <div className="bg-white rounded-[var(--radius-xl)] shadow-sm border border-slate-200 overflow-hidden">
-            <div className="p-4 border-b border-slate-100 bg-slate-50/50">
-                <h3 className="text-sm font-bold text-gray-900">Leave History</h3>
-            </div>
+        <div className="bg-[var(--color-card)] rounded-[var(--radius-xl)] shadow-sm border border-slate-200 p-4 flex flex-col h-full flex-1 min-h-[250px]">
+            <h3 className="text-sm text-gray-900 font-semibold tracking-tight mb-3 shrink-0">Recent Activity</h3>
 
-            <div className="overflow-x-auto">
-                <table className="w-full text-sm text-left">
-                    <thead className="bg-slate-50 text-xs uppercase text-gray-500 font-semibold">
-                        <tr>
-                            <th className="px-6 py-3">Dates</th>
-                            <th className="px-6 py-3">Type / Reason</th>
-                            <th className="px-6 py-3">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                        {sortedLeaves.map((leave) => {
-                            const isSingleDay = leave.startDate === leave.endDate;
-                            // Parsing reason to show simplified type if possible
-                            // Reason format "Type: Details" or just "Details"
-                            const reasonText = leave.reason;
-
-                            let statusColor = "bg-slate-100 text-slate-700";
-                            if (leave.status === 'approved') statusColor = "bg-green-100 text-green-800";
-                            if (leave.status === 'pending') statusColor = "bg-yellow-100 text-yellow-800";
-                            if (leave.status === 'rejected') statusColor = "bg-red-100 text-red-800";
-                            if (leave.status === 'cancelled') statusColor = "bg-gray-100 text-gray-500 line-through";
-
-                            return (
-                                <tr key={leave.id} className="hover:bg-slate-50/50 transition-colors">
-                                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                                        {format(parseISO(leave.startDate), 'MMM d, yyyy')}
-                                        {!isSingleDay && ` - ${format(parseISO(leave.endDate), 'MMM d, yyyy')}`}
-                                    </td>
-                                    <td className="px-6 py-4 max-w-xs truncate text-gray-600">
-                                        {reasonText}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <span className={cn("px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wide", statusColor)}>
-                                            {leave.status}
-                                        </span>
-                                    </td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-            </div>
+            {historyLeaves.length === 0 ? (
+                <div className="text-sm text-gray-500 text-center py-8">No recent activity.</div>
+            ) : (
+                <ScrollContainer className="flex-1 min-h-0" contentClassName="pr-2 space-y-3">
+                    {historyLeaves.map((leave) => (
+                        <div key={leave.id} className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50 hover:bg-white hover:border-slate-200 transition-colors">
+                            <div className="min-w-0">
+                                <p className="text-xs font-semibold text-gray-900 truncate">
+                                    {leave.reason || 'Leave Request'}
+                                </p>
+                                <p className="text-[10px] text-gray-500">
+                                    {format(parseISO(leave.startDate), 'MMM d, yyyy')}
+                                </p>
+                            </div>
+                            <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full border 
+                                ${leave.status === 'approved' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+                                    leave.status === 'rejected' ? 'bg-red-50 text-red-700 border-red-200' :
+                                        'bg-amber-50 text-amber-700 border-amber-200'}`}>
+                                {leave.status}
+                            </span>
+                        </div>
+                    ))}
+                </ScrollContainer>
+            )}
         </div>
     );
 }

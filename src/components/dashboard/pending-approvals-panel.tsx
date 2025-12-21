@@ -21,7 +21,7 @@ export function PendingApprovalsPanel({ leaves, users, onApprove, onReject, isLo
     // Persistent Empty State
     if (leaves.length === 0) {
         return (
-            <div className="w-80 bg-white rounded-[var(--radius-xl)] shadow-sm border border-slate-100 p-6 h-fit shrink-0 mb-6 flex flex-col items-center justify-center text-center">
+            <div className="w-80 bg-[var(--color-card)] rounded-[var(--radius-xl)] shadow-sm border border-slate-200 p-6 h-fit shrink-0 mb-6 flex flex-col items-center justify-center text-center">
                 <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mb-3">
                     <Check size={20} className="text-emerald-500" />
                 </div>
@@ -32,7 +32,7 @@ export function PendingApprovalsPanel({ leaves, users, onApprove, onReject, isLo
     }
 
     return (
-        <div className="w-80 bg-white rounded-[var(--radius-xl)] shadow-sm border border-amber-100 p-6 h-fit shrink-0 mb-6 relative overflow-hidden">
+        <div className="w-80 bg-[var(--color-card)] rounded-[var(--radius-xl)] shadow-sm border border-amber-200 p-6 h-fit shrink-0 mb-6 relative overflow-hidden">
             <div className="absolute top-0 left-0 w-1 h-full bg-amber-400"></div>
             <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-bold text-gray-900">Pending Approvals</h3>
