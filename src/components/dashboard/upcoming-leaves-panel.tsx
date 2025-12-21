@@ -55,7 +55,7 @@ export function UpcomingLeavesPanel({
 
 
     return (
-        <div className={`w-full bg-[var(--color-card)] rounded-[var(--radius-xl)] shadow-sm border border-slate-200 p-4 flex flex-col ${className}`}>
+        <div className={`w-full bg-white rounded-[var(--radius-xl)] shadow-sm border border-slate-200 p-4 flex flex-col ${className}`}>
             <h3 className="text-sm text-gray-900 font-semibold tracking-tight mb-3 shrink-0">
                 {format(currentMonth, 'MMMM yyyy')}
             </h3>
