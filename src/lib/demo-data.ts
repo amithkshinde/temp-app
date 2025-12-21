@@ -140,6 +140,17 @@ export const DEMO_LEAVES: Leave[] = [
         createdAt: `${currentYear}-12-15`,
         type: 'planned',
         userName: 'Demo Employee'
+    },
+    {
+        id: 'demo-leave-pending-new',
+        userId: 'demo-emp',
+        startDate: getRelativeDate(15),
+        endDate: getRelativeDate(16),
+        reason: 'Planned: Family Vacation',
+        status: 'pending',
+        createdAt: getRelativeDate(-1),
+        type: 'planned',
+        userName: 'Demo Employee'
     }
 ];
 
