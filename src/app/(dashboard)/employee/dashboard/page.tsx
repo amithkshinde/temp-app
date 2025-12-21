@@ -225,10 +225,6 @@ export default function EmployeeDashboard() {
                         <div className="flex flex-col gap-4 lg:absolute lg:inset-0">
                             <UpcomingLeavesPanel
                                 leaves={leaves}
-                                holidays={holidays}
-                                selectedHolidayIds={selectedHolidayIds}
-                                onHolidayClick={handleHolidayClick}
-                                currentMonth={currentMonth}
                                 isLoading={isLoading}
                                 onLeaveClick={(leave) => {
                                     setSelectedLeave(leave);
