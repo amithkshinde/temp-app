@@ -266,9 +266,6 @@ export default function EmployeeDashboard() {
                                 balance={balance}
                                 isLoading={isLoading}
                                 role="employee"
-                                selectedHolidaysCount={selectedHolidayIds.length}
-                                upcomingLeaves={leaves.filter(l => l.status === 'approved' && new Date(l.startDate) >= new Date(new Date().setHours(0, 0, 0, 0)))}
-                                pendingCount={leaves.filter(l => l.status === 'pending').length}
                             />
                         </div>
 
