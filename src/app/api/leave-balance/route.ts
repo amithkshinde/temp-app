@@ -20,6 +20,11 @@ interface Holiday {
     type: string;
 }
 
+interface HolidaySelection {
+    userId: string;
+    holidayId: string;
+}
+
 const HOLIDAY_LIMIT = 10;
 
 // Helper to calculate working days excluding weekends and public holidays
@@ -53,8 +58,7 @@ export async function GET(request: Request) {
     // Dynamic Data Fetching (Supports Demo & Real)
     let userLeaves: Leave[] = [];
     let publicHolidays: Holiday[] = [];
-
-    let holidaySelections: any[] = [];
+    let holidaySelections: HolidaySelection[] = [];
 
     try {
         const now = dateParam ? parseISO(dateParam) : new Date();

@@ -8,7 +8,6 @@ interface StatsStripProps {
     onLeaveTodayCount?: number;
     selectedHolidaysCount?: number;
     // New Props
-    upcomingLeaves?: Leave[];
     pendingCount?: number;
 }
 
@@ -16,8 +15,7 @@ export function StatsStrip({
     balance,
     isLoading,
     role = 'employee',
-    onLeaveTodayCount = 0,
-    upcomingLeaves = []
+    onLeaveTodayCount = 0
 }: StatsStripProps) {
     if (isLoading) {
         return <div className="animate-pulse h-32 bg-slate-100 rounded-xl w-full"></div>;
