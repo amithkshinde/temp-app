@@ -20,8 +20,7 @@ export function ConfirmationModal({
     message,
     confirmLabel = 'Confirm',
     cancelLabel = 'Cancel',
-    isLoading = false,
-    variant = 'neutral'
+    isLoading = false
 }: ConfirmationModalProps) {
     if (!isOpen) return null;
 

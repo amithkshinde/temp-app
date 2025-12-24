@@ -34,7 +34,6 @@ export function UpcomingLeavesPanel({
 
     // 1. Filter Leaves
     const activeLeaves = leaves.filter(l => {
-        const start = parseISO(l.startDate);
         const end = parseISO(l.endDate);
         return l.status !== 'cancelled' && (isAfter(end, today) || isSameDate(end, today));
     });

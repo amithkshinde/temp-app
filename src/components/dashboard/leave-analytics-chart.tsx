@@ -6,7 +6,7 @@ interface LeaveAnalyticsChartProps {
     isLoading: boolean;
 }
 
-export function LeaveAnalyticsChart({ balance, isLoading }: LeaveAnalyticsChartProps) {
+export function LeaveAnalyticsChart({ isLoading }: LeaveAnalyticsChartProps) {
     if (isLoading) {
         return <div className="w-full h-64 animate-pulse bg-slate-50 rounded-xl"></div>;
     }

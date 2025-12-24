@@ -379,7 +379,6 @@ export function LeaveModal({
 
                                             let available = 0;
                                             let carried = 0;
-                                            let infinite = false;
 
                                             if (isSick) {
                                                 // Fixed 6 days

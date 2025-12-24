@@ -53,7 +53,7 @@ export async function GET(request: Request) {
     // Dynamic Data Fetching (Supports Demo & Real)
     let userLeaves: Leave[] = [];
     let publicHolidays: Holiday[] = [];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     let holidaySelections: any[] = [];
 
     try {
@@ -70,7 +70,7 @@ export async function GET(request: Request) {
             // Mock Prisma selection format
             holidaySelections = DEMO_HOLIDAY_SELECTIONS.map(id => ({ userId, holidayId: id }));
         } else {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
             const results = await Promise.all([
                 prisma.leave.findMany({
                     where: { userId }

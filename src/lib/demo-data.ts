@@ -21,7 +21,7 @@ export const DEMO_USER_MANAGER: User = {
 };
 
 const today = new Date();
-const currentYear = today.getFullYear();
+
 
 // Helper to format date as YYYY-MM-DD
 const formatDate = (date: Date) => {

@@ -17,22 +17,13 @@ export function StatsStrip({
     isLoading,
     role = 'employee',
     onLeaveTodayCount = 0,
-    selectedHolidaysCount = 0,
-    upcomingLeaves = [],
-    pendingCount = 0
+    upcomingLeaves = []
 }: StatsStripProps) {
     if (isLoading) {
         return <div className="animate-pulse h-32 bg-slate-100 rounded-xl w-full"></div>;
     }
 
     if (role === 'employee') {
-        const nextLeave = upcomingLeaves.length > 0
-            ? upcomingLeaves.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())[0]
-            : null;
-
-        const nextLeaveDate = nextLeave
-            ? new Date(nextLeave.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-            : 'None';
 
         return (
             <div className="w-full grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-6">

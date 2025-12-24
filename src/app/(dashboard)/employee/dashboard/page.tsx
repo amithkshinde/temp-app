@@ -12,7 +12,7 @@ import { PublicHoliday } from '@/data/holiday-data';
 import { useNotifications } from '@/context/NotificationContext';
 import { NotificationCenter } from '@/components/ui/notification-center';
 import { UpcomingLeavesPanel } from '@/components/dashboard/upcoming-leaves-panel';
-import { HelpCircle, FileText, CalendarDays, ExternalLink, Mail, History, Edit2, Trash2, AlertCircle, Lightbulb, AlertTriangle } from 'lucide-react';
+import { HelpCircle, FileText, CalendarDays, ExternalLink, Mail, Lightbulb, AlertTriangle } from 'lucide-react';
 import { usePolling } from '@/hooks/use-polling';
 
 import { MobileFAB } from '@/components/dashboard/mobile-fab';
