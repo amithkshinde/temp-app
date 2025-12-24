@@ -11,9 +11,9 @@ export default function DashboardLayout({
 }) {
     return (
         <ProtectedRoute>
-            <div className="flex flex-col min-h-screen bg-[var(--color-bg)]">
+            <div className="h-full w-full flex flex-col bg-[var(--color-background)] overflow-hidden">
                 <DemoBanner />
-                <main className="flex-1">
+                <main className="flex-1 w-full min-h-0 relative flex flex-col">
                     {children}
                 </main>
             </div>

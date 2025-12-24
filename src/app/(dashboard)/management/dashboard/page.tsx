@@ -196,6 +196,7 @@ export default function ManagerDashboard() {
 
                 <TeamUpcomingPanel
                     leaves={leaves}
+                    holidays={holidays}
                     users={users}
                     isLoading={isLoading}
                 />

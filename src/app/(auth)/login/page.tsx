@@ -128,7 +128,7 @@ export default function LoginPage() {
                                 Explore demo mode
                             </span>
                         </div>
-                        <div className="flex gap-3">
+                        <div className="flex gap-3 items-start">
                             <Button
                                 variant="outline"
                                 className="flex-1 border-slate-200 text-slate-700 hover:bg-slate-50 h-10 font-normal"
@@ -136,13 +136,19 @@ export default function LoginPage() {
                             >
                                 As Employee
                             </Button>
-                            <Button
-                                variant="outline"
-                                className="flex-1 border-slate-200 text-slate-700 hover:bg-slate-50 h-10 font-normal"
-                                onClick={() => loginAsDemo('management')}
-                            >
-                                As Manager
-                            </Button>
+                            <div className="flex-1 flex flex-col items-center gap-1.5">
+                                <Button
+                                    variant="outline"
+                                    className="w-full border-slate-200 text-slate-400 bg-slate-50/50 hover:bg-slate-50/50 h-10 font-normal cursor-default opacity-70 shadow-none"
+                                    onClick={(e) => e.preventDefault()}
+                                    title="Manager demo will be available soon"
+                                >
+                                    As Manager
+                                </Button>
+                                <span className="text-[10px] font-medium text-slate-400 bg-slate-100/80 px-2 py-0.5 rounded-full tracking-wide">
+                                    Coming Soon
+                                </span>
+                            </div>
                         </div>
                     </div>
                 )}

@@ -37,7 +37,7 @@ export function DateCard({
     return (
         <div
             className={cn(
-                "p-3 rounded-lg border transition-colors cursor-pointer group hover:bg-slate-50 relative",
+                "p-4 rounded-lg border transition-colors cursor-pointer group hover:bg-slate-50 relative",
                 bgColor,
                 borderColor,
                 className

@@ -188,18 +188,18 @@ export function getVisualConfig(status: 'past' | 'approved' | 'pending' | 'rejec
             };
         case 'approved':
             return {
-                bg: 'bg-green-100',
-                border: 'border-green-300',
-                text: 'text-green-900 font-medium',
-                indicator: 'bg-green-500',
+                bg: 'bg-green-600',
+                border: 'border-green-600',
+                text: 'text-white font-medium',
+                indicator: 'bg-green-600',
                 label: 'Approved'
             };
         case 'pending':
             return {
-                bg: 'bg-yellow-50',
-                border: 'border-yellow-400 border-dashed',
-                text: 'text-yellow-900 font-medium',
-                indicator: 'bg-yellow-400',
+                bg: 'bg-amber-100',
+                border: 'border-amber-400 border-dashed',
+                text: 'text-amber-900 font-medium',
+                indicator: 'bg-amber-400',
                 label: 'Pending'
             };
         case 'rejected':
@@ -220,4 +220,100 @@ export function getVisualConfig(status: 'past' | 'approved' | 'pending' | 'rejec
                 label: 'Cancelled'
             };
     }
+}
+// ... existing methods ...
+
+/**
+ * Calculates leave balance including STRICT quarterly carry-forward rules.
+ * 
+ * Rules:
+ * - 4 Holidays per Quarter
+ * - User can pick max 10 total
+ * 
+ * Carry Forward Logic (to NEXT quarter only):
+ * Used 0 -> Carry 2
+ * Used 1-2 -> Carry (2 minus Used) ?? Wait, Prompt says "If 1-2 holidays used -> remaining holidays carry (max 2)"
+ *   Actually: "If 1-2 holidays used -> remaining holidays carry (max 2)"
+ *   "If 3 holidays used -> 1 carries forward"
+ *   "If 4 holidays used -> none carry forward"
+ * 
+ *   Re-reading strict logic:
+ *   Base: 4 available
+ *   
+ *   Used 0: Remaining 4. Carry max 2? Yes. -> Carry 2.
+ *   Used 1: Remaining 3. Carry max 2? Yes -> Carry 2.
+ *   Used 2: Remaining 2. Carry 2.
+ *   Used 3: Remaining 1. Carry 1.
+ *   Used 4: Remaining 0. Carry 0.
+ *   
+ *   Formula: Math.min(2, 4 - used)
+ */
+export function calculateQuarterlyBalance(
+    holidaysTakenDetails: { date: Date }[], // Dates of taken holidays
+    currentDate: Date = new Date()
+) {
+    const currentYear = currentDate.getFullYear();
+    const currentQuarter = Math.floor((currentDate.getMonth() + 3) / 3);
+
+    let carriedOver = 0;
+    const quarterStats = [];
+
+    // Iterate through quarters 1 to current
+    for (let q = 1; q <= 4; q++) {
+        // 1. Base Pool
+        const basePool = 4;
+
+        // 2. Available this quarter
+        const available = basePool + carriedOver;
+
+        // 3. Find taken this quarter
+        const qStartMonth = (q - 1) * 3; // 0, 3, 6, 9
+        const qEndMonth = qStartMonth + 3;
+
+        const takenCount = holidaysTakenDetails.filter(h => {
+            const d = new Date(h.date);
+            return d.getFullYear() === currentYear &&
+                d.getMonth() >= qStartMonth && d.getMonth() < qEndMonth;
+        }).length;
+
+        // 4. Calculate Carry Forward for NEXT quarter
+        // Rule: Max 2 can be carried.
+        // Base unused = 4 - takenCount (Carry logic applies to BASE allocation usually, or total available? 
+        // Prompt says: "If 0 holidays used in a quarter -> 2 carry forward". Implies logic is based on Usage count against the base 4.
+        // "If 3 holidays used -> 1 carries forward" (4-3 = 1).
+
+        // Let's assume logic applies to the *unused balance*, capped at 2.
+        const unused = Math.max(0, available - takenCount);
+
+        // "Carry forward applies only to the immediately next quarter."
+        // "Any unused balance older than one quarter is forfeited."
+        // This implies we don't just accumulate. We calculate what moves to Q+1.
+
+        // Logic interpretation:
+        // You have 4 base.
+        // If you used 0, you have 4 left. Max 2 carry. So 2 moves to next.
+        // If you used 1, you have 3 left. Max 2 carry. So 2 moves to next.
+        // If you used 3, you have 1 left. Max 2 carry (but only 1 avail). So 1 moves.
+        // This suggests: carriedOver_Next = Math.min(2, Math.max(0, available - takenCount));
+
+        const nextCarry = Math.min(2, unused);
+
+        quarterStats.push({
+            quarter: q,
+            base: basePool,
+            carriedIn: carriedOver,
+            totalAvailable: available,
+            taken: takenCount,
+            remaining: unused,
+            carriedOut: nextCarry
+        });
+
+        // Setup for next loop
+        carriedOver = nextCarry;
+    }
+
+    return {
+        currentQ: quarterStats[currentQuarter - 1],
+        allQuarters: quarterStats
+    };
 }

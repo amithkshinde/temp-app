@@ -22,8 +22,8 @@ export async function PUT(
                 startDate,
                 endDate,
                 reason,
-                status: 'pending',
-                type: 'planned',
+                status: reason.toLowerCase().startsWith('sick') ? 'approved' : 'pending',
+                type: reason.toLowerCase().startsWith('sick') ? 'sick' : 'planned',
                 updatedAt: new Date().toISOString()
             });
         }

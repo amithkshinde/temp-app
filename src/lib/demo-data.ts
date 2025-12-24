@@ -48,43 +48,47 @@ const getRelativeDate = (days: number) => {
 // 3. Future Rejected (+8 days)
 // 4. Past Approved (-5 days)
 
+// 1. Past Approved (-5 days)
+// 2. Future Approved (+2 days)
+// 3. Pending (+5 days)
+// 4. Rejected (+8 days)
+
 export const DEMO_LEAVES: Leave[] = [
-    // Q1 Leaves (Feb) - 3 Days (Scenario: Took 3, Carry 1)
     {
-        id: 'demo-leave-q1-1',
-        userId: 'demo-emp',
-        startDate: `${currentYear}-02-10`,
-        endDate: `${currentYear}-02-12`,
-        reason: 'Personal: Winter Break',
-        status: 'approved',
-        createdAt: `${currentYear}-01-15`,
-        type: 'planned',
-        userName: 'Demo Employee'
-    },
-    {
-        id: 'demo-leave-past-approved',
+        id: 'demo-past-approved',
         userId: 'demo-emp',
         startDate: getRelativeDate(-5),
         endDate: getRelativeDate(-5),
-        reason: 'Personal: Post-project recovery',
+        reason: 'Personal: Recovering from project',
         status: 'approved',
         createdAt: getRelativeDate(-10),
         type: 'planned',
         userName: 'Demo Employee'
     },
     {
-        id: 'demo-leave-future-approved',
+        id: 'demo-future-approved',
         userId: 'demo-emp',
         startDate: getRelativeDate(2),
         endDate: getRelativeDate(2),
         reason: 'Personal: Dentist Appointment',
         status: 'approved',
-        createdAt: getRelativeDate(-1),
+        createdAt: getRelativeDate(-2),
         type: 'planned',
         userName: 'Demo Employee'
     },
     {
-        id: 'demo-leave-future-pending',
+        id: 'demo-leave-sick',
+        userId: DEMO_USER_EMPLOYEE.id,
+        startDate: getRelativeDate(2), // 2 days from now (Sick/Upcoming)
+        endDate: getRelativeDate(3),
+        type: 'sick',
+        status: 'approved', // Auto-approved
+        reason: 'Sick: Viral Fever',
+        createdAt: new Date().toISOString(),
+        userName: 'Demo Employee'
+    },
+    {
+        id: 'demo-future-pending',
         userId: 'demo-emp',
         startDate: getRelativeDate(5),
         endDate: getRelativeDate(5),
@@ -95,59 +99,12 @@ export const DEMO_LEAVES: Leave[] = [
         userName: 'Demo Employee'
     },
     {
-        id: 'demo-leave-future-rejected',
+        id: 'demo-future-rejected',
         userId: 'demo-emp',
         startDate: getRelativeDate(8),
         endDate: getRelativeDate(8),
         reason: 'Personal: Long Weekend',
         status: 'rejected',
-        createdAt: getRelativeDate(-2),
-        type: 'planned',
-        userName: 'Demo Employee'
-    },
-    // Keep some original static ones if needed for other months, but the request focuses on Current Month.
-    // Adding one far future one just in case.
-    {
-        id: 'demo-leave-dec-static',
-        userId: 'demo-emp',
-        startDate: `${currentYear}-12-25`,
-        endDate: `${currentYear}-12-26`,
-        reason: 'Christmas Break',
-        status: 'approved',
-        createdAt: `${currentYear}-11-01`,
-        type: 'planned',
-        userName: 'Demo Employee'
-    },
-    // New Requested Leaves
-    {
-        id: 'demo-leave-rejected-new',
-        userId: 'demo-emp',
-        startDate: getRelativeDate(10),
-        endDate: getRelativeDate(10),
-        reason: 'Personal: Day trip',
-        status: 'rejected',
-        createdAt: getRelativeDate(-1),
-        type: 'planned',
-        userName: 'Demo Employee'
-    },
-    {
-        id: 'demo-leave-jan-new',
-        userId: 'demo-emp',
-        startDate: `${currentYear + 1}-01-08`,
-        endDate: `${currentYear + 1}-01-08`,
-        reason: 'Planned: Family Visit',
-        status: 'approved',
-        createdAt: `${currentYear}-12-15`,
-        type: 'planned',
-        userName: 'Demo Employee'
-    },
-    {
-        id: 'demo-leave-pending-new',
-        userId: 'demo-emp',
-        startDate: getRelativeDate(15),
-        endDate: getRelativeDate(16),
-        reason: 'Planned: Family Vacation',
-        status: 'pending',
         createdAt: getRelativeDate(-1),
         type: 'planned',
         userName: 'Demo Employee'

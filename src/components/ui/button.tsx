@@ -21,9 +21,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             variantStyles = "hover:bg-slate-100 text-slate-600 text-sm";
         }
 
-        let sizeStyles = "h-11 px-8 py-2";
+        let sizeStyles = "h-10 px-4 py-2";
         if (size === 'default' && ['primary', 'secondary', 'outline'].includes(variant)) {
-            sizeStyles = "py-1 px-4";
+            sizeStyles = "h-10 px-4 py-2";
         }
         if (size === 'sm') sizeStyles = "h-9 rounded-lg px-3";
         if (size === 'lg') sizeStyles = "h-12 rounded-lg px-8";

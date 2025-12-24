@@ -92,7 +92,7 @@ export function CalendarView({
                 <Button variant="ghost" onClick={nextMonth} size="sm" className="absolute right-0">→</Button>
             </div>
 
-            <div className="grid grid-cols-7 gap-1 text-center mb-2">
+            <div className="grid grid-cols-7 gap-[6px] text-center mb-2">
                 {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
                     <div key={day} className="text-xs font-semibold text-gray-400 uppercase tracking-widest py-2">
                         {day}
@@ -100,7 +100,7 @@ export function CalendarView({
                 ))}
             </div>
 
-            <div className="grid grid-cols-7 gap-1">
+            <div className="grid grid-cols-7 gap-[6px]">
                 {days.map((day: Date) => {
                     const dayLeaves = getLeavesForDate(day);
                     const holiday = getHolidayForDate(day);
@@ -116,24 +116,18 @@ export function CalendarView({
 
 
                     if (holiday) {
-                        // Holidays also high priority
-                        bgClass = "bg-amber-100";
-                        borderClass = "border-amber-300 border-dashed";
-                        textClass = "text-amber-900 font-bold";
+                        // Holidays 
+                        if (isSelectedHoliday) {
+                            bgClass = "bg-amber-100";
+                            borderClass = "border-amber-500"; // Solid for Selected (Accepted)
+                            textClass = "text-amber-900 font-bold";
+                        } else {
+                            bgClass = "bg-amber-50";
+                            borderClass = "border-amber-300 border-dashed"; // Dashed for Available
+                            textClass = "text-amber-800/70 font-medium";
+                        }
                     }
                     else if (dayLeaves.length > 0) {
-                        // Import assumption: `getLeaveVisualStatus` and `getVisualConfig` are available.
-                        // I will add the import in the next tool call to be safe, or I can try to add it here but it's far away.
-                        // Let's write the logic invoking the function, and I'll add the import in a subsequent edit or PREVIOUS?
-                        // I should have added the import first. 
-                        // I will abort this edit, add import, then come back? 
-                        // No, I can do it in order. I will add import first.
-
-                        // Wait, I am in the middle of a `replace_file_content`.
-                        // I will CANCEL this tool call effectively by returning a different thought? 
-                        // No, I must complete the tool call. 
-                        // I will write the code assuming the import exists, and then add the import.
-
                         const dominantLeave = dayLeaves[0];
                         const visualStatus = getLeaveVisualStatus(dominantLeave);
                         const config = getVisualConfig(visualStatus);
@@ -175,7 +169,7 @@ export function CalendarView({
                     const isDisabled = (isPastDate && (!!holiday || dayLeaves.length === 0)) || isSelectionDisabled;
 
                     const containerClasses = cn(
-                        compact ? "min-h-[3rem] p-1" : "min-h-[3.5rem] p-1.5",
+                        compact ? "min-h-[60px] p-1" : "min-h-[68px] p-1.5",
                         "rounded-lg flex flex-col items-start justify-start text-xs transition-all border relative",
                         bgClass,
                         borderClass,
@@ -188,15 +182,25 @@ export function CalendarView({
                         if (isDisabled) return;
 
                         if (holiday && onHolidayClick) {
+                            // Rule 3: Removing a selected holiday requires 2-step confirmation
+                            if (isSelectedHoliday) {
+                                // Double check? Actually `window.confirm` is adequate basic 2-step (Click -> Confirm).
+                                // Prompt says "Show an 'Are you sure?' modal". Browser confirm is acceptable for "modal" in this context unless we have a specific UI modal.
+                                // Given we don't have a generic ConfirmModal component ready, window.confirm is the standard react method for this logic proof.
+                                const confirmed = window.confirm(`Are you sure you want to deselect ${holiday.name}? This will remove it from your balance.`);
+                                if (!confirmed) return;
+                            }
                             onHolidayClick(holiday.id);
                         } else {
-                            // Single click, no existing selection logic here
-                            onDateClick(day, dayLeaves.length === 1 ? dayLeaves[0] : undefined);
+                            if (holiday) return; // Should not happen given logic above, but safe guard. Holidays (unselected) are clickable if not disabled.
+
+                            const dominantLeave = dayLeaves[0]; // Logic for leaf
+                            onDateClick(day, dominantLeave); // Open Leave Modal
                         }
                     };
 
                     let titleText = format(day, 'EEEE, MMMM d, yyyy');
-                    if (holiday) titleText += `\nHoliday: ${holiday.name}`;
+                    if (holiday) titleText += `\nHoliday: ${holiday.name} ${isSelectedHoliday ? '(Selected)' : '(Click to select)'}`;
                     if (dayLeaves.length > 0) titleText += `\nLeaves: ${dayLeaves.map(l => `${l.userName || l.userId} (${l.status})`).join(', ')}`;
 
                     // --- Conflict Check (Team Mode) ---
@@ -264,7 +268,7 @@ export function CalendarView({
             </div>
 
             {/* Legend */}
-            <div className="flex flex-wrap gap-4 mt-2 text-xs text-gray-600 justify-center">
+            <div className="flex flex-wrap gap-4 py-6 text-xs text-gray-600 justify-center">
                 <div className="flex items-center gap-2">
                     <div className="w-4 h-4 bg-green-50 border border-green-200 rounded flex items-center justify-center">
                         <div className="w-full h-1.5 bg-green-500 rounded-full mx-1"></div>

@@ -21,6 +21,11 @@ export async function POST(
             return NextResponse.json({ error: 'Leave not found' }, { status: 404 });
         }
 
+        // Block Rejection of Sick Leave
+        const isSick = leave.type === 'sick' || leave.reason.toLowerCase().startsWith('sick');
+        if (isSick) {
+            return NextResponse.json({ error: 'Sick leave cannot be rejected as it is auto-approved.' }, { status: 400 });
+        }
         // Update Status
         const updatedLeave = await prisma.leave.update({
             where: { id },

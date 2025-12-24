@@ -109,7 +109,8 @@ export default function EmployeeDashboard() {
             if (!res.ok) throw new Error('Failed to update selection');
 
             if (newCount > 10 && !isSelected) {
-                console.warn("Soft Warning: You have selected more than 10 public holidays.");
+                // Soft Warning
+                addNotification("You have selected more than 10 public holidays.", "warning", user.id);
             }
         } catch (err) {
             console.error(err);
@@ -173,9 +174,13 @@ export default function EmployeeDashboard() {
     };
 
     return (
-        <div className="min-h-screen bg-[var(--color-bg)] p-4 lg:p-6 flex flex-col h-auto lg:h-screen lg:overflow-hidden">
-            <div className="max-w-5xl mx-auto w-full flex-1 flex flex-col gap-4 min-h-0">
-                <header className="flex justify-between items-center shrink-0">
+        // The outer wrapper is handled by layout.tsx (h-full flex-col). 
+        // We just need to fit into that.
+        <>
+
+            {/* Header: Fixed (Flex None) - Centered Content */}
+            <header className="flex-none w-full z-40 bg-[var(--background)] pt-4 px-4 md:pt-6 md:px-6 lg:pt-8 lg:px-8 pb-4">
+                <div className="mx-auto max-w-7xl flex justify-between items-center">
                     <div>
                         <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">Welcome, {user?.name.split(' ')[0]}!</h1>
                         <p className="text-sm lg:text-base text-gray-500">Here’s your leave overview</p>
@@ -184,116 +189,141 @@ export default function EmployeeDashboard() {
                         <NotificationCenter />
                         <UserMenu />
                     </div>
-                </header>
-
-                {showSickRibbon && (
-                    <div className="w-full bg-orange-100 border border-orange-200 text-orange-800 px-6 py-3 rounded-xl flex items-center justify-center gap-3 animate-in slide-in-from-top-4 fade-in shrink-0">
-                        <span className="text-xl">🍵</span>
-                        <div>
-                            <p className="font-bold text-sm">Sick Leave Recorded for Today</p>
-                            <p className="text-xs opacity-90">Take care! You’re on Sick Leave today.</p>
-                        </div>
-                    </div>
-                )}
-
-                <div className="shrink-0">
-                    <StatsStrip
-                        balance={balance}
-                        isLoading={isLoading}
-                        role="employee"
-                        selectedHolidaysCount={selectedHolidayIds.length}
-                        upcomingLeaves={leaves.filter(l => l.status === 'approved' && new Date(l.startDate) >= new Date(new Date().setHours(0, 0, 0, 0)))}
-                        pendingCount={leaves.filter(l => l.status === 'pending').length}
-                    />
                 </div>
+            </header>
 
-                <div className="flex-1 min-h-0 flex flex-col-reverse lg:flex-row gap-4 items-stretch pb-20 lg:pb-0">
-                    <div className="flex-1 min-w-0">
-                        <CalendarView
-                            leaves={leaves}
-                            holidays={holidays}
-                            selectedHolidayIds={selectedHolidayIds}
-                            onDateClick={handleDateClick}
-                            onHolidayClick={handleHolidayClick}
-                            className="h-[400px] lg:h-full"
-                            currentMonth={currentMonth}
-                            onMonthChange={setCurrentMonth}
-                        />
-                    </div>
+            {/* Scrollable Content Area - Full Width Container */}
+            <div className="flex-1 w-full min-h-0 overflow-y-auto">
+                {/* Centered Grid Wrapper */}
+                <div className="mx-auto max-w-7xl px-4 md:px-6 lg:px-8 pb-20">
+                    <div className="grid gap-6 md:grid-cols-12">
 
-                    <div className="w-full lg:w-80 relative shrink-0">
-                        <div className="flex flex-col gap-4 lg:absolute lg:inset-0">
+                        {/* Sick Ribbon */}
+                        {showSickRibbon && (
+                            <div className="md:col-span-12 w-full bg-orange-100 border border-orange-200 text-orange-800 px-6 py-3 rounded-xl flex items-center justify-center gap-3 animate-in slide-in-from-top-4 fade-in">
+                                <span className="text-xl">🍵</span>
+                                <div>
+                                    <p className="font-bold text-sm">Sick Leave Recorded for Today</p>
+                                    <p className="text-xs opacity-90">Take care! You’re on Sick Leave today.</p>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Stats Strip: Full Width */}
+                        <div className="md:col-span-12">
+                            <StatsStrip
+                                balance={balance}
+                                isLoading={isLoading}
+                                role="employee"
+                                selectedHolidaysCount={selectedHolidayIds.length}
+                                upcomingLeaves={leaves.filter(l => l.status === 'approved' && new Date(l.startDate) >= new Date(new Date().setHours(0, 0, 0, 0)))}
+                                pendingCount={leaves.filter(l => l.status === 'pending').length}
+                            />
+                        </div>
+
+                        {/* Calendar Section (Span 8) */}
+                        <div className="md:col-span-8">
+                            <CalendarView
+                                leaves={leaves}
+                                holidays={holidays}
+                                selectedHolidayIds={selectedHolidayIds}
+                                onDateClick={handleDateClick}
+                                onHolidayClick={handleHolidayClick}
+                                className="h-fit w-full"
+                                currentMonth={currentMonth}
+                                onMonthChange={setCurrentMonth}
+                            />
+                        </div>
+
+                        {/* Upcoming Leaves Section (Span 4) */}
+                        <div className="md:col-span-4">
                             <UpcomingLeavesPanel
                                 leaves={leaves}
+                                holidays={holidays}
+                                selectedHolidayIds={selectedHolidayIds}
                                 isLoading={isLoading}
                                 onLeaveClick={(leave) => {
                                     setSelectedLeave(leave);
                                     setIsModalOpen(true);
                                 }}
-                                className="flex-1 min-h-0 bg-white rounded-[var(--radius-xl)] shadow-sm border border-slate-200"
+                                className="h-[550px] w-full bg-white rounded-[var(--radius-xl)] shadow-sm border border-slate-200"
                             />
                         </div>
+
+                        {/* Leave History (Span 8) - Aligned with Policy */}
+                        <div className="md:col-span-8 p-4 bg-white rounded-[var(--radius-xl)] border border-slate-200 shadow-sm">
+                            <h3 className="text-lg font-semibold mb-4">Leave History</h3>
+                            <div className="text-gray-400 text-sm italic">Displaying recent leave history...</div>
+                        </div>
+
+                        {/* Policy (Span 4) - Aligned with History */}
+                        <div className="md:col-span-4 p-4 bg-white rounded-[var(--radius-xl)] border border-slate-200 shadow-sm">
+                            <h3 className="text-lg font-semibold mb-4">Policy</h3>
+                            <div className="text-gray-400 text-sm italic">Company leave policy details...</div>
+                        </div>
+
+
                     </div>
                 </div>
-
-                <MobileFAB onClick={() => {
-                    setSelectedLeave(undefined);
-                    setIsModalOpen(true);
-                }} />
-
-                <HolidaySelectionModal
-                    isOpen={isHolidayModalOpen}
-                    onClose={() => setIsHolidayModalOpen(false)}
-                    availableHolidays={holidays}
-                    selectedHolidayIds={selectedHolidayIds}
-                    onSave={async (ids: string[]) => {
-                        const current = new Set(selectedHolidayIds);
-                        const next = new Set(ids);
-                        for (const id of Array.from(next)) {
-                            if (!current.has(id)) await handleHolidayClick(id);
-                        }
-                        for (const id of Array.from(current)) {
-                            if (!next.has(id)) await handleHolidayClick(id);
-                        }
-                        setSelectedHolidayIds(ids);
-                    }}
-                />
-
-                {isModalOpen && (
-                    <LeaveModal
-                        isOpen={isModalOpen}
-                        onClose={() => setIsModalOpen(false)}
-                        onSubmit={async (data) => {
-                            if (selectedLeave) {
-                                // EDIT
-                                try {
-                                    const res = await fetch(`/api/leaves/${selectedLeave.id}`, {
-                                        method: 'PUT',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify(data)
-                                    });
-                                    if (res.ok) {
-                                        await fetchData();
-                                        addNotification('Leave updated successfully', 'success', user?.id || '');
-                                    } else {
-                                        alert('Update failed');
-                                    }
-                                } catch (e) { console.error(e); }
-                            } else {
-                                // CREATE
-                                await handleMarkLeave(data);
-                            }
-                        }}
-                        onRemove={handleRemoveLeave}
-                        initialStartDate={selectedLeave ? selectedLeave.startDate : (selectedDate ? format(selectedDate, 'yyyy-MM-dd') : '')}
-                        initialEndDate={selectedLeave ? selectedLeave.endDate : undefined}
-                        existingLeaveId={selectedLeave?.id}
-                        isDemo={user?.demo}
-                        holidays={holidays}
-                        leaves={leaves}
-                    />
-                )}
             </div>
-        </div>
+
+            <MobileFAB onClick={() => {
+                setSelectedLeave(undefined);
+                setIsModalOpen(true);
+            }} />
+
+            <HolidaySelectionModal
+                isOpen={isHolidayModalOpen}
+                onClose={() => setIsHolidayModalOpen(false)}
+                availableHolidays={holidays}
+                selectedHolidayIds={selectedHolidayIds}
+                onSave={async (ids: string[]) => {
+                    const current = new Set(selectedHolidayIds);
+                    const next = new Set(ids);
+                    for (const id of Array.from(next)) {
+                        if (!current.has(id)) await handleHolidayClick(id);
+                    }
+                    for (const id of Array.from(current)) {
+                        if (!next.has(id)) await handleHolidayClick(id);
+                    }
+                    setSelectedHolidayIds(ids);
+                }}
+            />
+
+            {isModalOpen && (
+                <LeaveModal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    onSubmit={async (data) => {
+                        if (selectedLeave) {
+                            // EDIT
+                            try {
+                                const res = await fetch(`/api/leaves/${selectedLeave.id}`, {
+                                    method: 'PUT',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify(data)
+                                });
+                                if (res.ok) {
+                                    await fetchData();
+                                    addNotification('Leave updated successfully', 'success', user?.id || '');
+                                } else {
+                                    alert('Update failed');
+                                }
+                            } catch (e) { console.error(e); }
+                        } else {
+                            // CREATE
+                            await handleMarkLeave(data);
+                        }
+                    }}
+                    onRemove={handleRemoveLeave}
+                    initialStartDate={selectedLeave ? selectedLeave.startDate : (selectedDate ? format(selectedDate, 'yyyy-MM-dd') : '')}
+                    initialEndDate={selectedLeave ? selectedLeave.endDate : undefined}
+                    existingLeaveId={selectedLeave?.id}
+                    isDemo={user?.demo}
+                    holidays={holidays}
+                    leaves={leaves}
+                />
+            )}
+        </>
     );
 }

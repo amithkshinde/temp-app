@@ -126,11 +126,13 @@ export function LeaveModal({
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
-        if (isDemo) {
-            alert('This is a demo. Actions are disabled.');
+        if (isDemo && isPastApproved) {
+            alert('Past leaves cannot be edited.');
             setIsLoading(false);
             return;
         }
+
+        // Demo logic: Allow interactions usually, but if it's past, block it.
 
         // Overlap Check
         const startObj = parseISO(startDate);
@@ -154,8 +156,8 @@ export function LeaveModal({
 
     const handleRemove = async () => {
         setIsLoading(true);
-        if (isDemo) {
-            alert('This is a demo. Actions are disabled.');
+        if (isDemo && isPastApproved) {
+            alert('Past leaves cannot be edited.');
             setIsLoading(false);
             return;
         }
@@ -412,15 +414,15 @@ export function LeaveModal({
                                 )}
 
                                 {showSickBanner && (
-                                    <div className="bg-blue-50 text-blue-800 text-xs p-3 rounded-lg flex items-start gap-2">
-                                        <span>ℹ️</span>
+                                    <div className="bg-emerald-50 text-emerald-800 text-xs p-3 rounded-lg flex items-start gap-2">
+                                        <span>✓</span>
                                         <span className="font-medium">
-                                            Sick leave is automatically approved.
+                                            This leave is auto-approved.
                                         </span>
                                     </div>
                                 )}
 
-                                {showEditBanner && (
+                                {showEditBanner && !showSickBanner && (
                                     <div className="bg-amber-50 text-amber-800 text-xs p-3 rounded-lg flex items-start gap-2">
                                         <span>⚠️</span>
                                         Note: Editing a leave request will reset its status to &apos;Pending&apos;.
@@ -458,10 +460,9 @@ export function LeaveModal({
                                 {/* Edit Mode: Cancel Request (Delete) */}
                                 {mode === 'edit' && (
                                     <button
-                                        type="button"
-                                        className="text-sm font-medium text-gray-500 hover:text-gray-900 hover:underline mr-auto transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="text-sm font-medium text-slate-500 hover:text-slate-800 mr-auto transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                         onClick={async () => {
-                                            if (!confirm('Are you sure you want to cancel this leave?')) return;
+                                            if (!confirm('Are you sure you want to cancel this leave request?')) return;
                                             await handleRemove();
                                         }}
                                         disabled={isLoading}

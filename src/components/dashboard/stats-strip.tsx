@@ -36,51 +36,48 @@ export function StatsStrip({
 
         return (
             <div className="w-full grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-6">
-                {/* 1. Total Leave Balance */}
+                {/* 1. Leaves Remaining (Priority) */}
                 <div className="rounded-[var(--radius-xl)] border border-slate-200 shadow-sm p-4 lg:p-6 flex flex-col justify-center bg-white min-h-[110px] lg:min-h-[140px]">
-                    <p className="text-xs lg:text-sm text-gray-900 font-semibold tracking-tight mb-1 lg:mb-2">Total Leave Balance</p>
-                    <p className="text-2xl lg:text-4xl font-bold text-gray-900">
+                    <div className="flex justify-between items-start">
+                        <p className="text-base font-semibold leading-none text-gray-900 tracking-tight mb-2">Remaining Leaves</p>
+                        <Calendar className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" />
+                    </div>
+                    <p className="text-3xl lg:text-5xl font-bold text-[#f0216a]">
                         {balance?.remaining ?? 0}
                     </p>
-                    <p className="text-[10px] lg:text-xs text-gray-500 mt-1 lg:mt-2 font-medium">Leaves remaining this year</p>
+                    <p className="text-xs text-gray-500 mt-1 font-medium">Available to use</p>
                 </div>
 
                 {/* 2. Leaves Taken */}
                 <div className="rounded-[var(--radius-xl)] border border-slate-200 shadow-sm p-4 lg:p-6 flex flex-col justify-center bg-white min-h-[110px] lg:min-h-[140px]">
-                    <p className="text-xs lg:text-sm text-gray-900 font-semibold tracking-tight mb-1 lg:mb-2">Leaves Taken</p>
-                    <p className="text-2xl lg:text-4xl font-bold text-gray-900">{balance?.taken ?? 0}</p>
-                    <p className="text-[10px] lg:text-xs text-gray-500 mt-1 lg:mt-2 font-medium">Used so far</p>
+                    <p className="text-base font-semibold leading-none text-gray-900 tracking-tight mb-2">Leaves Taken</p>
+                    <p className="text-3xl font-bold text-gray-900">{balance?.taken ?? 0}</p>
+                    <p className="text-xs text-gray-500 mt-1 font-medium">Used this year</p>
                 </div>
 
-                {/* 3. Upcoming Approved */}
+                {/* 3. Total Leaves (Quarterly Base + Carry) */}
                 <div className="rounded-[var(--radius-xl)] border border-slate-200 shadow-sm p-4 lg:p-6 flex flex-col justify-center bg-white min-h-[110px] lg:min-h-[140px]">
-                    <div className="flex justify-between items-start">
-                        <p className="text-xs lg:text-sm text-gray-900 font-semibold tracking-tight mb-1 lg:mb-2">Upcoming Approved</p>
-                        <Calendar className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" />
-                    </div>
-                    <p className="text-2xl lg:text-4xl font-bold text-[#f0216a]">
-                        {upcomingLeaves.length}
+                    <p className="text-base font-semibold leading-none text-gray-900 tracking-tight mb-2">Total Leaves</p>
+                    <p className="text-3xl font-bold text-gray-900">
+                        {balance?.allocated ?? 0}
                     </p>
-                    <p className="text-[10px] lg:text-xs text-gray-500 mt-1 lg:mt-2 font-medium truncate">
-                        Next: {nextLeaveDate}
-                    </p>
+                    <p className="text-xs text-gray-500 mt-1 font-medium">Quarterly + Carried</p>
                 </div>
 
-                {/* 4. Pending Requests */}
+                {/* 4. Carried Forward Only */}
                 <div className="rounded-[var(--radius-xl)] border border-slate-200 shadow-sm p-4 lg:p-6 flex flex-col justify-center bg-white min-h-[110px] lg:min-h-[140px]">
                     <div className="flex justify-between items-start">
-                        <p className="text-xs lg:text-sm text-gray-900 font-semibold tracking-tight mb-1 lg:mb-2">Pending Requests</p>
+                        <p className="text-base font-semibold leading-none text-gray-900 tracking-tight mb-2">Carried Forward</p>
                         <Clock className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" />
                     </div>
-                    <p className="text-2xl lg:text-4xl font-bold text-gray-900">{pendingCount}</p>
-                    <p className="text-[10px] lg:text-xs text-gray-500 mt-1 lg:mt-2 font-medium">Awaiting approval</p>
+                    <p className="text-3xl font-bold text-gray-900">{balance?.carriedForward ?? 0}</p>
+                    <p className="text-xs text-gray-500 mt-1 font-medium">From previous quarter</p>
                 </div>
             </div>
         );
     }
 
     // Management View - Keeping as is for now, or standardizing grid if needed.
-    // User request focused on specific card definitions which match Employee view.
     return (
         <div className="w-full">
             <div className="flex flex-col md:flex-row gap-4 w-full">
