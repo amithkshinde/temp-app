@@ -122,15 +122,15 @@ export default function LoginPage() {
                                 Explore demo mode
                             </span>
                         </div>
-                        <div className="flex gap-3 items-start">
+                        <div className="grid grid-cols-2 gap-3 items-start">
                             <Button
                                 variant="outline"
-                                className="flex-1 border-slate-200 text-slate-700 hover:bg-slate-50 h-10 font-normal"
+                                className="w-full border-slate-200 text-slate-700 hover:bg-slate-50 h-10 font-normal"
                                 onClick={() => loginAsDemo('employee')}
                             >
                                 As Employee
                             </Button>
-                            <div className="flex-1 flex flex-col items-center gap-1.5">
+                            <div className="flex flex-col items-center gap-1.5 w-full">
                                 <Button
                                     variant="outline"
                                     className="w-full border-slate-200 text-slate-400 bg-slate-50/50 hover:bg-slate-50/50 h-10 font-normal cursor-default opacity-70 shadow-none"
