@@ -11,6 +11,8 @@ interface UpcomingLeavesPanelProps {
     selectedHolidayIds?: string[];
     isLoading: boolean;
     onLeaveClick?: (leave: Leave) => void;
+    onHolidayClick?: (holiday: PublicHoliday) => void;
+    onRemoveHoliday?: (holiday: PublicHoliday) => void;
     className?: string; // e.g. h-[600px]
 }
 
@@ -20,6 +22,8 @@ export function UpcomingLeavesPanel({
     selectedHolidayIds = [],
     isLoading,
     onLeaveClick,
+    onHolidayClick,
+    onRemoveHoliday,
     className
 }: UpcomingLeavesPanelProps) {
     if (isLoading) {
@@ -39,10 +43,6 @@ export function UpcomingLeavesPanel({
     const upcomingHolidays = holidays.filter(h => {
         const d = parseISO(h.date);
         return isAfter(d, today) || isSameDate(d, today);
-        // Only show SELECTED holidays?? 
-        // Prompt rule 5: "Public holidays must appear in the upcoming leaves panel... styled distinctively". 
-        // Typically user wants to see "Days Off", which includes Selected Holidays.
-        // Assuming we only show selected ones as "Leaves".
     }).filter(h => selectedHolidayIds.includes(h.id));
 
     // 3. Merge & Sort
@@ -113,6 +113,8 @@ export function UpcomingLeavesPanel({
                         } else {
                             // Holiday Logic
                             const holiday = item.data;
+                            const isPast = isAfter(today, parseISO(holiday.date)) && !isSameDate(today, parseISO(holiday.date));
+
                             return (
                                 <DateCard
                                     key={`holiday-${holiday.id}`}
@@ -124,16 +126,26 @@ export function UpcomingLeavesPanel({
                                         </span>
                                     }
                                     bottomElement={
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-[11px] font-bold text-gray-800">
-                                                {holiday.name}
-                                            </span>
-                                        </div>
+                                        <>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-[11px] font-bold text-gray-800">
+                                                    {holiday.name}
+                                                </span>
+                                            </div>
+                                            {!isPast && (
+                                                <span
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        onRemoveHoliday?.(holiday);
+                                                    }}
+                                                    className="text-xs text-[#f0216a] opacity-0 group-hover:opacity-100 transition-opacity font-bold hover:underline cursor-pointer"
+                                                >
+                                                    Remove Holiday
+                                                </span>
+                                            )}
+                                        </>
                                     }
-                                    // Holiday click could open details or deselect? Prompt doesn't specify action in panel.
-                                    // Make non-clickable for now? Or pass handler?
-                                    // For now, no click handler passed.
-                                    onClick={undefined}
+                                    onClick={() => onHolidayClick?.(holiday)}
                                 />
                             );
                         }

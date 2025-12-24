@@ -157,6 +157,40 @@ export async function POST(request: Request) {
             }
         });
 
+        // --- Auto-Apply Public Holidays Logic ---
+        // Rule: If a public holiday date lies within the start and end date, automatically include (select) it.
+        try {
+            const holidaysInRange = await prisma.holiday.findMany({
+                where: {
+                    date: {
+                        gte: startDate,
+                        lte: endDate
+                    }
+                }
+            });
+
+            for (const h of holidaysInRange) {
+                // Upsert selection to ensure it's "Accepted" (Selected)
+                await prisma.holidaySelection.upsert({
+                    where: {
+                        userId_holidayId: {
+                            userId,
+                            holidayId: h.id
+                        }
+                    },
+                    update: {}, // Already selected, do nothing
+                    create: {
+                        userId,
+                        holidayId: h.id
+                    }
+                });
+            }
+        } catch (hErr) {
+            console.error("Failed to auto-apply public holidays:", hErr);
+            // Don't fail the leave creation if this fails, just log.
+        }
+        // ----------------------------------------
+
         // Notifications
         if (status === 'pending') {
             const user = await prisma.user.findUnique({ where: { id: userId } });

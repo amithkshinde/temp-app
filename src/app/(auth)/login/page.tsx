@@ -43,14 +43,8 @@ export default function LoginPage() {
             <div className="w-full max-w-[400px] bg-white rounded-2xl shadow-xl p-8 border border-white/50">
                 {/* Header */}
                 <div className="flex flex-col items-center text-center">
-                    <div className="relative w-12 h-12 mb-6">
-                        <Image
-                            src="/twist-logo.png"
-                            alt="Logo"
-                            fill
-                            className="object-contain"
-                            priority
-                        />
+                    <div className="h-12 w-12 bg-[var(--color-brand-pink)] rounded-full mx-auto flex items-center justify-center text-white font-bold text-xl mb-6">
+                        LT
                     </div>
                     <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Welcome</h1>
                     <p className="text-sm text-gray-500 mt-2">Log in to manage your leaves</p>

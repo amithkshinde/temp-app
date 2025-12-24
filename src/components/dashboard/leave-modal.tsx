@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { findOverlappingLeave } from '@/lib/leave-utils';
+import { findOverlappingLeave, calculateQuarterlyBalance } from '@/lib/leave-utils';
 import { Leave, PublicHoliday } from '@/lib/types';
-import { differenceInCalendarDays, startOfToday, parseISO, isWithinInterval, format } from 'date-fns';
+import { differenceInCalendarDays, startOfToday, parseISO, isWithinInterval, format, eachDayOfInterval } from 'date-fns';
 import { Select } from '@/components/ui/select';
 import { Calendar } from 'lucide-react';
 
@@ -205,7 +205,7 @@ export function LeaveModal({
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
             <div
                 className={`bg-white rounded-[var(--radius-xl)] shadow-xl w-full max-w-md overflow-hidden flex flex-col animate-in zoom-in-95 duration-200 transition-all ${isTallModal ? 'h-[650px]' : ''
                     }`}
@@ -347,7 +347,6 @@ export function LeaveModal({
                                             onChange={(e) => {
                                                 const val = e.target.value;
                                                 setReasonType(val);
-                                                // Reset details logic same as before
                                                 if (val === 'Sick') setReasonDetails('Sick Leave');
                                                 else if (reasonDetails === 'Sick Leave') setReasonDetails('');
                                             }}
@@ -355,6 +354,85 @@ export function LeaveModal({
                                             className="font-medium text-gray-900"
                                             disabled={isLoading}
                                         />
+
+                                        {/* Balance Helper Text */}
+                                        {(() => {
+                                            if (reasonType === 'Other') return null;// Or show Planned? "Other" is usually "Planned".
+                                            // Assuming "Other", "Personal", "Emergency" are all PLANNED. "Sick" is SICK.
+                                            // Prompt Rule 2: "Planned / Personal Leave... Use existing quarterly logic".
+
+                                            const isSick = reasonType === 'Sick';
+
+                                            // Calculate Cost
+                                            let cost = 0;
+                                            if (startObj && endObj) {
+                                                try {
+                                                    cost = differenceInCalendarDays(endObj, startObj) + 1;
+                                                } catch { }
+                                            } else if (startObj) {
+                                                cost = 1;
+                                            }
+
+                                            // Calculate Balance
+                                            // 1. Filter Approved Leaves
+                                            const approvedLeaves = (leaves || []).filter(l => l.status === 'approved' && l.id !== existingLeaveId);
+
+                                            let available = 0;
+                                            let carried = 0;
+                                            let infinite = false;
+
+                                            if (isSick) {
+                                                // Fixed 6 days
+                                                const LIMIT = 6;
+                                                // Count taken
+                                                let taken = 0;
+                                                approvedLeaves.filter(l => l.type === 'sick').forEach(l => {
+                                                    const d = differenceInCalendarDays(parseISO(l.endDate), parseISO(l.startDate)) + 1;
+                                                    taken += d;
+                                                });
+                                                available = Math.max(0, LIMIT - taken);
+                                            } else {
+                                                // Planned (Quarterly)
+                                                // We need the Reference Date (StartDate of Request) to know WHICH quarter's balance to show.
+                                                // If no start date, use Today.
+                                                const refDate = startObj || new Date();
+
+                                                // Expand taken dates for calculateQuarterlyBalance
+                                                // Filter for PLANNED leaves
+                                                const plannedDates: { date: Date }[] = [];
+                                                approvedLeaves.filter(l => l.type !== 'sick').forEach(l => {
+                                                    try {
+                                                        const days = eachDayOfInterval({ start: parseISO(l.startDate), end: parseISO(l.endDate) });
+                                                        days.forEach(d => plannedDates.push({ date: d }));
+                                                    } catch { }
+                                                });
+
+                                                // Import helper dynamically or assume imported. I need to add import.
+                                                const { currentQ } = calculateQuarterlyBalance(plannedDates, refDate);
+                                                available = currentQ.remaining; // "Available balance" typically means remaining unused balance
+                                                // Or totalAvailable? "Available balance: X days". Usually means what I have LEFT.
+                                                // calculateQuarterlyBalance returns 'remaining'.
+                                                // But wait, 'remaining' = totalAvailable - taken. Yes.
+                                                available = currentQ.remaining;
+                                                carried = currentQ.carriedIn;
+                                            }
+                                            return (
+                                                <div className="text-right mt-1.5 min-h-[20px]">
+                                                    {reasonType !== 'Sick' ? (
+                                                        <span className={`text-xs ${cost > available ? 'text-amber-600 font-bold' : 'text-gray-500'}`}>
+                                                            Available balance: <span className="font-semibold">{available} days</span>
+                                                            {carried > 0 && <span className="text-gray-400 font-normal ml-1">(incl. {carried} carried forward)</span>}
+                                                            {cost > available && " (Insufficient)"}
+                                                        </span>
+                                                    ) : (
+                                                        <span className={`text-xs ${cost > available ? 'text-amber-600 font-bold' : 'text-gray-500'}`}>
+                                                            Available balance: <span className="font-semibold">{available} days</span>
+                                                            {cost > available && " (Insufficient)"}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            );
+                                        })()}
                                     </div>
                                 )}
 

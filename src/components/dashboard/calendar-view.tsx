@@ -183,13 +183,9 @@ export function CalendarView({
 
                         if (holiday && onHolidayClick) {
                             // Rule 3: Removing a selected holiday requires 2-step confirmation
-                            if (isSelectedHoliday) {
-                                // Double check? Actually `window.confirm` is adequate basic 2-step (Click -> Confirm).
-                                // Prompt says "Show an 'Are you sure?' modal". Browser confirm is acceptable for "modal" in this context unless we have a specific UI modal.
-                                // Given we don't have a generic ConfirmModal component ready, window.confirm is the standard react method for this logic proof.
-                                const confirmed = window.confirm(`Are you sure you want to deselect ${holiday.name}? This will remove it from your balance.`);
-                                if (!confirmed) return;
-                            }
+                            // Rule 3: Removing a selected holiday requires 2-step confirmation
+                            // Confirmation is now handled by the parent component (EmployeeDashboard) via modal.
+                            // We just broadcast the click.
                             onHolidayClick(holiday.id);
                         } else {
                             if (holiday) return; // Should not happen given logic above, but safe guard. Holidays (unselected) are clickable if not disabled.
