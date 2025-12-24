@@ -2,7 +2,7 @@ import { User, Leave, LeaveBalance, PublicHoliday } from './types';
 
 export const DEMO_USER_EMPLOYEE: User = {
     id: 'demo-emp',
-    name: 'Demo Employee',
+    name: 'Amith Shinde',
     email: 'amith@twistopen.in',
     role: 'employee',
     demo: true,

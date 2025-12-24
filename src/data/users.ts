@@ -46,7 +46,7 @@ export const MOCK_USERS: (User & { password: string })[] = [
     },
     {
         id: 'emp-005',
-        name: 'Amith Employee',
+        name: 'Amith Shinde',
         email: 'amith@twistopen.in',
         role: 'employee',
         password: 'password123',

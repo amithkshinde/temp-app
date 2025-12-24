@@ -80,7 +80,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setIsDemo(true);
         const demoUser: User = {
             id: role === 'employee' ? 'demo-emp' : 'demo-mgr',
-            name: role === 'employee' ? 'Demo Employee' : 'Demo Manager',
+            name: role === 'employee' ? 'Amith Shinde' : 'Demo Manager',
             email: `demo.${role}@example.com`,
             role: role,
             demo: true,
